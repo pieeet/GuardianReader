@@ -1,0 +1,54 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocdev.guardianreader.ArticlesFragment">
+
+    <FrameLayout
+        android:id="@+id/listContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/moreButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="10 more"
+                android:background="@color/colorGuardianBlue"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar"
+        android:layout_gravity="center_horizontal|center_vertical" />
+
+    <TextView
+        android:id="@+id/noNetworkTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NO NETWORK, TRY LATER"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:visibility="gone"
+        />
+
+</FrameLayout>
