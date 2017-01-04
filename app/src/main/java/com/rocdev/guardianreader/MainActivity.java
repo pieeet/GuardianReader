@@ -15,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,12 +25,11 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<List<Article>>,
-        ArticlesFragment.OnFragmentInteractionListener
-
-{
+        ArticlesFragment.OnFragmentInteractionListener {
 
     protected static final int CONTENT_CONTAINER = R.id.content_container;
 
+    //The urls for the different sections
     private static final String URL_NEWS = "https://content.guardianapis.com/search";
     private static final String URL_EDITORS_PICKS = "http://content.guardianapis.com/uk";
     private static final String URL_ART_AND_DESIGN = "https://content.guardianapis.com/artanddesign";
@@ -80,6 +78,7 @@ public class MainActivity extends AppCompatActivity
             URL_WEATHER
     };
 
+    // should be in strings.xml for multi language (TODO)
     private static final String[] TITLES = {
             "Latest news",
             "World News",
@@ -143,12 +142,12 @@ public class MainActivity extends AppCompatActivity
     private boolean isEditorsPicks;
     private ArrayList<Article> articles;
     private ArticlesFragment fragment;
+    private int listPosition;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("Activity", "onCreate started");
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -160,6 +159,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //screen rotation
         if (savedInstanceState != null) {
             articles = savedInstanceState.getParcelableArrayList("articles");
             currentPage = savedInstanceState.getInt("currentPage");
@@ -167,26 +168,27 @@ public class MainActivity extends AppCompatActivity
             loaderId = savedInstanceState.getInt("loaderId");
             onLoaderReset(mLoader);
             isEditorsPicks = savedInstanceState.getBoolean("isEditorPicks");
+            listPosition = savedInstanceState.getInt("listPosition");
         } else {
             articles = new ArrayList<>();
             isEditorsPicks = false;
             currentSection = SECTION_NEWS;
             currentPage = 1;
             loaderId = 1;
+            listPosition = 0;
         }
-        fragment = ArticlesFragment.newInstance(articles);
+
+        fragment = ArticlesFragment.newInstance(articles, listPosition);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(CONTENT_CONTAINER, fragment)
                 .commit();
         if (articles.isEmpty()) {
             selectSection(currentSection);
-        } else {
-            //noinspection ConstantConditions
-            getSupportActionBar().setTitle(TITLES[currentSection]);
         }
+        //noinspection ConstantConditions
+        getSupportActionBar().setTitle(TITLES[currentSection]);
     }
-
 
 
     @Override
@@ -196,6 +198,7 @@ public class MainActivity extends AppCompatActivity
         outState.putInt("currentPage", currentPage);
         outState.putInt("loaderId", loaderId);
         outState.putBoolean("isEditorPicks", isEditorsPicks);
+        outState.putInt("listPosition", listPosition);
         super.onSaveInstanceState(outState);
     }
 
@@ -208,36 +211,16 @@ public class MainActivity extends AppCompatActivity
     private void selectSection(int section) {
         isNewList = true;
         loaderId++;
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            fragment.setProgressView(true);
+        if (checkConnection()) {
+            fragment.showProgressBar();
             currentPage = 1;
             currentSection = section;
             //noinspection ConstantConditions
             getSupportActionBar().setTitle(TITLES[currentSection]);
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
-            fragment.setNoNetworkWarning();
+            fragment.showNoNetworkWarning();
         }
-    }
-
-    /**
-     * Builds the query url to Guardian API with specified parameters
-     *
-     * @return url in string form
-     */
-    private String buildUrl() {
-        Uri baseUri = Uri.parse(SECTIONS[currentSection]);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        if (isEditorsPicks) {
-            uriBuilder.appendQueryParameter("show-editors-picks", "true");
-        } else {
-            uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
-        }
-        uriBuilder.appendQueryParameter("api-key", API_KEY);
-        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
-        return uriBuilder.toString();
     }
 
     @Override
@@ -266,10 +249,15 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            currentPage = 1;
-            loaderId++;
-            isNewList = true;
-            getLoaderManager().initLoader(loaderId, null, this);
+            if (checkConnection()) {
+                fragment.showProgressBar();
+                currentPage = 1;
+                loaderId++;
+                isNewList = true;
+                getLoaderManager().initLoader(loaderId, null, this);
+            } else {
+                fragment.showNoNetworkWarning();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -302,7 +290,6 @@ public class MainActivity extends AppCompatActivity
                     selectSection(SECTION_ART_AND_DESIGN);
                 }
                 break;
-
             case R.id.nav_books:
                 if (currentSection != SECTION_BOOKS) {
                     isEditorsPicks = false;
@@ -422,7 +409,6 @@ public class MainActivity extends AppCompatActivity
                     selectSection(SECTION_WEATHER);
                 }
                 break;
-
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -432,7 +418,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
-        return new ArticleLoader(this, buildUrl(), isEditorsPicks);
+        //build URI with specified parameters
+        Uri baseUri = Uri.parse(SECTIONS[currentSection]);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        if (isEditorsPicks) {
+            uriBuilder.appendQueryParameter("show-editors-picks", "true");
+        } else {
+            uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
+        }
+        uriBuilder.appendQueryParameter("api-key", API_KEY);
+        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
+
+        return new ArticleLoader(this, uriBuilder.toString(), isEditorsPicks);
     }
 
     @Override
@@ -445,6 +442,7 @@ public class MainActivity extends AppCompatActivity
             articles.add(article);
         }
         fragment.notifyArticlesChanged(isNewList, isEditorsPicks);
+        fragment.hideWarningContainer();
         onLoaderReset(mLoader);
     }
 
@@ -459,12 +457,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void saveListPosition(int position) {
+        listPosition = position;
+    }
+
+
+    @Override
     public void onMoreArticles() {
-        if (!isEditorsPicks) {
+        if (checkConnection()) {
+            //fragment.showMoreButton(false);
+            fragment.showProgressBar();
             currentPage++;
             loaderId++;
             isNewList = false;
             getLoaderManager().initLoader(loaderId, null, this);
+        } else {
+            fragment.showNoNetworkWarning();
+        }
+
+
+    }
+
+    private boolean checkConnection() {
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
