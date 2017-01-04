@@ -355,6 +355,7 @@ public class MainActivity extends AppCompatActivity
                     isEditorsPicks = false;
                     selectSection(SECTION_OPINION);
                 }
+                break;
             case R.id.nav_politics:
                 if (currentSection != SECTION_POLITICS) {
                     isEditorsPicks = false;
