@@ -9,8 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,15 +36,15 @@
     <FrameLayout
         android:id="@+id/warningcontainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="#afb4bc"
+        android:alpha=".3">
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@android:style/Widget.ProgressBar"
             android:layout_gravity="center_horizontal|center_vertical"/>
-
         <TextView
             android:id="@+id/noNetworkTextView"
             android:layout_width="wrap_content"
@@ -57,7 +55,6 @@
             android:visibility="gone"
             android:background="@android:color/white"
             android:textColor="@android:color/holo_red_dark"/>
-
     </FrameLayout>
 
 

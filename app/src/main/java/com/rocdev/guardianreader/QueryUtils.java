@@ -20,7 +20,7 @@ import java.util.ArrayList;
  *
  */
 
-public class QueryUtils {
+class QueryUtils {
 
 
     /**
@@ -36,11 +36,11 @@ public class QueryUtils {
      * Return a list of {@link Article} objects that has been built up from
      * parsing a JSON response.
      */
-    public static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
+    static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
         StringBuilder output = new StringBuilder();
         URL url = makeUrl(urlStr);
         HttpURLConnection connection = null;
-        BufferedReader reader = null;
+        BufferedReader reader;
         InputStream in = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
@@ -78,7 +78,7 @@ public class QueryUtils {
             // build up a list of Article objects with the corresponding data.
             JSONObject root = new JSONObject(output.toString());
             JSONObject response = root.getJSONObject("response");
-            JSONArray results = null;
+            JSONArray results;
             if (isEditorsPick) {
                 results = response.getJSONArray("editorsPicks");
             } else {
@@ -97,7 +97,7 @@ public class QueryUtils {
                 try {
                     JSONObject fields = article.getJSONObject("fields");
                     thumbnail = fields.getString("thumbnail");
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
 
                 articles.add(new Article(webTitle, webPublicationDate, webUrl, sectionName, thumbnail));
 

@@ -1,5 +1,6 @@
 package com.rocdev.guardianreader;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -14,9 +15,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +59,7 @@ public class MainActivity extends AppCompatActivity
     private static final String URL_TV_RADIO = "https://content.guardianapis.com/tv-and-radio";
     private static final String URL_WEATHER = "https://content.guardianapis.com/weather";
     private static final String URL_WORLD = "https://content.guardianapis.com/world";
-
-    //TODO Search
-    //private static final String URL_SEARCH = "https://content.guardianapis.com/search";
+    private static final String URL_SEARCH = "https://content.guardianapis.com/search";
 
     private static final String API_KEY = "test";
 
@@ -75,10 +78,11 @@ public class MainActivity extends AppCompatActivity
             URL_POLITICS,
             URL_SCIENCE, URL_SOCIETY, URL_SPORT, URL_STAGE,
             URL_TECH, URL_TRAVEL, URL_TV_RADIO,
-            URL_WEATHER
+            URL_WEATHER,
+            URL_SEARCH
     };
 
-    // should be in strings.xml for multi language (TODO)
+    // should be in strings.xml for multi language
     private static final String[] TITLES = {
             "Latest news",
             "World News",
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity
     private static final int SECTION_TRAVEL = 21;
     private static final int SECTION_TV_AND_RADIO = 22;
     private static final int SECTION_WEATHER = 23;
+    private static final int SECTION_SEARCH = 24;
 
     /*********
      * INSTANCE VARIABLES
@@ -143,6 +148,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Article> articles;
     private ArticlesFragment fragment;
     private int listPosition;
+    private String searchQuery;
 
 
     @Override
@@ -160,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //screen rotation
+        //retrieve data in case of screen rotation
         if (savedInstanceState != null) {
             articles = savedInstanceState.getParcelableArrayList("articles");
             currentPage = savedInstanceState.getInt("currentPage");
@@ -169,15 +175,17 @@ public class MainActivity extends AppCompatActivity
             onLoaderReset(mLoader);
             isEditorsPicks = savedInstanceState.getBoolean("isEditorPicks");
             listPosition = savedInstanceState.getInt("listPosition");
+            //noinspection ConstantConditions
+            getSupportActionBar().setTitle(TITLES[currentSection]);
+
         } else {
             articles = new ArrayList<>();
             isEditorsPicks = false;
-            currentSection = SECTION_NEWS;
             currentPage = 1;
             loaderId = 1;
             listPosition = 0;
+            currentSection = SECTION_NEWS;
         }
-
         fragment = ArticlesFragment.newInstance(articles, listPosition);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -186,10 +194,17 @@ public class MainActivity extends AppCompatActivity
         if (articles.isEmpty()) {
             selectSection(currentSection);
         }
-        //noinspection ConstantConditions
-        getSupportActionBar().setTitle(TITLES[currentSection]);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            currentSection = SECTION_SEARCH;
+            searchQuery = intent.getStringExtra(SearchManager.QUERY);
+            selectSection(currentSection);
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -209,14 +224,25 @@ public class MainActivity extends AppCompatActivity
      * @param section the news section
      */
     private void selectSection(int section) {
+        currentSection = section;
         isNewList = true;
         loaderId++;
         if (checkConnection()) {
             fragment.showProgressBar();
             currentPage = 1;
-            currentSection = section;
             //noinspection ConstantConditions
-            getSupportActionBar().setTitle(TITLES[currentSection]);
+            if (currentSection == SECTION_SEARCH) {
+                String title = searchQuery;
+                if (searchQuery.length() > 12) {
+                    title = searchQuery.substring(0, 7) + "...";
+                }
+                //noinspection ConstantConditions
+                getSupportActionBar().setTitle(title);
+            } else {
+                //noinspection ConstantConditions
+                getSupportActionBar().setTitle(TITLES[currentSection]);
+            }
+
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
             fragment.showNoNetworkWarning();
@@ -237,6 +263,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
 
@@ -268,145 +302,121 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.nav_news:
                 if (currentSection != SECTION_NEWS) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_NEWS);
                 }
                 break;
             case R.id.nav_world_news:
                 if (currentSection != SECTION_WORLD_NEWS) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_WORLD_NEWS);
                 }
                 break;
             case R.id.nav_editors_picks:
                 if (currentSection != SECTION_EDITORS_PICKS) {
-                    isEditorsPicks = true;
                     selectSection(SECTION_EDITORS_PICKS);
                 }
                 break;
             case R.id.nav_art_and_design:
                 if (currentSection != SECTION_ART_AND_DESIGN) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_ART_AND_DESIGN);
                 }
                 break;
             case R.id.nav_books:
                 if (currentSection != SECTION_BOOKS) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_BOOKS);
                 }
                 break;
             case R.id.nav_business:
                 if (currentSection != SECTION_BUSINESS) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_BUSINESS);
                 }
                 break;
             case R.id.nav_culture:
                 if (currentSection != SECTION_CULTURE) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_CULTURE);
                 }
                 break;
             case R.id.nav_education:
                 if (currentSection != SECTION_EDUCATION) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_EDUCATION);
                 }
                 break;
             case R.id.nav_film:
                 if (currentSection != SECTION_FILM) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_FILM);
                 }
                 break;
             case R.id.nav_law:
                 if (currentSection != SECTION_LAW) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_LAW);
                 }
                 break;
             case R.id.nav_life_and_style:
                 if (currentSection != SECTION_LIFE_AND_STYLE) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_LIFE_AND_STYLE);
                 }
                 break;
             case R.id.nav_media:
                 if (currentSection != SECTION_MEDIA) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_MEDIA);
                 }
                 break;
             case R.id.nav_money:
                 if (currentSection != SECTION_MONEY) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_MONEY);
                 }
                 break;
             case R.id.nav_music:
                 if (currentSection != SECTION_MUSIC) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_MUSIC);
                 }
                 break;
             case R.id.nav_opinion:
                 if (currentSection != SECTION_OPINION) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_OPINION);
                 }
                 break;
             case R.id.nav_politics:
                 if (currentSection != SECTION_POLITICS) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_POLITICS);
                 }
                 break;
             case R.id.nav_science:
                 if (currentSection != SECTION_SCIENCE) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_SCIENCE);
                 }
                 break;
             case R.id.nav_society:
                 if (currentSection != SECTION_SOCIETY) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_SOCIETY);
                 }
                 break;
             case R.id.nav_sport:
                 if (currentSection != SECTION_SPORT) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_SPORT);
                 }
                 break;
             case R.id.nav_stage:
                 if (currentSection != SECTION_STAGE) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_STAGE);
                 }
                 break;
             case R.id.nav_tech:
                 if (currentSection != SECTION_TECH) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_TECH);
                 }
                 break;
             case R.id.nav_travel:
                 if (currentSection != SECTION_TRAVEL) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_TRAVEL);
                 }
                 break;
             case R.id.nav_tv_and_radio:
                 if (currentSection != SECTION_TV_AND_RADIO) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_TV_AND_RADIO);
                 }
                 break;
             case R.id.nav_weather:
                 if (currentSection != SECTION_WEATHER) {
-                    isEditorsPicks = false;
                     selectSection(SECTION_WEATHER);
                 }
                 break;
@@ -420,16 +430,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         //build URI with specified parameters
+        isEditorsPicks = currentSection == SECTION_EDITORS_PICKS;
         Uri baseUri = Uri.parse(SECTIONS[currentSection]);
         Uri.Builder uriBuilder = baseUri.buildUpon();
+        uriBuilder.appendQueryParameter("api-key", API_KEY);
+        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
         if (isEditorsPicks) {
             uriBuilder.appendQueryParameter("show-editors-picks", "true");
         } else {
             uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
+            if (currentSection == SECTION_SEARCH) {
+                uriBuilder.appendQueryParameter("q", searchQuery);
+                Log.d("Query", uriBuilder.toString());
+            }
         }
-        uriBuilder.appendQueryParameter("api-key", API_KEY);
-        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
-
         return new ArticleLoader(this, uriBuilder.toString(), isEditorsPicks);
     }
 
@@ -482,10 +496,6 @@ public class MainActivity extends AppCompatActivity
     private boolean checkConnection() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        } else {
-            return false;
-        }
+        return networkInfo != null && networkInfo.isConnected();
     }
 }
