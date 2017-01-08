@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -34,15 +33,19 @@ public class MainActivity extends AppCompatActivity
 
     protected static final int CONTENT_CONTAINER = R.id.content_container;
 
+    //urls for different news editions
+    private static final String URL_NEWS_AUS = "https://content.guardianapis.com/au";
+    private static final String URL_NEWS_UK = "https://content.guardianapis.com/uk";
+    private static final String URL_NEWS_US = "https://content.guardianapis.com/us";
+    private static final String URL_NEWS_INT = "https://content.guardianapis.com/international";
     //The urls for the different sections
-    private static final String URL_NEWS = "https://content.guardianapis.com/search";
-    private static final String URL_EDITORS_PICKS = "http://content.guardianapis.com/uk";
     private static final String URL_ART_AND_DESIGN = "https://content.guardianapis.com/artanddesign";
     private static final String URL_BOOKS = "https://content.guardianapis.com/books";
     private static final String URL_BUSINESS = "https://content.guardianapis.com/business";
     private static final String URL_CULTURE = "https://content.guardianapis.com/culture";
     private static final String URL_EDUCATION = "https://content.guardianapis.com/education";
     private static final String URL_FILM = "https://content.guardianapis.com/film";
+    private static final String URL_FOOTBALL = "https://content.guardianapis.com/football";
     private static final String URL_LAW = "https://content.guardianapis.com/law";
     private static final String URL_LIFE_AND_STYLE = "https://content.guardianapis.com/lifeandstyle";
     private static final String URL_MEDIA = "https://content.guardianapis.com/media";
@@ -65,13 +68,13 @@ public class MainActivity extends AppCompatActivity
 
     private static final String[] SECTIONS = {
             //news sections
-            URL_NEWS, URL_WORLD, URL_EDITORS_PICKS,
+            URL_NEWS_AUS, URL_NEWS_UK, URL_NEWS_US, URL_NEWS_INT,
             // sections
             URL_ART_AND_DESIGN,
             URL_BOOKS, URL_BUSINESS,
             URL_CULTURE,
             URL_EDUCATION,
-            URL_FILM,
+            URL_FILM, URL_FOOTBALL,
             URL_LAW, URL_LIFE_AND_STYLE,
             URL_MEDIA, URL_MONEY, URL_MUSIC,
             URL_OPINION,
@@ -79,20 +82,25 @@ public class MainActivity extends AppCompatActivity
             URL_SCIENCE, URL_SOCIETY, URL_SPORT, URL_STAGE,
             URL_TECH, URL_TRAVEL, URL_TV_RADIO,
             URL_WEATHER,
+            URL_WORLD,
             URL_SEARCH
     };
 
     // should be in strings.xml for multi language
     private static final String[] TITLES = {
-            "Latest news",
-            "World News",
-            "Editors Picks",
+            //News Editions (editor picks)
+            "Australia headlines",
+            "UK headlines",
+            "US headlines",
+            "International headlines",
+            //Sections
             "Art & Design",
             "Books",
             "Business",
             "Culture",
             "Education",
             "Film",
+            "Football",
             "Law",
             "Life & Style",
             "Media",
@@ -107,38 +115,43 @@ public class MainActivity extends AppCompatActivity
             "Technology",
             "Travel",
             "TV & Radio",
-            "Weather"
+            "Weather",
+            "World News"
     };
+    //editions
+    private static final int SECTION_NEWS_AUS = 0;
+    private static final int SECTION_NEWS_UK = 1;
+    private static final int SECTION_NEWS_US = 2;
+    private static final int SECTION_NEWS_INT = 3;
+    //sections
+    private static final int SECTION_ART_AND_DESIGN = 4;
+    private static final int SECTION_BOOKS = 5;
+    private static final int SECTION_BUSINESS = 6;
+    private static final int SECTION_CULTURE = 7;
+    private static final int SECTION_EDUCATION = 8;
+    private static final int SECTION_FILM = 9;
+    private static final int SECTION_FOOTBALL = 10;
+    private static final int SECTION_LAW = 11;
+    private static final int SECTION_LIFE_AND_STYLE = 12;
+    private static final int SECTION_MEDIA = 13;
+    private static final int SECTION_MONEY = 14;
+    private static final int SECTION_MUSIC = 15;
+    private static final int SECTION_OPINION = 16;
+    private static final int SECTION_POLITICS = 17;
+    private static final int SECTION_SCIENCE = 18;
+    private static final int SECTION_SOCIETY = 19;
+    private static final int SECTION_SPORT = 20;
+    private static final int SECTION_STAGE = 21;
+    private static final int SECTION_TECH = 22;
+    private static final int SECTION_TRAVEL = 23;
+    private static final int SECTION_TV_AND_RADIO = 24;
+    private static final int SECTION_WEATHER = 25;
+    private static final int SECTION_WORLD_NEWS = 26;
+    private static final int SECTION_SEARCH = 27;
 
-    private static final int SECTION_NEWS = 0;
-    private static final int SECTION_WORLD_NEWS = 1;
-    private static final int SECTION_EDITORS_PICKS = 2;
-    private static final int SECTION_ART_AND_DESIGN = 3;
-    private static final int SECTION_BOOKS = 4;
-    private static final int SECTION_BUSINESS = 5;
-    private static final int SECTION_CULTURE = 6;
-    private static final int SECTION_EDUCATION = 7;
-    private static final int SECTION_FILM = 8;
-    private static final int SECTION_LAW = 9;
-    private static final int SECTION_LIFE_AND_STYLE = 10;
-    private static final int SECTION_MEDIA = 11;
-    private static final int SECTION_MONEY = 12;
-    private static final int SECTION_MUSIC = 13;
-    private static final int SECTION_OPINION = 14;
-    private static final int SECTION_POLITICS = 15;
-    private static final int SECTION_SCIENCE = 16;
-    private static final int SECTION_SOCIETY = 17;
-    private static final int SECTION_SPORT = 18;
-    private static final int SECTION_STAGE = 19;
-    private static final int SECTION_TECH = 20;
-    private static final int SECTION_TRAVEL = 21;
-    private static final int SECTION_TV_AND_RADIO = 22;
-    private static final int SECTION_WEATHER = 23;
-    private static final int SECTION_SEARCH = 24;
-
-    /*********
+    /*******************************
      * INSTANCE VARIABLES
-     ******/
+     *******************************/
     private int loaderId;
     private Loader<List<Article>> mLoader;
     private int currentSection;
@@ -180,11 +193,12 @@ public class MainActivity extends AppCompatActivity
 
         } else {
             articles = new ArrayList<>();
-            isEditorsPicks = false;
+            isEditorsPicks = true;
             currentPage = 1;
             loaderId = 1;
             listPosition = 0;
-            currentSection = SECTION_NEWS;
+            // the section that is shown on app start
+            currentSection = SECTION_NEWS_INT;
         }
         fragment = ArticlesFragment.newInstance(articles, listPosition);
         getSupportFragmentManager()
@@ -199,6 +213,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        // invoke search intent
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             currentSection = SECTION_SEARCH;
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
@@ -226,6 +241,7 @@ public class MainActivity extends AppCompatActivity
     private void selectSection(int section) {
         currentSection = section;
         isNewList = true;
+        // avoid using same loaderId
         loaderId++;
         if (checkConnection()) {
             fragment.showProgressBar();
@@ -234,7 +250,7 @@ public class MainActivity extends AppCompatActivity
             if (currentSection == SECTION_SEARCH) {
                 String title = searchQuery;
                 if (searchQuery.length() > 12) {
-                    title = searchQuery.substring(0, 7) + "...";
+                    title = searchQuery.substring(0, 12) + "...";
                 }
                 //noinspection ConstantConditions
                 getSupportActionBar().setTitle(title);
@@ -242,7 +258,7 @@ public class MainActivity extends AppCompatActivity
                 //noinspection ConstantConditions
                 getSupportActionBar().setTitle(TITLES[currentSection]);
             }
-
+            // initialize Loader
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
             fragment.showNoNetworkWarning();
@@ -300,19 +316,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         switch (item.getItemId()) {
-            case R.id.nav_news:
-                if (currentSection != SECTION_NEWS) {
-                    selectSection(SECTION_NEWS);
+            case R.id.nav_news_aus:
+                if (currentSection != SECTION_NEWS_AUS) {
+                    selectSection(SECTION_NEWS_AUS);
                 }
                 break;
-            case R.id.nav_world_news:
-                if (currentSection != SECTION_WORLD_NEWS) {
-                    selectSection(SECTION_WORLD_NEWS);
+            case R.id.nav_news_uk:
+                if (currentSection != SECTION_NEWS_UK) {
+                    selectSection(SECTION_NEWS_UK);
                 }
                 break;
-            case R.id.nav_editors_picks:
-                if (currentSection != SECTION_EDITORS_PICKS) {
-                    selectSection(SECTION_EDITORS_PICKS);
+            case R.id.nav_news_us:
+                if (currentSection != SECTION_NEWS_US) {
+                    selectSection(SECTION_NEWS_US);
+                }
+                break;
+            case R.id.nav_news_int:
+                if (currentSection != SECTION_NEWS_INT) {
+                    selectSection(SECTION_NEWS_INT);
                 }
                 break;
             case R.id.nav_art_and_design:
@@ -343,6 +364,11 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_film:
                 if (currentSection != SECTION_FILM) {
                     selectSection(SECTION_FILM);
+                }
+                break;
+            case R.id.nav_football:
+                if (currentSection != SECTION_FOOTBALL) {
+                    selectSection(SECTION_FOOTBALL);
                 }
                 break;
             case R.id.nav_law:
@@ -420,6 +446,11 @@ public class MainActivity extends AppCompatActivity
                     selectSection(SECTION_WEATHER);
                 }
                 break;
+            case R.id.nav_world_news:
+                if (currentSection != SECTION_WORLD_NEWS) {
+                    selectSection(SECTION_WORLD_NEWS);
+                }
+                break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -430,7 +461,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         //build URI with specified parameters
-        isEditorsPicks = currentSection == SECTION_EDITORS_PICKS;
+        isEditorsPicks = currentSection <= SECTION_NEWS_INT;
         Uri baseUri = Uri.parse(SECTIONS[currentSection]);
         Uri.Builder uriBuilder = baseUri.buildUpon();
         uriBuilder.appendQueryParameter("api-key", API_KEY);
@@ -441,7 +472,6 @@ public class MainActivity extends AppCompatActivity
             uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
             if (currentSection == SECTION_SEARCH) {
                 uriBuilder.appendQueryParameter("q", searchQuery);
-                Log.d("Query", uriBuilder.toString());
             }
         }
         return new ArticleLoader(this, uriBuilder.toString(), isEditorsPicks);

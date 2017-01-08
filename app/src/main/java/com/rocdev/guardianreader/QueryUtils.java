@@ -1,7 +1,5 @@
 package com.rocdev.guardianreader;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,24 +15,21 @@ import java.util.ArrayList;
 
 /**
  * Created by piet on 27-12-16.
- *
+ * This class is only meant to hold static variables and methods
  */
 
 class QueryUtils {
-
 
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
      * This class is only meant to hold static variables and methods, which can be accessed
      * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
      */
-    private QueryUtils() {
-    }
+    private QueryUtils() {}
 
 
     /**
-     * Return a list of {@link Article} objects that has been built up from
-     * parsing a JSON response.
+     * @return a list of {@link Article} objects that has been built up from parsing a JSON response.
      */
     static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
         StringBuilder output = new StringBuilder();
@@ -65,16 +60,14 @@ class QueryUtils {
                 }
             }
         }
-
         // Create an empty ArrayList that we can start adding Articles to
         ArrayList<Article> articles = new ArrayList<>();
 
-        // Try to parse the SAMPLE_JSON_RESPONSE. If there's a problem with the way the JSON
+        // Try to parse the JSON_RESPONSE. If there's a problem with the way the JSON
         // is formatted, a JSONException exception object will be thrown.
-        // Catch the exception so the app doesn't crash, and print the error message to the logs.
+        // In case of an exception, the method will
+        // return an empty list
         try {
-
-
             // build up a list of Article objects with the corresponding data.
             JSONObject root = new JSONObject(output.toString());
             JSONObject response = root.getJSONObject("response");
@@ -84,9 +77,6 @@ class QueryUtils {
             } else {
                 results = response.getJSONArray("results");
             }
-
-
-
             for (int i = 0; i < results.length(); i++) {
                 JSONObject article = results.getJSONObject(i);
                 String webTitle = article.getString("webTitle");
@@ -94,21 +84,14 @@ class QueryUtils {
                 String webUrl = article.getString("webUrl");
                 String sectionName = article.getString("sectionName");
                 String thumbnail = null;
+                // there might not be a thumbnail
                 try {
                     JSONObject fields = article.getJSONObject("fields");
                     thumbnail = fields.getString("thumbnail");
                 } catch (Exception ignored) {}
-
                 articles.add(new Article(webTitle, webPublicationDate, webUrl, sectionName, thumbnail));
-
             }
-
-        } catch (JSONException e) {
-            // If an error is thrown when executing any of the above statements in the "try" block,
-            // catch the exception here, so the app doesn't crash. Print a log message
-            // with the message from the exception.
-            Log.e("QueryUtils", "Problem parsing the Article JSON results", e);
-        }
+        } catch (JSONException ignored) {}
 
         // Return the list of Articles
         return articles;

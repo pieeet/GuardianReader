@@ -249,13 +249,12 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     }
 
 
-    /****************
+    /*******************************
      * OnScrollListener methods
-     ***************/
+     *******************************/
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-    }
+    public void onScrollStateChanged(AbsListView absListView, int scrollState) {}
 
     /**
      * Shows or hides the more articles button

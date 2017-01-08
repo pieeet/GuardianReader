@@ -16,6 +16,7 @@
         android:id="@+id/imageView"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/side_nav_bar"
         android:scaleType="centerCrop"/>
 
@@ -25,14 +26,5 @@
         android:text="Guardian Reader"
         android:textSize="24sp"
         android:textColor="@color/sidebar_text" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/sidebar_text"
-        android:textSize="16sp"
-        android:textStyle="italic"
-        android:text="by roc-dev" />
 
 </LinearLayout>
