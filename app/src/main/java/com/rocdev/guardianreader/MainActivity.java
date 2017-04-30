@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity
     private static final String URL_WORLD = "https://content.guardianapis.com/world";
     private static final String URL_SEARCH = "https://content.guardianapis.com/search";
 
-    private static final String API_KEY = "test";
+    private static final String API_KEY = Secret.API_KEY;
 
     private static final String[] SECTIONS = {
             //news sections
