@@ -519,8 +519,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             fragment.showNoNetworkWarning();
         }
-
-
     }
 
     private boolean checkConnection() {
