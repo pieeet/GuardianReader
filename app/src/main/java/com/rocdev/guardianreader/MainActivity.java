@@ -86,39 +86,7 @@ public class MainActivity extends AppCompatActivity
             URL_SEARCH
     };
 
-    // should be in strings.xml for multi language
-    private static final String[] TITLES = {
-            //News Editions (editor picks)
-            "Australia headlines",
-            "UK headlines",
-            "US headlines",
-            "International headlines",
-            //Sections
-            "Art & Design",
-            "Books",
-            "Business",
-            "Culture",
-            "Education",
-            "Film",
-            "Football",
-            "Law",
-            "Life & Style",
-            "Media",
-            "Money",
-            "Music",
-            "Opinion",
-            "Politics",
-            "Science",
-            "Society",
-            "Sport",
-            "Stage",
-            "Technology",
-            "Travel",
-            "TV & Radio",
-            "Weather",
-            "World News"
-    };
-    //editions
+    //editions headlines (Editor Picks)
     private static final int SECTION_NEWS_AUS = 0;
     private static final int SECTION_NEWS_UK = 1;
     private static final int SECTION_NEWS_US = 2;
@@ -153,6 +121,7 @@ public class MainActivity extends AppCompatActivity
      * INSTANCE VARIABLES
      *******************************/
     private int loaderId;
+    private String[] titles;
     private Loader<List<Article>> mLoader;
     private int currentSection;
     private int currentPage;
@@ -167,6 +136,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -189,7 +159,7 @@ public class MainActivity extends AppCompatActivity
             isEditorsPicks = savedInstanceState.getBoolean("isEditorPicks");
             listPosition = savedInstanceState.getInt("listPosition");
             //noinspection ConstantConditions
-            getSupportActionBar().setTitle(TITLES[currentSection]);
+            getSupportActionBar().setTitle(titles[currentSection]);
 
         } else {
             articles = new ArrayList<>();
@@ -256,7 +226,7 @@ public class MainActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(title);
             } else {
                 //noinspection ConstantConditions
-                getSupportActionBar().setTitle(TITLES[currentSection]);
+                getSupportActionBar().setTitle(titles[currentSection]);
             }
             // initialize Loader
             getLoaderManager().initLoader(loaderId, null, this);
