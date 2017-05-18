@@ -10,14 +10,14 @@
 
     <item android:id="@+id/action_search"
         android:title="search"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
         android:id="@+id/action_refresh"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="refresh"
         android:icon="@drawable/ic_refresh_white_24dp"
         app:showAsAction="ifRoom" />

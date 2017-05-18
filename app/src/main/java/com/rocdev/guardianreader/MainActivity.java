@@ -138,6 +138,24 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
+        initNavigation();
+
+        //retrieve data in case of screen rotation
+        if (savedInstanceState != null) {
+            restoreInstanceState(savedInstanceState);
+            onLoaderReset(mLoader);
+            getSupportActionBar().setTitle(titles[currentSection]);
+
+        } else {
+            initInstanceState();
+        }
+        initFragment();
+        if (articles.isEmpty()) {
+            selectSection(currentSection);
+        }
+    }
+
+    private void initNavigation() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         loaderId = 1;
@@ -148,36 +166,34 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
-        //retrieve data in case of screen rotation
-        if (savedInstanceState != null) {
-            articles = savedInstanceState.getParcelableArrayList("articles");
-            currentPage = savedInstanceState.getInt("currentPage");
-            currentSection = savedInstanceState.getInt("currentSection");
-            loaderId = savedInstanceState.getInt("loaderId");
-            onLoaderReset(mLoader);
-            isEditorsPicks = savedInstanceState.getBoolean("isEditorPicks");
-            listPosition = savedInstanceState.getInt("listPosition");
-            //noinspection ConstantConditions
-            getSupportActionBar().setTitle(titles[currentSection]);
+    private void restoreInstanceState(Bundle savedInstanceState) {
+        articles = savedInstanceState.getParcelableArrayList("articles");
+        currentPage = savedInstanceState.getInt("currentPage");
+        currentSection = savedInstanceState.getInt("currentSection");
+        loaderId = savedInstanceState.getInt("loaderId");
+        isEditorsPicks = savedInstanceState.getBoolean("isEditorPicks");
+        listPosition = savedInstanceState.getInt("listPosition");
+    }
 
-        } else {
-            articles = new ArrayList<>();
-            isEditorsPicks = true;
-            currentPage = 1;
-            loaderId = 1;
-            listPosition = 0;
-            // the section that is shown on app start
-            currentSection = SECTION_NEWS_INT;
-        }
+    private void initInstanceState() {
+        articles = new ArrayList<>();
+        isEditorsPicks = true;
+        currentPage = 1;
+        loaderId = 1;
+        listPosition = 0;
+        // the section that is shown on app start
+        currentSection = SECTION_NEWS_INT;
+
+    }
+
+    private void initFragment() {
         fragment = ArticlesFragment.newInstance(articles, listPosition);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(CONTENT_CONTAINER, fragment)
                 .commit();
-        if (articles.isEmpty()) {
-            selectSection(currentSection);
-        }
     }
 
     @Override
