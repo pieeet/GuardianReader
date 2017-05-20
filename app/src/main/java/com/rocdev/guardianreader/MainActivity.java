@@ -34,7 +34,11 @@ public class MainActivity extends AppCompatActivity
         ArticlesFragment.OnFragmentInteractionListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    protected static final int CONTENT_CONTAINER = R.id.content_container;
+    /*******************************
+     * CONSTANTS
+     *******************************/
+
+    private static final int CONTENT_CONTAINER = R.id.content_container;
 
     //urls for different news editions
     private static final String URL_HEADLINES_AUS = "https://content.guardianapis.com/au";
@@ -70,8 +74,7 @@ public class MainActivity extends AppCompatActivity
     private static final String URL_NEWS_UK = "https://content.guardianapis.com/uk-news";
     private static final String URL_NEWS_US = "https://content.guardianapis.com/us-news";
 
-
-    private static final String API_KEY = Secret.API_KEY;
+    private static final String API_KEY = Secret.getApiKey();
 
     private static final String[] SECTIONS = {
             //news headlines
@@ -131,8 +134,6 @@ public class MainActivity extends AppCompatActivity
     private static final int SECTION_NEWS_UK = 17;
     private static final int SECTION_NEWS_US = 18;
     private static final int SECTION_NEWS_WORLD = 19;
-//    private static final int SECTION_OBSERVER = 20;
-
     private static final int SECTION_OPINION = 20;
     private static final int SECTION_POLITICS = 21;
     private static final int SECTION_SCIENCE = 22;
@@ -235,7 +236,6 @@ public class MainActivity extends AppCompatActivity
                 .replace(CONTENT_CONTAINER, fragment)
                 .commit();
     }
-
 
     @Override
     protected void onResume() {

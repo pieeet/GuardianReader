@@ -5,6 +5,7 @@ import android.preference.PreferenceFragment;
 
 /**
  * Created by piet on 19-05-17.
+ *
  */
 
 public class SettingsFragment extends PreferenceFragment {

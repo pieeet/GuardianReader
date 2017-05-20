@@ -8,7 +8,7 @@ import android.os.Parcelable;
  *
  */
 
-public class Article implements Parcelable {
+class Article implements Parcelable {
     private String title;
     private String date;
     private String url;
@@ -25,7 +25,7 @@ public class Article implements Parcelable {
         this.thumbUrl = thumbUrl;
     }
 
-    public String getTitle() {
+    String getTitle() {
         return title;
     }
 

@@ -16,7 +16,6 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rocdev.guardianreader.R.id.noNetworkTextView;
 
 
 /**
@@ -211,7 +210,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * @param article the selected article
      */
     public void onArticleClicked(Article article) {
-        if (mListener != null) {
+        if (null != mListener) {
             mListener.onArticleClicked(article);
         }
     }
@@ -286,7 +285,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    interface OnFragmentInteractionListener {
         // DONE: Update argument type and name
         void onArticleClicked(Article article);
         void saveListPosition(int position);

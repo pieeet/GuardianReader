@@ -17,20 +17,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.rocdev.guardianreader.R.id.titleTextView;
-
 
 /**
  * Created by piet on 27-12-16.
  *
  */
 
-public class ArticleAdapter extends ArrayAdapter<Article> {
+class ArticleAdapter extends ArrayAdapter<Article> {
 
     private Context context;
 
 
-    public ArticleAdapter(Context context, List<Article> articles) {
+    ArticleAdapter(Context context, List<Article> articles) {
         super(context, 0, articles);
         this.context = context;
     }
@@ -50,6 +48,7 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         // anders laadt verkeerde plaatje
         //http://stackoverflow.com/questions/25429683/picasso-loads-pictures-to-the-wrong-imageview-in-a-list-adapter
         Picasso.with(context).cancelRequest(imgView);
+        assert article != null;
         if (article.getThumbUrl() != null) {
             Picasso.with(context).load(article.getThumbUrl()).into(imgView);
         }

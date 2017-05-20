@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by piet on 19-05-17.
+ *
  */
 
 public class SettingsActivity extends AppCompatActivity {
