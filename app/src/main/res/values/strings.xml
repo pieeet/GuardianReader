@@ -4,44 +4,109 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="action_settings">Personalise</string>
 
     <string-array name="titles">
         <item>Australia headlines</item>
         <item>UK headlines</item>
         <item>US headlines</item>
         <item>International headlines</item>
-        <item>Art &amp; Design</item>
-        <item>Books</item>
-        <item>Business</item>
-        <item>Culture</item>
-        <item>Education</item>
-        <item>Film</item>
-        <item>Football</item>
-        <item>Law</item>
-        <item>Life &amp; Style</item>
-        <item>Media</item>
-        <item>Money</item>
-        <item>Music</item>
-        <item>Opinion</item>
-        <item>Politics</item>
-        <item>Science</item>
-        <item>Society</item>
-        <item>Sport</item>
-        <item>Stage</item>
-        <item>Technology</item>
-        <item>Travel</item>
-        <item>TV &amp; Radio</item>
-        <item>Weather</item>
+        <item>@string/pref_title_art_design</item>
+        <item>@string/pref_title_books</item>
+        <item>@string/pref_title_business</item>
+        <item>@string/pref_title_culture</item>
+        <item>@string/pref_title_education</item>
+        <item>@string/pref_title_film</item>
+        <item>@string/pref_title_football</item>
+        <item>@string/pref_title_law</item>
+        <item>@string/pref_title_life_style</item>
+        <item>@string/pref_title_media</item>
+        <item>@string/pref_title_money</item>
+        <item>@string/pref_title_music</item>
+        <item>Australia News</item>
+        <item>UK News</item>
+        <item>US News</item>
         <item>World News</item>
+        <item>@string/pref_title_opinion</item>
+        <item>@string/pref_title_politics</item>
+        <item>@string/pref_title_science</item>
+        <item>@string/pref_title_society</item>
+        <item>@string/pref_title_sport</item>
+        <item>@string/pref_title_stage</item>
+        <item>@string/pref_title_tech</item>
+        <item>@string/pref_title_travel</item>
+        <item>@string/pref_title_tv_radio</item>
+        <item>@string/pref_title_weather</item>
     </string-array>
 
+    <!--navbar pref keys -->
 
+    <string name="pref_key_art_design" translatable="false">pref_section_art_design</string>
+    <string name="pref_key_books" translatable="false">pref_section_books</string>
+    <string name="pref_key_business" translatable="false">pref_section_business</string>
+    <string name="pref_key_culture" translatable="false">pref_section_culture</string>
+    <string name="pref_key_education" translatable="false">pref_section_education</string>
+    <string name="pref_key_film" translatable="false">pref_section_film</string>
+    <string name="pref_key_football" translatable="false">pref_section_football</string>
+    <string name="pref_key_law" translatable="false">pref_section_law</string>
+    <string name="pref_key_life_style" translatable="false">pref_section_life_style</string>
+    <string name="pref_key_media" translatable="false">pref_section_media</string>
+    <string name="pref_key_money" translatable="false">pref_section_money</string>
+    <string name="pref_key_music" translatable="false">pref_section_music</string>
+    <string name="pref_key_news_australia" translatable="false">pref_section_news_australia</string>
+    <string name="pref_key_news_uk" translatable="false">pref_section_news_uk</string>
+    <string name="pref_key_news_us" translatable="false">pref_section_news_us</string>
+    <string name="pref_key_news_world" translatable="false">pref_section_news_world</string>
+    <string name="pref_key_opinion" translatable="false">pref_section_opinion</string>
+    <string name="pref_key_politics" translatable="false">pref_section_politics</string>
+    <string name="pref_key_science" translatable="false">pref_section_science</string>
+    <string name="pref_key_society" translatable="false">pref_section_society</string>
+    <string name="pref_key_sport" translatable="false">pref_section_sport</string>
+    <string name="pref_key_stage" translatable="false">pref_section_stage</string>
+    <string name="pref_key_tech" translatable="false">pref_section_tech</string>
+    <string name="pref_key_tv_radio" translatable="false">pref_section_tv_radio</string>
+    <string name="pref_key_travel" translatable="false">pref_section_travel</string>
+    <string name="pref_key_weather" translatable="false">pref_section_weather</string>
+    <string name="pref_key_change_sections" translatable="false">changeSections</string>
 
+    <!--navbar titles -->
+    <string name="pref_heading_headlines">Editors picks</string>
+
+    <string name="pref_title_headlines_aus">Australia edition</string>
+    <string name="pref_title_headlines_uk">UK edition</string>
+    <string name="pref_title_headlines_us">US edition</string>
+    <string name="pref_title_headlines_world">International edition</string>
+
+    <string name="pref_heading_sections">Sections</string>
+
+    <string name="pref_title_art_design"><![CDATA[Art & Design]]></string>
+    <string name="pref_title_books">Books</string>
+    <string name="pref_title_business">Business</string>
+    <string name="pref_title_culture">Culture</string>
+    <string name="pref_title_education">Education</string>
+    <string name="pref_title_film">Film</string>
+    <string name="pref_title_football">Football</string>
+    <string name="pref_title_law">Law</string>
+    <string name="pref_title_life_style"><![CDATA[Life & Style]]></string>
+    <string name="pref_title_media">Media</string>
+    <string name="pref_title_money">Money</string>
+    <string name="pref_title_music">Music</string>
+    <string name="pref_title_news_australia">News Australia</string>
+    <string name="pref_title_news_uk">News UK</string>
+    <string name="pref_title_news_us">News US</string>
+    <string name="pref_title_news_world">News World</string>
+    <string name="pref_title_opinion">Opinion</string>
+    <string name="pref_title_politics">Politics</string>
+    <string name="pref_title_science">Science</string>
+    <string name="pref_title_society">Society</string>
+    <string name="pref_title_sport">Sport</string>
+    <string name="pref_title_stage">Stage</string>
+    <string name="pref_title_tech">Technology</string>
+    <string name="pref_title_tv_radio"><![CDATA[TV & Radio]]></string>
+    <string name="pref_title_travel">Travel</string>
+    <string name="pref_title_weather">Weather</string>
+
+    <string name="google_play_url" translatable="false">https://play.google.com/store/apps/details?id=com.rocdev.guardianreader</string>
 
 
 </resources>

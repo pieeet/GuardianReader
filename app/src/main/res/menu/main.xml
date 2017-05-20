@@ -8,8 +8,14 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_rate"
+        android:orderInCategory="200"
+        android:title="Rate app"
+        app:showAsAction="never" />
+
     <item android:id="@+id/action_search"
-        android:title="search"
+        android:title="Search"
         android:orderInCategory="1"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="collapseActionView|ifRoom"
@@ -18,7 +24,7 @@
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="2"
-        android:title="refresh"
+        android:title="Refresh"
         android:icon="@drawable/ic_refresh_white_24dp"
         app:showAsAction="ifRoom" />
 </menu>

@@ -12,11 +12,11 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rocdev.guardianreader.R.id.noNetworkTextView;
 
 
 /**
@@ -29,10 +29,9 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
 
     private View listContainer;
     private ListView listView;
-    private View warningContainer;
+    private View progressContainer;
+    private View noNetworkContainer;
     private Button moreButton;
-    private View progressView;
-    private TextView noNetworkTextView;
     private List<Article> articles;
     private ArticleAdapter adapter;
     private OnFragmentInteractionListener mListener;
@@ -43,8 +42,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     /**
      * required (Framework) empty constructor
      */
-    public ArticlesFragment() {
-    }
+    public ArticlesFragment() {}
 
 
     /**
@@ -54,11 +52,13 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * @param articles reference to articles in Activity to be shown. Can be empty, not null.
      * @return A new instance of fragment.
      */
-    public static ArticlesFragment newInstance(@NonNull ArrayList<Article> articles, int listPosition) {
+    public static ArticlesFragment newInstance(@NonNull ArrayList<Article> articles,
+                                               int listPosition, boolean hasMoreButton) {
         ArticlesFragment fragment = new ArticlesFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList("articles", articles);
         args.putInt("listPosition", listPosition);
+        args.putBoolean("hasMoreButton", hasMoreButton);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,10 +70,9 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             articles = getArguments().getParcelableArrayList("articles");
             listPosition = getArguments().getInt("listPosition");
             adapter = new ArticleAdapter(getActivity(), articles);
-            hasMoreButton = true;
+            hasMoreButton = getArguments().getBoolean("hasMoreButton");
         }
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,7 +82,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         initListeners();
         return rootView;
     }
-
 
     /**
      * initializes views
@@ -104,13 +102,12 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
                 }
             });
         }
-        warningContainer = view.findViewById(R.id.warningcontainer);
+        progressContainer = view.findViewById(R.id.progressContainer);
+        noNetworkContainer = view.findViewById(R.id.noNetworkContainer);
         moreButton = (Button) view.findViewById(R.id.moreButton);
         moreButton.setVisibility(View.GONE);
-        progressView = view.findViewById(R.id.progressBar);
-        noNetworkTextView = (TextView) view.findViewById(R.id.noNetworkTextView);
         if (!articles.isEmpty()) {
-            hideWarningContainer();
+            hideProgressContainer();
         }
     }
 
@@ -152,8 +149,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         hasMoreButton = !isEditorPicks;
         showMoreButton(false);
         adapter.notifyDataSetChanged();
-        progressView.setVisibility(View.GONE);
-        warningContainer.setVisibility(View.GONE);
+        progressContainer.setVisibility(View.GONE);
         listContainer.setVisibility(View.VISIBLE);
         if (isNewList) {
             listPosition = 0;
@@ -167,9 +163,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      */
     protected void showProgressBar() {
         try {
-            warningContainer.setVisibility(View.VISIBLE);
-            noNetworkTextView.setVisibility(View.GONE);
-            progressView.setVisibility(View.VISIBLE);
+            progressContainer.setVisibility(View.VISIBLE);
+            noNetworkContainer.setVisibility(View.GONE);
         } catch (NullPointerException ignored) {
         }
     }
@@ -179,9 +174,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      */
     protected void showNoNetworkWarning() {
         try {
-            progressView.setVisibility(View.GONE);
-            noNetworkTextView.setVisibility(View.VISIBLE);
-            warningContainer.setVisibility(View.VISIBLE);
+            progressContainer.setVisibility(View.GONE);
+            noNetworkContainer.setVisibility(View.VISIBLE);
         } catch (NullPointerException ignored) {
         }
     }
@@ -198,14 +192,15 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             } else {
                 moreButton.setVisibility(View.GONE);
             }
-        } catch (NullPointerException ignored) {
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
 
-    protected void hideWarningContainer() {
+    protected void hideProgressContainer() {
         try {
-            warningContainer.setVisibility(View.GONE);
+            progressContainer.setVisibility(View.GONE);
         } catch (NullPointerException ignored) {}
     }
 
@@ -279,9 +274,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
                 showMoreButton(false);
             }
         }
-
     }
-
 
     /**
      * This interface must be implemented by activities that contain this

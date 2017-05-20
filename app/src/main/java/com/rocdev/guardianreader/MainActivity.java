@@ -3,12 +3,14 @@ package com.rocdev.guardianreader;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.LoaderManager;
 import android.content.Loader;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,15 +31,16 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<List<Article>>,
-        ArticlesFragment.OnFragmentInteractionListener {
+        ArticlesFragment.OnFragmentInteractionListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     protected static final int CONTENT_CONTAINER = R.id.content_container;
 
     //urls for different news editions
-    private static final String URL_NEWS_AUS = "https://content.guardianapis.com/au";
-    private static final String URL_NEWS_UK = "https://content.guardianapis.com/uk";
-    private static final String URL_NEWS_US = "https://content.guardianapis.com/us";
-    private static final String URL_NEWS_INT = "https://content.guardianapis.com/international";
+    private static final String URL_HEADLINES_AUS = "https://content.guardianapis.com/au";
+    private static final String URL_HEADLINES_UK = "https://content.guardianapis.com/uk";
+    private static final String URL_HEADLINES_US = "https://content.guardianapis.com/us";
+    private static final String URL_HEADLINES_INT = "https://content.guardianapis.com/international";
     //The urls for the different sections
     private static final String URL_ART_AND_DESIGN = "https://content.guardianapis.com/artanddesign";
     private static final String URL_BOOKS = "https://content.guardianapis.com/books";
@@ -61,36 +64,56 @@ public class MainActivity extends AppCompatActivity
     private static final String URL_TRAVEL = "https://content.guardianapis.com/travel";
     private static final String URL_TV_RADIO = "https://content.guardianapis.com/tv-and-radio";
     private static final String URL_WEATHER = "https://content.guardianapis.com/weather";
-    private static final String URL_WORLD = "https://content.guardianapis.com/world";
+    private static final String URL_NEWS_WORLD = "https://content.guardianapis.com/world";
     private static final String URL_SEARCH = "https://content.guardianapis.com/search";
+    private static final String URL_NEWS_AUS = "https://content.guardianapis.com/australia-news";
+    private static final String URL_NEWS_UK = "https://content.guardianapis.com/uk-news";
+    private static final String URL_NEWS_US = "https://content.guardianapis.com/us-news";
+
 
     private static final String API_KEY = Secret.API_KEY;
 
     private static final String[] SECTIONS = {
-            //news sections
-            URL_NEWS_AUS, URL_NEWS_UK, URL_NEWS_US, URL_NEWS_INT,
+            //news headlines
+            URL_HEADLINES_AUS,
+            URL_HEADLINES_UK,
+            URL_HEADLINES_US,
+            URL_HEADLINES_INT,
             // sections
             URL_ART_AND_DESIGN,
-            URL_BOOKS, URL_BUSINESS,
+            URL_BOOKS,
+            URL_BUSINESS,
             URL_CULTURE,
             URL_EDUCATION,
-            URL_FILM, URL_FOOTBALL,
-            URL_LAW, URL_LIFE_AND_STYLE,
-            URL_MEDIA, URL_MONEY, URL_MUSIC,
+            URL_FILM,
+            URL_FOOTBALL,
+            URL_LAW,
+            URL_LIFE_AND_STYLE,
+            URL_MEDIA,
+            URL_MONEY,
+            URL_MUSIC,
+            URL_NEWS_AUS,
+            URL_NEWS_UK,
+            URL_NEWS_US,
+            URL_NEWS_WORLD,
             URL_OPINION,
             URL_POLITICS,
-            URL_SCIENCE, URL_SOCIETY, URL_SPORT, URL_STAGE,
-            URL_TECH, URL_TRAVEL, URL_TV_RADIO,
+            URL_SCIENCE,
+            URL_SOCIETY,
+            URL_SPORT,
+            URL_STAGE,
+            URL_TECH,
+            URL_TRAVEL,
+            URL_TV_RADIO,
             URL_WEATHER,
-            URL_WORLD,
             URL_SEARCH
     };
 
     //editions headlines (Editor Picks)
-    private static final int SECTION_NEWS_AUS = 0;
-    private static final int SECTION_NEWS_UK = 1;
-    private static final int SECTION_NEWS_US = 2;
-    private static final int SECTION_NEWS_INT = 3;
+    private static final int SECTION_HEADLINES_AUS = 0;
+    private static final int SECTION_HEADLINES_UK = 1;
+    private static final int SECTION_HEADLINES_US = 2;
+    private static final int SECTION_HEADLINES_WORLD = 3;
     //sections
     private static final int SECTION_ART_AND_DESIGN = 4;
     private static final int SECTION_BOOKS = 5;
@@ -104,18 +127,23 @@ public class MainActivity extends AppCompatActivity
     private static final int SECTION_MEDIA = 13;
     private static final int SECTION_MONEY = 14;
     private static final int SECTION_MUSIC = 15;
-    private static final int SECTION_OPINION = 16;
-    private static final int SECTION_POLITICS = 17;
-    private static final int SECTION_SCIENCE = 18;
-    private static final int SECTION_SOCIETY = 19;
-    private static final int SECTION_SPORT = 20;
-    private static final int SECTION_STAGE = 21;
-    private static final int SECTION_TECH = 22;
-    private static final int SECTION_TRAVEL = 23;
-    private static final int SECTION_TV_AND_RADIO = 24;
-    private static final int SECTION_WEATHER = 25;
-    private static final int SECTION_WORLD_NEWS = 26;
-    private static final int SECTION_SEARCH = 27;
+    private static final int SECTION_NEWS_AUS = 16;
+    private static final int SECTION_NEWS_UK = 17;
+    private static final int SECTION_NEWS_US = 18;
+    private static final int SECTION_NEWS_WORLD = 19;
+//    private static final int SECTION_OBSERVER = 20;
+
+    private static final int SECTION_OPINION = 20;
+    private static final int SECTION_POLITICS = 21;
+    private static final int SECTION_SCIENCE = 22;
+    private static final int SECTION_SOCIETY = 23;
+    private static final int SECTION_SPORT = 24;
+    private static final int SECTION_STAGE = 25;
+    private static final int SECTION_TECH = 26;
+    private static final int SECTION_TRAVEL = 27;
+    private static final int SECTION_TV_AND_RADIO = 28;
+    private static final int SECTION_WEATHER = 29;
+    private static final int SECTION_SEARCH = 30;
 
     /*******************************
      * INSTANCE VARIABLES
@@ -131,6 +159,10 @@ public class MainActivity extends AppCompatActivity
     private ArticlesFragment fragment;
     private int listPosition;
     private String searchQuery;
+    private SharedPreferences mSharedPreferences;
+    private NavigationView navigationView;
+
+//    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
 
     @Override
@@ -138,14 +170,12 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
+        setPreferences();
         initNavigation();
 
         //retrieve data in case of screen rotation
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);
-            onLoaderReset(mLoader);
-            getSupportActionBar().setTitle(titles[currentSection]);
-
         } else {
             initInstanceState();
         }
@@ -153,6 +183,12 @@ public class MainActivity extends AppCompatActivity
         if (articles.isEmpty()) {
             selectSection(currentSection);
         }
+    }
+
+    private void setPreferences() {
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     private void initNavigation() {
@@ -164,8 +200,9 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        setNavBarSections();
     }
 
     private void restoreInstanceState(Bundle savedInstanceState) {
@@ -175,6 +212,10 @@ public class MainActivity extends AppCompatActivity
         loaderId = savedInstanceState.getInt("loaderId");
         isEditorsPicks = savedInstanceState.getBoolean("isEditorPicks");
         listPosition = savedInstanceState.getInt("listPosition");
+        onLoaderReset(mLoader);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(titles[currentSection]);
+        }
     }
 
     private void initInstanceState() {
@@ -184,16 +225,24 @@ public class MainActivity extends AppCompatActivity
         loaderId = 1;
         listPosition = 0;
         // the section that is shown on app start
-        currentSection = SECTION_NEWS_INT;
-
+        currentSection = SECTION_HEADLINES_WORLD;
     }
 
     private void initFragment() {
-        fragment = ArticlesFragment.newInstance(articles, listPosition);
+        fragment = ArticlesFragment.newInstance(articles, listPosition, !isEditorsPicks);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(CONTENT_CONTAINER, fragment)
                 .commit();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!checkConnection()) {
+            fragment.showNoNetworkWarning();
+        }
     }
 
     @Override
@@ -278,22 +327,28 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            if (checkConnection()) {
-                fragment.showProgressBar();
-                currentPage = 1;
-                loaderId++;
-                isNewList = true;
-                getLoaderManager().initLoader(loaderId, null, this);
-            } else {
-                fragment.showNoNetworkWarning();
-            }
+        switch (id) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.action_refresh:
+                if (checkConnection()) {
+                    fragment.showProgressBar();
+                    currentPage = 1;
+                    loaderId++;
+                    isNewList = true;
+                    getLoaderManager().initLoader(loaderId, null, this);
+                } else {
+                    fragment.showNoNetworkWarning();
+                }
+                break;
+            case R.id.action_rate:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse(
+                        getString(R.string.google_play_url)));
+                startActivity(browserIntent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -302,24 +357,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         switch (item.getItemId()) {
-            case R.id.nav_news_aus:
-                if (currentSection != SECTION_NEWS_AUS) {
-                    selectSection(SECTION_NEWS_AUS);
+            case R.id.nav_headlines_aus:
+                if (currentSection != SECTION_HEADLINES_AUS) {
+                    selectSection(SECTION_HEADLINES_AUS);
                 }
                 break;
-            case R.id.nav_news_uk:
-                if (currentSection != SECTION_NEWS_UK) {
-                    selectSection(SECTION_NEWS_UK);
+            case R.id.nav_headlines_uk:
+                if (currentSection != SECTION_HEADLINES_UK) {
+                    selectSection(SECTION_HEADLINES_UK);
                 }
                 break;
-            case R.id.nav_news_us:
-                if (currentSection != SECTION_NEWS_US) {
-                    selectSection(SECTION_NEWS_US);
+            case R.id.nav_headlines_us:
+                if (currentSection != SECTION_HEADLINES_US) {
+                    selectSection(SECTION_HEADLINES_US);
                 }
                 break;
-            case R.id.nav_news_int:
-                if (currentSection != SECTION_NEWS_INT) {
-                    selectSection(SECTION_NEWS_INT);
+            case R.id.nav_headlines_int:
+                if (currentSection != SECTION_HEADLINES_WORLD) {
+                    selectSection(SECTION_HEADLINES_WORLD);
                 }
                 break;
             case R.id.nav_art_and_design:
@@ -382,6 +437,31 @@ public class MainActivity extends AppCompatActivity
                     selectSection(SECTION_MUSIC);
                 }
                 break;
+            case R.id.nav_news_australia:
+                if (currentSection != SECTION_NEWS_AUS) {
+                    selectSection(SECTION_NEWS_AUS);
+                }
+                break;
+            case R.id.nav_news_uk:
+                if (currentSection != SECTION_NEWS_UK) {
+                    selectSection(SECTION_NEWS_UK);
+                }
+                break;
+            case R.id.nav_news_us:
+                if (currentSection != SECTION_NEWS_US) {
+                    selectSection(SECTION_NEWS_US);
+                }
+                break;
+            case R.id.nav_news_world:
+                if (currentSection != SECTION_NEWS_WORLD) {
+                    selectSection(SECTION_NEWS_WORLD);
+                }
+                break;
+//            case R.id.nav_observer:
+//                if (currentSection != SECTION_OBSERVER) {
+//                    selectSection(SECTION_OBSERVER);
+//                }
+//                break;
             case R.id.nav_opinion:
                 if (currentSection != SECTION_OPINION) {
                     selectSection(SECTION_OPINION);
@@ -432,11 +512,7 @@ public class MainActivity extends AppCompatActivity
                     selectSection(SECTION_WEATHER);
                 }
                 break;
-            case R.id.nav_world_news:
-                if (currentSection != SECTION_WORLD_NEWS) {
-                    selectSection(SECTION_WORLD_NEWS);
-                }
-                break;
+
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -447,7 +523,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         //build URI with specified parameters
-        isEditorsPicks = currentSection <= SECTION_NEWS_INT;
+        isEditorsPicks = currentSection <= SECTION_HEADLINES_WORLD;
         Uri baseUri = Uri.parse(SECTIONS[currentSection]);
         Uri.Builder uriBuilder = baseUri.buildUpon();
         uriBuilder.appendQueryParameter("api-key", API_KEY);
@@ -473,7 +549,7 @@ public class MainActivity extends AppCompatActivity
             articles.add(article);
         }
         fragment.notifyArticlesChanged(isNewList, isEditorsPicks);
-        fragment.hideWarningContainer();
+        fragment.hideProgressContainer();
         onLoaderReset(mLoader);
     }
 
@@ -511,5 +587,152 @@ public class MainActivity extends AppCompatActivity
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
+    }
+
+
+    private void setNavBarSections() {
+        Menu navMenu = navigationView.getMenu();
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_books), true)) {
+            navMenu.findItem(R.id.nav_books).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_books).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_business), true)) {
+            navMenu.findItem(R.id.nav_business).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_business).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_art_design), true)) {
+            navMenu.findItem(R.id.nav_art_and_design).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_art_and_design).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_culture), true)) {
+            navMenu.findItem(R.id.nav_culture).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_culture).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_education), true)) {
+            navMenu.findItem(R.id.nav_education).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_education).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_film), true)) {
+            navMenu.findItem(R.id.nav_film).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_film).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_football), true)) {
+            navMenu.findItem(R.id.nav_football).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_football).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_law), true)) {
+            navMenu.findItem(R.id.nav_law).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_law).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_life_style), true)) {
+            navMenu.findItem(R.id.nav_life_and_style).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_life_and_style).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_media), true)) {
+            navMenu.findItem(R.id.nav_media).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_media).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_money), true)) {
+            navMenu.findItem(R.id.nav_money).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_money).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_music), true)) {
+            navMenu.findItem(R.id.nav_music).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_music).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_australia), true)) {
+            navMenu.findItem(R.id.nav_news_australia).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_news_australia).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_uk), true)) {
+            navMenu.findItem(R.id.nav_news_uk).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_news_uk).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_us), true)) {
+            navMenu.findItem(R.id.nav_news_us).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_news_us).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_world), true)) {
+            navMenu.findItem(R.id.nav_news_world).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_news_world).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_opinion), true)) {
+            navMenu.findItem(R.id.nav_opinion).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_opinion).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_politics), true)) {
+            navMenu.findItem(R.id.nav_politics).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_politics).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_science), true)) {
+            navMenu.findItem(R.id.nav_science).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_science).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_society), true)) {
+            navMenu.findItem(R.id.nav_society).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_society).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_sport), true)) {
+            navMenu.findItem(R.id.nav_sport).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_sport).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_stage), true)) {
+            navMenu.findItem(R.id.nav_stage).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_stage).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_tech), true)) {
+            navMenu.findItem(R.id.nav_tech).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_tech).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_travel), true)) {
+            navMenu.findItem(R.id.nav_travel).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_travel).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_tv_radio), true)) {
+            navMenu.findItem(R.id.nav_tv_and_radio).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_tv_and_radio).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_weather), true)) {
+            navMenu.findItem(R.id.nav_weather).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_weather).setVisible(true);
+        }
+
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        mSharedPreferences = sharedPreferences;
+        String[] keyParts = key.split("_");
+        if (keyParts.length > 1) {
+            if (keyParts[1].equals("section")) {
+                setNavBarSections();
+            }
+        }
     }
 }
