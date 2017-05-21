@@ -3,11 +3,11 @@
         <item
             android:checkable="false"
             android:enabled="true"
-            android:title="@string/pref_heading_headlines" />
+            android:title="@string/nav_heading_headlines" />
         <group
             android:id="@+id/menu_top"
             android:checkableBehavior="single"
-            android:text="@string/pref_heading_headlines">
+            android:text="@string/nav_heading_headlines">
             <item
                 android:id="@+id/nav_headlines_aus"
                 android:icon="@drawable/ic_public_black_18dp"
@@ -28,7 +28,7 @@
         <item
             android:checkable="false"
             android:enabled="true"
-            android:title="@string/pref_heading_sections" />
+            android:title="@string/nav_heading_sections" />
         <group
             android:id="@+id/menu_bottom"
             android:checkableBehavior="single">

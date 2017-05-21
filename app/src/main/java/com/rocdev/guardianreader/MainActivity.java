@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity
     private int listPosition;
     private String searchQuery;
     private SharedPreferences mSharedPreferences;
+    private int defaultEdition;
     private NavigationView navigationView;
 
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -190,6 +191,8 @@ public class MainActivity extends AppCompatActivity
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        defaultEdition = Integer.parseInt(mSharedPreferences.getString(
+                getString(R.string.pref_key_default_edition), "3"));
     }
 
     private void initNavigation() {
@@ -226,7 +229,7 @@ public class MainActivity extends AppCompatActivity
         loaderId = 1;
         listPosition = 0;
         // the section that is shown on app start
-        currentSection = SECTION_HEADLINES_WORLD;
+        currentSection = defaultEdition;
     }
 
     private void initFragment() {
@@ -457,11 +460,6 @@ public class MainActivity extends AppCompatActivity
                     selectSection(SECTION_NEWS_WORLD);
                 }
                 break;
-//            case R.id.nav_observer:
-//                if (currentSection != SECTION_OBSERVER) {
-//                    selectSection(SECTION_OBSERVER);
-//                }
-//                break;
             case R.id.nav_opinion:
                 if (currentSection != SECTION_OPINION) {
                     selectSection(SECTION_OPINION);
@@ -592,6 +590,36 @@ public class MainActivity extends AppCompatActivity
 
     private void setNavBarSections() {
         Menu navMenu = navigationView.getMenu();
+
+
+        //Headlines
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_aus_headlines), true)) {
+            navMenu.findItem(R.id.nav_headlines_aus).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_headlines_aus).setVisible(true);
+        }
+
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_uk_headlines), true)) {
+            navMenu.findItem(R.id.nav_headlines_uk).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_headlines_uk).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_us_headlines), true)) {
+            navMenu.findItem(R.id.nav_headlines_us).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_headlines_us).setVisible(true);
+        }
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_int_headlines), true)) {
+            navMenu.findItem(R.id.nav_headlines_int).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_headlines_int).setVisible(true);
+        }
+
+        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_art_design), true)) {
+            navMenu.findItem(R.id.nav_art_and_design).setVisible(false);
+        } else {
+            navMenu.findItem(R.id.nav_art_and_design).setVisible(true);
+        }
         if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_books), true)) {
             navMenu.findItem(R.id.nav_books).setVisible(false);
         } else {
@@ -601,11 +629,6 @@ public class MainActivity extends AppCompatActivity
             navMenu.findItem(R.id.nav_business).setVisible(false);
         } else {
             navMenu.findItem(R.id.nav_business).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_art_design), true)) {
-            navMenu.findItem(R.id.nav_art_and_design).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_art_and_design).setVisible(true);
         }
         if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_culture), true)) {
             navMenu.findItem(R.id.nav_culture).setVisible(false);

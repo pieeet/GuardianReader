@@ -1,139 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <ListPreference
+        android:defaultValue="3"
+        android:dialogTitle="Pick default edition"
+        android:entries="@array/default_entries"
+        android:entryValues="@array/default_values"
+        android:key="@string/pref_key_default_edition"
+        android:summary="@string/pref_title_headlines_world"
+        android:title="@string/pref_heading_default_edition"
+        android:icon="@drawable/ic_public_black_18dp"/>
+
+
     <PreferenceCategory
-        android:title="Show sections"
-        android:key="@string/pref_key_change_sections">
+        android:key="showHeadlines"
+        android:title="@string/pref_heading_headlines">
 
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_art_design"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:key="@string/pref_key_aus_headlines"
+            android:title="@string/pref_title_headlines_aus" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:key="@string/pref_key_uk_headlines"
+            android:title="@string/pref_title_headlines_uk" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:key="@string/pref_key_us_headlines"
+            android:title="@string/pref_title_headlines_us" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:key="@string/pref_key_int_headlines"
+            android:title="@string/pref_title_headlines_world" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:key="@string/pref_key_change_sections"
+        android:title="@string/pref_heading_sections">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_art_design"
             android:title="@string/pref_title_art_design" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_books"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_books"
             android:title="@string/pref_title_books" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_business"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_business"
             android:title="@string/pref_title_business" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_culture"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_culture"
             android:title="@string/pref_title_culture" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_education"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_education"
             android:title="@string/pref_title_education" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_film"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_film"
             android:title="@string/pref_title_film" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_football"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_football"
             android:title="@string/pref_title_football" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_law"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_law"
             android:title="@string/pref_title_law" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_life_style"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_life_style"
             android:title="@string/pref_title_life_style" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_media"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_media"
             android:title="@string/pref_title_media" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_money"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_money"
             android:title="@string/pref_title_money" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_music"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_music"
             android:title="@string/pref_title_music" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_news_australia"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_news_australia"
             android:title="@string/pref_title_news_australia" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_news_uk"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_news_uk"
             android:title="@string/pref_title_news_uk" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_news_us"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_news_us"
             android:title="@string/pref_title_news_us" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_news_world"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_news_world"
             android:title="@string/pref_title_news_world" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_opinion"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_opinion"
             android:title="@string/pref_title_opinion" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_politics"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_politics"
             android:title="@string/pref_title_politics" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_science"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_science"
             android:title="@string/pref_title_science" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_society"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_society"
             android:title="@string/pref_title_society" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_sport"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_sport"
             android:title="@string/pref_title_sport" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_stage"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_stage"
             android:title="@string/pref_title_stage" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_tech"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_tech"
             android:title="@string/pref_title_tech" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_travel"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_travel"
             android:title="@string/pref_title_travel" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_tv_radio"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_tv_radio"
             android:title="@string/pref_title_tv_radio" />
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_weather"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_weather"
             android:title="@string/pref_title_weather" />
 
     </PreferenceCategory>

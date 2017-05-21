@@ -39,7 +39,25 @@
         <item>@string/pref_title_weather</item>
     </string-array>
 
+    <string-array name="default_entries">
+        <item>@string/pref_title_headlines_aus</item>
+        <item>@string/pref_title_headlines_uk</item>
+        <item>@string/pref_title_headlines_us</item>
+        <item>@string/pref_title_headlines_world</item>
+    </string-array>
+    <string-array name="default_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
     <!--navbar pref keys -->
+
+    <string name="pref_key_aus_headlines" translatable="false">pref_section_headlines_aus</string>
+    <string name="pref_key_uk_headlines" translatable="false">pref_section_headlines_uk</string>
+    <string name="pref_key_us_headlines" translatable="false">pref_section_headlines_us</string>
+    <string name="pref_key_int_headlines" translatable="false">pref_section_headlines_int</string>
 
     <string name="pref_key_art_design" translatable="false">pref_section_art_design</string>
     <string name="pref_key_books" translatable="false">pref_section_books</string>
@@ -70,14 +88,16 @@
     <string name="pref_key_change_sections" translatable="false">changeSections</string>
 
     <!--navbar titles -->
-    <string name="pref_heading_headlines">Editors picks</string>
+    <string name="nav_heading_headlines">Headlines</string>
+    <string name="pref_heading_headlines">Show headlines</string>
 
     <string name="pref_title_headlines_aus">Australia edition</string>
     <string name="pref_title_headlines_uk">UK edition</string>
     <string name="pref_title_headlines_us">US edition</string>
     <string name="pref_title_headlines_world">International edition</string>
 
-    <string name="pref_heading_sections">Sections</string>
+    <string name="nav_heading_sections">Sections</string>
+    <string name="pref_heading_sections">Show sections</string>
 
     <string name="pref_title_art_design"><![CDATA[Art & Design]]></string>
     <string name="pref_title_books">Books</string>
@@ -107,6 +127,8 @@
     <string name="pref_title_weather">Weather</string>
 
     <string name="google_play_url" translatable="false">https://play.google.com/store/apps/details?id=com.rocdev.guardianreader</string>
+    <string name="pref_heading_default_edition">Default Edition</string>
+    <string name="pref_key_default_edition">pref_default_edition</string>
 
 
 </resources>

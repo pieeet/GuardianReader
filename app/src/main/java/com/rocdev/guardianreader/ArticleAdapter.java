@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 /**
@@ -27,7 +28,6 @@ class ArticleAdapter extends ArrayAdapter<Article> {
 
     private Context context;
 
-
     ArticleAdapter(Context context, List<Article> articles) {
         super(context, 0, articles);
         this.context = context;
@@ -37,7 +37,6 @@ class ArticleAdapter extends ArrayAdapter<Article> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-
         View listItemView = convertView;
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext())
@@ -48,32 +47,28 @@ class ArticleAdapter extends ArrayAdapter<Article> {
         // anders laadt verkeerde plaatje
         //http://stackoverflow.com/questions/25429683/picasso-loads-pictures-to-the-wrong-imageview-in-a-list-adapter
         Picasso.with(context).cancelRequest(imgView);
-        assert article != null;
         if (article.getThumbUrl() != null) {
             Picasso.with(context).load(article.getThumbUrl()).into(imgView);
         }
-
         TextView titleTextView = (TextView) listItemView.findViewById(R.id.titleTextView);
         titleTextView.setText(article.getTitle());
         TextView dateTextView = (TextView) listItemView.findViewById(R.id.dateTextView);
-        String dateStrOriginal = article.getDate();
-        int indexT = dateStrOriginal.indexOf("T");
-        String dateString = dateStrOriginal.substring(0, indexT);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        dateTextView.setText(formatDateTime(article.getDate()));
+        TextView sectionTextView = (TextView) listItemView.findViewById(R.id.sectionTextView);
+        sectionTextView.setText(article.getSection());
+        return  listItemView;
+    }
+
+    private String formatDateTime(String input) {
+        SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdfIn.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date dateIn = new Date();
         try {
-            Date date = sdf.parse(dateString);
-            sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
-            dateString = sdf.format(date);
+            dateIn = sdfIn.parse(input);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        String timeString = dateStrOriginal.substring(indexT + 1, indexT + 6);
-
-
-        dateTextView.setText(dateString + " " + timeString);
-        TextView sectionTextView = (TextView) listItemView.findViewById(R.id.sectionTextView);
-        sectionTextView.setText(article.getSection());
-
-        return  listItemView;
+        SimpleDateFormat sdfOut = new SimpleDateFormat("d MMMM yyyy HH:mm", Locale.getDefault());
+        return sdfOut.format(dateIn);
     }
 }
