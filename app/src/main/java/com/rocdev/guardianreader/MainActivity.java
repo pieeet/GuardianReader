@@ -20,8 +20,12 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 
 import java.util.ArrayList;
@@ -163,6 +167,9 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences mSharedPreferences;
     private int defaultEdition;
     private NavigationView navigationView;
+    private Menu mMenu;
+    private MenuItem refreshItem;
+
 
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -185,6 +192,7 @@ public class MainActivity extends AppCompatActivity
         if (articles.isEmpty()) {
             selectSection(currentSection);
         }
+
     }
 
     private void setPreferences() {
@@ -243,9 +251,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if(!checkConnection()) {
+        if (!checkConnection()) {
             fragment.showNoNetworkWarning();
         }
+
     }
 
     @Override
@@ -313,10 +322,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        mMenu = menu;
+        refreshItem = mMenu.findItem(R.id.action_refresh);
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
@@ -325,6 +337,7 @@ public class MainActivity extends AppCompatActivity
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
         return true;
     }
 
@@ -341,6 +354,7 @@ public class MainActivity extends AppCompatActivity
                     currentPage = 1;
                     loaderId++;
                     isNewList = true;
+                    startRefreshAnimation(item);
                     getLoaderManager().initLoader(loaderId, null, this);
                 } else {
                     fragment.showNoNetworkWarning();
@@ -355,6 +369,27 @@ public class MainActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void startRefreshAnimation(MenuItem item) {
+        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView iv = (ImageView)inflater.inflate(R.layout.iv_refresh, null);
+        Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+        rotation.setRepeatCount(Animation.INFINITE);
+        iv.startAnimation(rotation);
+        item.setActionView(iv);
+    }
+
+    private void stopRefreshAnimation() {
+        // Get our refresh item from the menu
+        MenuItem m = mMenu.findItem(R.id.action_refresh);
+        if(m.getActionView()!=null)
+        {
+            // Remove the animation.
+            m.getActionView().clearAnimation();
+            m.setActionView(null);
+        }
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -540,6 +575,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<List<Article>> loader, List<Article> data) {
         mLoader = loader;
+        stopRefreshAnimation();
         if (isNewList) {
             articles.clear();
         }
