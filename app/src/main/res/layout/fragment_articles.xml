@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rocdev.guardianreader.ArticlesFragment">
+    tools:context="com.rocdev.guardianreader.fragments.ArticlesFragment">
 
     <FrameLayout
         android:id="@+id/listContainer"
@@ -56,15 +56,37 @@
         android:background="#afb4bc"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/noNetworkTextView"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NO NETWORK, TRY AGAIN LATER"
-            android:padding="16dp"
-            android:layout_gravity="center_horizontal|center_vertical"
+            android:orientation="vertical"
             android:background="@android:color/white"
-            android:textColor="@android:color/holo_red_dark" />
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/noNetworkTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NO NETWORK, TRY AGAIN LATER"
+                android:textColor="@android:color/holo_red_dark"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp"/>
+
+            <Button
+                android:id="@+id/tryAgainButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorGuardianBlue"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:textColor="@android:color/white"
+                android:text="Try again"
+                android:padding="16dp"/>
+
+        </LinearLayout>
+
     </FrameLayout>
 
 

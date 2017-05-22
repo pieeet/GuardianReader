@@ -1,8 +1,10 @@
-package com.rocdev.guardianreader;
+package com.rocdev.guardianreader.activities;
 
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.rocdev.guardianreader.fragments.SettingsFragment;
 
 /**
  * Created by piet on 19-05-17.

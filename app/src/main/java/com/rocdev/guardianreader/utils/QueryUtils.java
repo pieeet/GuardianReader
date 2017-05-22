@@ -1,4 +1,6 @@
-package com.rocdev.guardianreader;
+package com.rocdev.guardianreader.utils;
+
+import com.rocdev.guardianreader.models.Article;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
  * This class is only meant to hold static variables and methods
  */
 
-class QueryUtils {
+public class QueryUtils {
 
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
@@ -31,7 +33,7 @@ class QueryUtils {
     /**
      * @return a list of {@link Article} objects that has been built up from parsing a JSON response.
      */
-    static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
+    public static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
         StringBuilder output = new StringBuilder();
         URL url = makeUrl(urlStr);
         HttpURLConnection connection = null;

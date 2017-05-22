@@ -1,4 +1,4 @@
-package com.rocdev.guardianreader;
+package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rocdev.guardianreader.R;
+import com.rocdev.guardianreader.models.Article;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -24,11 +26,11 @@ import java.util.TimeZone;
  *
  */
 
-class ArticleAdapter extends ArrayAdapter<Article> {
+public class ArticleAdapter extends ArrayAdapter<Article> {
 
     private Context context;
 
-    ArticleAdapter(Context context, List<Article> articles) {
+    public ArticleAdapter(Context context, List<Article> articles) {
         super(context, 0, articles);
         this.context = context;
     }

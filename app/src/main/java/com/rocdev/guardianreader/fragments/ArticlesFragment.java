@@ -1,4 +1,4 @@
-package com.rocdev.guardianreader;
+package com.rocdev.guardianreader.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,6 +12,10 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+
+import com.rocdev.guardianreader.utils.ArticleAdapter;
+import com.rocdev.guardianreader.R;
+import com.rocdev.guardianreader.models.Article;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private View progressContainer;
     private View noNetworkContainer;
     private Button moreButton;
+    private Button tryAgainButton;
     private List<Article> articles;
     private ArticleAdapter adapter;
     private OnFragmentInteractionListener mListener;
@@ -106,8 +111,10 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         moreButton = (Button) view.findViewById(R.id.moreButton);
         moreButton.setVisibility(View.GONE);
         if (!articles.isEmpty()) {
-            hideProgressContainer();
+            showProgressContainer(false);
         }
+        tryAgainButton = (Button) view.findViewById(R.id.tryAgainButton);
+
     }
 
     /**
@@ -127,6 +134,12 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
                 onMoreArticles();
             }
         });
+        tryAgainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.refresh();
+            }
+        });
     }
 
 
@@ -144,7 +157,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * @param isNewList     if true scroll to top of list
      * @param isEditorPicks if true hide moreButton
      */
-    protected void notifyArticlesChanged(boolean isNewList, boolean isEditorPicks) {
+    public void notifyArticlesChanged(boolean isNewList, boolean isEditorPicks) {
         hasMoreButton = !isEditorPicks;
         showMoreButton(false);
         adapter.notifyDataSetChanged();
@@ -157,21 +170,21 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     }
 
 
-    /**
-     * toggles progressBar
-     */
-    protected void showProgressBar() {
+    public void showProgressContainer(boolean show) {
         try {
-            progressContainer.setVisibility(View.VISIBLE);
             noNetworkContainer.setVisibility(View.GONE);
-        } catch (NullPointerException ignored) {
-        }
+            if (show) {
+                progressContainer.setVisibility(View.VISIBLE);
+            } else {
+                progressContainer.setVisibility(View.GONE);
+            }
+        } catch (NullPointerException ignored) {}
     }
 
     /**
      * sets no network warning
      */
-    protected void showNoNetworkWarning() {
+    public void showNoNetworkWarning() {
         try {
             progressContainer.setVisibility(View.GONE);
             noNetworkContainer.setVisibility(View.VISIBLE);
@@ -194,13 +207,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-    }
-
-
-    protected void hideProgressContainer() {
-        try {
-            progressContainer.setVisibility(View.GONE);
-        } catch (NullPointerException ignored) {}
     }
 
 
@@ -285,10 +291,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    interface OnFragmentInteractionListener {
+    public interface OnFragmentInteractionListener {
         // DONE: Update argument type and name
         void onArticleClicked(Article article);
         void saveListPosition(int position);
         void onMoreArticles();
+        void refresh();
     }
 }

@@ -1,4 +1,4 @@
-package com.rocdev.guardianreader;
+package com.rocdev.guardianreader.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,7 +8,7 @@ import android.os.Parcelable;
  *
  */
 
-class Article implements Parcelable {
+public class Article implements Parcelable {
     private String title;
     private String date;
     private String url;
@@ -17,7 +17,7 @@ class Article implements Parcelable {
 
 
 
-    Article(String title, String date, String url, String section, String thumbUrl) {
+    public Article(String title, String date, String url, String section, String thumbUrl) {
         this.title = title;
         this.date = date;
         this.url = url;
@@ -25,7 +25,7 @@ class Article implements Parcelable {
         this.thumbUrl = thumbUrl;
     }
 
-    String getTitle() {
+    public String getTitle() {
         return title;
     }
 
@@ -33,7 +33,7 @@ class Article implements Parcelable {
         this.title = title;
     }
 
-    String getDate() {
+    public String getDate() {
         return date;
     }
 
@@ -41,7 +41,7 @@ class Article implements Parcelable {
         this.date = date;
     }
 
-    String getUrl() {
+    public String getUrl() {
         return url;
     }
 
@@ -49,7 +49,7 @@ class Article implements Parcelable {
         this.url = url;
     }
 
-    String getSection() {
+    public String getSection() {
         return section;
     }
 
@@ -57,7 +57,7 @@ class Article implements Parcelable {
         this.section = section;
     }
 
-    String getThumbUrl() {
+    public String getThumbUrl() {
         return thumbUrl;
     }
 
