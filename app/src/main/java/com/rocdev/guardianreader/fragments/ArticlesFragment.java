@@ -33,7 +33,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private View listContainer;
     private ListView listView;
     private View progressContainer;
-    private View noNetworkContainer;
     private Button moreButton;
     private List<Article> articles;
     private ArticleAdapter adapter;
@@ -159,10 +158,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         }
     }
 
-
     public void showProgressContainer(boolean show) {
         try {
-            noNetworkContainer.setVisibility(View.GONE);
             if (show) {
                 progressContainer.setVisibility(View.VISIBLE);
             } else {
@@ -170,17 +167,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             }
         } catch (NullPointerException ignored) {}
     }
-
-//    /**
-//     * sets no network warning
-//     */
-//    public void showNoNetworkWarning() {
-//        try {
-//            progressContainer.setVisibility(View.GONE);
-//            noNetworkContainer.setVisibility(View.VISIBLE);
-//        } catch (NullPointerException ignored) {
-//        }
-//    }
 
     /**
      * toggles more articles button

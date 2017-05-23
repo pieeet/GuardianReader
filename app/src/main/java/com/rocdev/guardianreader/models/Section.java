@@ -9,7 +9,7 @@ import com.rocdev.guardianreader.R;
 
 public enum Section {
 
-    HEADLINES_AUS (
+    HEADLINES_AUS(
             "https://content.guardianapis.com/au",
             "Australia headlines",
             R.id.nav_headlines_aus,
@@ -162,7 +162,6 @@ public enum Section {
             "Search",
             -1,
             "");
-
 
     private String url = null;
     private String title = null;

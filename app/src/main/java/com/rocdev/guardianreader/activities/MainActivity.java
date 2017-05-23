@@ -298,7 +298,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
         isNewList = true;
         currentPage = 1;
         int id = item.getItemId();
@@ -370,7 +369,6 @@ public class MainActivity extends AppCompatActivity
     public void onMoreArticles() {
         showProgressAnimations();
         if (checkConnection()) {
-            //fragment.showMoreButton(false);
             currentPage++;
             loaderId++;
             isNewList = false;
