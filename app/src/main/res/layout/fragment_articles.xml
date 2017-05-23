@@ -24,10 +24,12 @@
                 android:id="@+id/moreButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorGuardianBlue"
+                android:background="@drawable/button_rounded"
                 android:text="10 more"
                 android:textColor="@android:color/white"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"/>
 
         </LinearLayout>
 
