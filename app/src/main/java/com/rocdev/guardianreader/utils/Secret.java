@@ -1,4 +1,4 @@
-package com.rocdev.guardianreader.activities;
+package com.rocdev.guardianreader.utils;
 
 /**
  * Created by piet on 30-04-17.
