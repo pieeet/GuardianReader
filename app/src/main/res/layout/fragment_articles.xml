@@ -18,16 +18,16 @@
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/moreButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="10 more"
                 android:background="@color/colorGuardianBlue"
+                android:text="10 more"
                 android:textColor="@android:color/white"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -37,55 +37,16 @@
         android:id="@+id/progressContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#afb4bc"
         android:alpha="0.3"
+        android:background="#afb4bc"
         android:visibility="gone">
+
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             style="@android:style/Widget.ProgressBar"
-            android:layout_gravity="center_horizontal|center_vertical"/>
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/noNetworkContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#afb4bc"
-        android:visibility="gone">
-
-
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/noNetworkTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="NO NETWORK, TRY AGAIN LATER"
-                android:textColor="@android:color/holo_red_dark"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp"/>
-
-            <Button
-                android:id="@+id/tryAgainButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/colorGuardianBlue"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:textColor="@android:color/white"
-                android:text="Try again"
-                android:padding="16dp"/>
-
-        </LinearLayout>
+            android:layout_gravity="center_horizontal|center_vertical" />
 
     </FrameLayout>
 

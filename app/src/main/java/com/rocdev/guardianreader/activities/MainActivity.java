@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import com.rocdev.guardianreader.utils.ArticleLoader;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity
         }
         initFragment();
         if (articles.isEmpty()) {
-            selectSection(currentSection);
+            refreshUI();
         }
     }
 
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         if (!checkConnection()) {
-            refresh();
+            refreshUI();
         }
     }
 
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             currentSection = Section.SEARCH.ordinal();
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
-            selectSection(currentSection);
+            refreshUI();
         }
     }
 
@@ -175,31 +176,20 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * set news section and update articles list
-     * in onLoadFinished the list will be passed to fragment
-     *
-     * @param section the news section
-     */
-    private void selectSection(int section) {
-        currentSection = section;
-        String title = titles[currentSection];
-        //noinspection ConstantConditions
-        if (currentSection == Section.SEARCH.ordinal()) {
-            title = searchQuery;
-            if (searchQuery.length() > 12) {
-                title = searchQuery.substring(0, 12) + "...";
-            }
-        }
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
-        refreshUI();
-    }
-
     private void refreshUI() {
         showProgressAnimations();
         if (checkConnection()) {
+            String title = titles[currentSection];
+            //noinspection ConstantConditions
+            if (currentSection == Section.SEARCH.ordinal()) {
+                title = searchQuery;
+                if (searchQuery.length() > 12) {
+                    title = searchQuery.substring(0, 12) + "...";
+                }
+            }
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(title);
+            }
             loaderId++;
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
@@ -208,22 +198,18 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     // Do something after 5s = 5000ms
-                    stopRefreshButtonAnimation();
-                    fragment.showNoNetworkWarning();
+                    Toast.makeText(MainActivity.this, "No network. Try again later", Toast.LENGTH_LONG).show();
                     if (getSupportActionBar() != null) {
                         getSupportActionBar().setTitle(R.string.title_no_network);
                     }
+                    articles.clear();
+                    fragment.notifyArticlesChanged(true, false);
+                    stopRefreshButtonAnimation();
                 }
             }, 2000);
         }
     }
 
-    @Override
-    public void refresh() {
-        isNewList = true;
-        currentPage = 1;
-        refreshUI();
-    }
 
     @Override
     public void onBackPressed() {
@@ -260,8 +246,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.action_refresh:
-                startRefreshButtonAnimation();
-                refresh();
+                isNewList = true;
+                currentPage = 1;
+                refreshUI();
                 break;
             case R.id.action_rate:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW);
@@ -315,7 +302,8 @@ public class MainActivity extends AppCompatActivity
         for (Section section : Section.values()) {
             if (section.getIdNav() == id) {
                 if (currentSection != section.ordinal()) {
-                    selectSection(section.ordinal());
+                    currentSection = section.ordinal();
+                    refreshUI();
                 }
             }
         }
@@ -385,7 +373,7 @@ public class MainActivity extends AppCompatActivity
             isNewList = false;
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
-            refresh();
+            refreshUI();
         }
     }
 

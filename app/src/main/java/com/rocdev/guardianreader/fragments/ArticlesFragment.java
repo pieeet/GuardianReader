@@ -35,7 +35,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private View progressContainer;
     private View noNetworkContainer;
     private Button moreButton;
-    private Button tryAgainButton;
     private List<Article> articles;
     private ArticleAdapter adapter;
     private OnFragmentInteractionListener mListener;
@@ -107,14 +106,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             });
         }
         progressContainer = view.findViewById(R.id.progressContainer);
-        noNetworkContainer = view.findViewById(R.id.noNetworkContainer);
         moreButton = (Button) view.findViewById(R.id.moreButton);
         moreButton.setVisibility(View.GONE);
         if (!articles.isEmpty()) {
             showProgressContainer(false);
         }
-        tryAgainButton = (Button) view.findViewById(R.id.tryAgainButton);
-
     }
 
     /**
@@ -132,12 +128,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             @Override
             public void onClick(View view) {
                 onMoreArticles();
-            }
-        });
-        tryAgainButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.refresh();
             }
         });
     }
@@ -181,16 +171,16 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         } catch (NullPointerException ignored) {}
     }
 
-    /**
-     * sets no network warning
-     */
-    public void showNoNetworkWarning() {
-        try {
-            progressContainer.setVisibility(View.GONE);
-            noNetworkContainer.setVisibility(View.VISIBLE);
-        } catch (NullPointerException ignored) {
-        }
-    }
+//    /**
+//     * sets no network warning
+//     */
+//    public void showNoNetworkWarning() {
+//        try {
+//            progressContainer.setVisibility(View.GONE);
+//            noNetworkContainer.setVisibility(View.VISIBLE);
+//        } catch (NullPointerException ignored) {
+//        }
+//    }
 
     /**
      * toggles more articles button
@@ -296,6 +286,5 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         void onArticleClicked(Article article);
         void saveListPosition(int position);
         void onMoreArticles();
-        void refresh();
     }
 }
