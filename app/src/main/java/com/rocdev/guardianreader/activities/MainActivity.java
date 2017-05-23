@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         setPreferences();
         initNavigation();
-
         //retrieve data in case of screen rotation
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);
@@ -91,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         if (articles.isEmpty()) {
             refreshUI();
         }
+
     }
 
     private void setPreferences() {
@@ -112,7 +112,12 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        setNavBarSections();
+        for (Section section: Section.values()) {
+            if (!section.equals(Section.SEARCH)) {
+                setNavBarSection(section);
+            }
+
+        }
     }
 
     private void restoreInstanceState(Bundle savedInstanceState) {
@@ -384,171 +389,19 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void setNavBarSections() {
+    private void setNavBarSection(Section section) {
         Menu navMenu = navigationView.getMenu();
-
-        //Headlines
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_aus_headlines), true)) {
-            navMenu.findItem(R.id.nav_headlines_aus).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_headlines_aus).setVisible(true);
-        }
-
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_uk_headlines), true)) {
-            navMenu.findItem(R.id.nav_headlines_uk).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_headlines_uk).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_us_headlines), true)) {
-            navMenu.findItem(R.id.nav_headlines_us).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_headlines_us).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_int_headlines), true)) {
-            navMenu.findItem(R.id.nav_headlines_int).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_headlines_int).setVisible(true);
-        }
-
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_art_design), true)) {
-            navMenu.findItem(R.id.nav_art_and_design).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_art_and_design).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_books), true)) {
-            navMenu.findItem(R.id.nav_books).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_books).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_business), true)) {
-            navMenu.findItem(R.id.nav_business).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_business).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_culture), true)) {
-            navMenu.findItem(R.id.nav_culture).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_culture).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_education), true)) {
-            navMenu.findItem(R.id.nav_education).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_education).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_film), true)) {
-            navMenu.findItem(R.id.nav_film).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_film).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_football), true)) {
-            navMenu.findItem(R.id.nav_football).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_football).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_law), true)) {
-            navMenu.findItem(R.id.nav_law).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_law).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_life_style), true)) {
-            navMenu.findItem(R.id.nav_life_and_style).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_life_and_style).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_media), true)) {
-            navMenu.findItem(R.id.nav_media).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_media).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_money), true)) {
-            navMenu.findItem(R.id.nav_money).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_money).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_music), true)) {
-            navMenu.findItem(R.id.nav_music).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_music).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_australia), true)) {
-            navMenu.findItem(R.id.nav_news_australia).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_news_australia).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_uk), true)) {
-            navMenu.findItem(R.id.nav_news_uk).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_news_uk).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_us), true)) {
-            navMenu.findItem(R.id.nav_news_us).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_news_us).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_news_world), true)) {
-            navMenu.findItem(R.id.nav_news_world).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_news_world).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_opinion), true)) {
-            navMenu.findItem(R.id.nav_opinion).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_opinion).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_politics), true)) {
-            navMenu.findItem(R.id.nav_politics).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_politics).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_science), true)) {
-            navMenu.findItem(R.id.nav_science).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_science).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_society), true)) {
-            navMenu.findItem(R.id.nav_society).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_society).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_sport), true)) {
-            navMenu.findItem(R.id.nav_sport).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_sport).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_stage), true)) {
-            navMenu.findItem(R.id.nav_stage).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_stage).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_tech), true)) {
-            navMenu.findItem(R.id.nav_tech).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_tech).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_travel), true)) {
-            navMenu.findItem(R.id.nav_travel).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_travel).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_tv_radio), true)) {
-            navMenu.findItem(R.id.nav_tv_and_radio).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_tv_and_radio).setVisible(true);
-        }
-        if (!mSharedPreferences.getBoolean(getString(R.string.pref_key_weather), true)) {
-            navMenu.findItem(R.id.nav_weather).setVisible(false);
-        } else {
-            navMenu.findItem(R.id.nav_weather).setVisible(true);
-        }
+        navMenu.findItem(section.getIdNav())
+                .setVisible(mSharedPreferences
+                .getBoolean(section.getPrefKey(), true));
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
-        String[] keyParts = key.split("_");
-        if (keyParts.length > 1) {
-            if (keyParts[1].equals("section")) {
-                setNavBarSections();
+        for (Section section: Section.values()) {
+            if (section.getPrefKey().equals(key)) {
+                setNavBarSection(section);
             }
         }
     }
