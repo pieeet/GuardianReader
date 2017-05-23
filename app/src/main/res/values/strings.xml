@@ -37,8 +37,11 @@
         <item>@string/pref_title_travel</item>
         <item>@string/pref_title_tv_radio</item>
         <item>@string/pref_title_weather</item>
+        <item>@string/pref_title_search</item>
     </string-array>
 
+
+    <!--List preference default edition-->
     <string-array name="default_entries">
         <item>@string/pref_title_headlines_aus</item>
         <item>@string/pref_title_headlines_uk</item>
@@ -85,6 +88,8 @@
     <string name="pref_key_tv_radio" translatable="false">pref_section_tv_radio</string>
     <string name="pref_key_travel" translatable="false">pref_section_travel</string>
     <string name="pref_key_weather" translatable="false">pref_section_weather</string>
+
+
     <string name="pref_key_change_sections" translatable="false">changeSections</string>
 
     <!--navbar titles -->
@@ -125,6 +130,7 @@
     <string name="pref_title_tv_radio"><![CDATA[TV & Radio]]></string>
     <string name="pref_title_travel">Travel</string>
     <string name="pref_title_weather">Weather</string>
+    <string name="pref_title_search">Search</string>
 
     <string name="google_play_url" translatable="false">https://play.google.com/store/apps/details?id=com.rocdev.guardianreader</string>
     <string name="pref_heading_default_edition">Default Edition</string>

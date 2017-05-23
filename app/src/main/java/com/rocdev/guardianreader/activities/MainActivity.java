@@ -48,19 +48,8 @@ public class MainActivity extends AppCompatActivity
     /*******************************
      * CONSTANTS
      *******************************/
-
     private static final int CONTENT_CONTAINER = R.id.content_container;
-    private static final String URL_SEARCH = "https://content.guardianapis.com/search";
     private static final String API_KEY = Secret.getApiKey();
-    private static final String[] URL_SECTIONS = {
-            URL_SEARCH
-    };
-
-    //editions headlines (Editor Picks)
-
-    private static final int SECTION_HEADLINES_WORLD = 3;
-    private static final int SECTION_SEARCH = 30;
-
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
@@ -81,7 +70,6 @@ public class MainActivity extends AppCompatActivity
     private int defaultEdition;
     private NavigationView navigationView;
     private Menu mMenu;
-
 
 
     @Override
@@ -170,7 +158,7 @@ public class MainActivity extends AppCompatActivity
         super.onNewIntent(intent);
         // invoke search intent
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            currentSection = SECTION_SEARCH;
+            currentSection = Section.SEARCH.ordinal();
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
             selectSection(currentSection);
         }
@@ -196,13 +184,11 @@ public class MainActivity extends AppCompatActivity
     private void selectSection(int section) {
         currentSection = section;
         String title = titles[currentSection];
-        if (checkConnection()) {
-            //noinspection ConstantConditions
-            if (currentSection == SECTION_SEARCH) {
-                 title = searchQuery;
-                if (searchQuery.length() > 12) {
-                    title = searchQuery.substring(0, 12) + "...";
-                }
+        //noinspection ConstantConditions
+        if (currentSection == Section.SEARCH.ordinal()) {
+            title = searchQuery;
+            if (searchQuery.length() > 12) {
+                title = searchQuery.substring(0, 12) + "...";
             }
         }
         if (getSupportActionBar() != null) {
@@ -288,12 +274,10 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     private void showProgressAnimations() {
         fragment.showProgressContainer(true);
         startRefreshButtonAnimation();
     }
-
 
 
     private void startRefreshButtonAnimation() {
@@ -302,8 +286,8 @@ public class MainActivity extends AppCompatActivity
             m = mMenu.findItem(R.id.action_refresh);
         }
         if (m != null) {
-            LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            ImageView iv = (ImageView)inflater.inflate(R.layout.iv_refresh, null);
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ImageView iv = (ImageView) inflater.inflate(R.layout.iv_refresh, null);
             Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
             rotation.setRepeatCount(Animation.INFINITE);
             iv.startAnimation(rotation);
@@ -318,7 +302,8 @@ public class MainActivity extends AppCompatActivity
             // Remove the animation.
             m.getActionView().clearAnimation();
             m.setActionView(null);
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     @Override
@@ -327,7 +312,7 @@ public class MainActivity extends AppCompatActivity
         isNewList = true;
         currentPage = 1;
         int id = item.getItemId();
-        for (Section section: Section.values()) {
+        for (Section section : Section.values()) {
             if (section.getIdNav() == id) {
                 if (currentSection != section.ordinal()) {
                     selectSection(section.ordinal());
@@ -343,8 +328,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         //build URI with specified parameters
-        isEditorsPicks = currentSection <= SECTION_HEADLINES_WORLD;
-        Uri baseUri = Uri.parse(URL_SECTIONS[currentSection]);
+        isEditorsPicks = currentSection <= Section.HEADLINES_INT.ordinal();
+        Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         Uri.Builder uriBuilder = baseUri.buildUpon();
         uriBuilder.appendQueryParameter("api-key", API_KEY);
         uriBuilder.appendQueryParameter("show-fields", "thumbnail");
@@ -352,7 +337,7 @@ public class MainActivity extends AppCompatActivity
             uriBuilder.appendQueryParameter("show-editors-picks", "true");
         } else {
             uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
-            if (currentSection == SECTION_SEARCH) {
+            if (currentSection == Section.SEARCH.ordinal()) {
                 uriBuilder.appendQueryParameter("q", searchQuery);
             }
         }

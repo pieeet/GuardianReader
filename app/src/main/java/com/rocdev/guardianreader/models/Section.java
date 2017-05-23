@@ -126,7 +126,12 @@ public enum Section {
     WEATHER(
             "https://content.guardianapis.com/weather",
             "Weather",
-            R.id.nav_weather);
+            R.id.nav_weather),
+    SEARCH(
+            "https://content.guardianapis.com/search",
+            "Search",
+            -1);
+
 
     private String url = null;
     private String title = null;
