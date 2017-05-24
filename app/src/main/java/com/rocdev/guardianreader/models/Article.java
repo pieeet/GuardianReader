@@ -9,6 +9,7 @@ import android.os.Parcelable;
  */
 
 public class Article implements Parcelable {
+    private long _ID;
     private String title;
     private String date;
     private String url;
@@ -18,11 +19,30 @@ public class Article implements Parcelable {
 
 
     public Article(String title, String date, String url, String section, String thumbUrl) {
+        this._ID = -1;
         this.title = title;
         this.date = date;
         this.url = url;
         this.section = section;
         this.thumbUrl = thumbUrl;
+    }
+
+    public Article(long _ID, String title, String date, String url, String section, String thumbUrl) {
+
+        this._ID = _ID;
+        this.title = title;
+        this.date = date;
+        this.url = url;
+        this.section = section;
+        this.thumbUrl = thumbUrl;
+    }
+
+    public long get_ID() {
+        return _ID;
+    }
+
+    public void set_ID(long _ID) {
+        this._ID = _ID;
     }
 
     public String getTitle() {
@@ -66,8 +86,8 @@ public class Article implements Parcelable {
     }
 
 
-
     protected Article(Parcel in) {
+        _ID = in.readLong();
         title = in.readString();
         date = in.readString();
         url = in.readString();
@@ -82,6 +102,7 @@ public class Article implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(_ID);
         dest.writeString(title);
         dest.writeString(date);
         dest.writeString(url);
