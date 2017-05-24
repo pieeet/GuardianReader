@@ -96,10 +96,10 @@
     <string name="nav_heading_headlines">Headlines</string>
     <string name="pref_heading_headlines">Show headlines</string>
 
-    <string name="pref_title_headlines_aus">Australia edition</string>
-    <string name="pref_title_headlines_uk">UK edition</string>
-    <string name="pref_title_headlines_us">US edition</string>
-    <string name="pref_title_headlines_world">International edition</string>
+    <string name="pref_title_headlines_aus">Australia headlines</string>
+    <string name="pref_title_headlines_uk">UK headlines</string>
+    <string name="pref_title_headlines_us">US headlines</string>
+    <string name="pref_title_headlines_world">International headlines</string>
 
     <string name="nav_heading_sections">Sections</string>
     <string name="pref_heading_sections">Show sections</string>

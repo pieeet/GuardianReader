@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-        <item
-            android:checkable="false"
-            android:enabled="true"
-            android:title="@string/nav_heading_headlines" />
+
         <group
             android:id="@+id/menu_top"
             android:checkableBehavior="single"
-            android:text="@string/nav_heading_headlines">
+            android:title="@string/nav_heading_headlines">
             <item
                 android:id="@+id/nav_headlines_aus"
                 android:icon="@drawable/ic_public_black_18dp"
@@ -25,10 +22,7 @@
                 android:icon="@drawable/ic_public_black_18dp"
                 android:title="@string/pref_title_headlines_world" />
         </group>
-        <item
-            android:checkable="false"
-            android:enabled="true"
-            android:title="@string/nav_heading_sections" />
+
         <group
             android:id="@+id/menu_bottom"
             android:checkableBehavior="single">
