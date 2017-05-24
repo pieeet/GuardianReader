@@ -9,11 +9,11 @@ import android.provider.BaseColumns;
  *
  */
 
-public class ArticleContract {
+public class Contract {
 
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
-    private ArticleContract() {}
+    private Contract() {}
 
 
     /**
@@ -76,7 +76,7 @@ public class ArticleContract {
          *
          * Type: TEXT
          */
-        public static final String COLUMN_ARTICLE_NAME = "title";
+        public static final String COLUMN_ARTICLE_TITLE = "title";
 
 
         /**
@@ -108,7 +108,7 @@ public class ArticleContract {
          *
          * Type: TEXT
          */
-        public static final String COLUMN_ARTICLE_URL_THUMBNAIL = "thumbnail";
+        public static final String COLUMN_THUMB_URL = "thumbnail";
 
     }
 
