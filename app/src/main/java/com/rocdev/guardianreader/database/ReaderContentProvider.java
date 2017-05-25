@@ -19,7 +19,7 @@ public class ReaderContentProvider extends ContentProvider {
 
     private DbHelper mDbHelper;
 
-    private static final String LOG_TAG = ReaderContentProvider.class.getSimpleName();
+//    private static final String LOG_TAG = ReaderContentProvider.class.getSimpleName();
 
     /**
      * URI matcher code for the content URI for the articles table

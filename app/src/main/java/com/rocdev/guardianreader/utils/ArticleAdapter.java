@@ -49,16 +49,16 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         // anders laadt verkeerde plaatje
         //http://stackoverflow.com/questions/25429683/picasso-loads-pictures-to-the-wrong-imageview-in-a-list-adapter
         Picasso.with(context).cancelRequest(imgView);
-        if (article.getThumbUrl() != null) {
+        if ((article != null ? article.getThumbUrl() : null) != null) {
             Picasso.with(context).load(article.getThumbUrl()).into(imgView);
         }
         TextView titleTextView = (TextView) listItemView.findViewById(R.id.titleTextView);
-        titleTextView.setText(article.getTitle());
+        titleTextView.setText(article != null ? article.getTitle() : "");
         TextView dateTextView = (TextView) listItemView.findViewById(R.id.dateTextView);
-        dateTextView.setText(formatDateTime(article.getDate()));
+        dateTextView.setText(formatDateTime(article != null ? article.getDate() : ""));
         TextView sectionTextView = (TextView) listItemView.findViewById(R.id.sectionTextView);
-        sectionTextView.setText(article.getSection());
-        return  listItemView;
+        sectionTextView.setText(article != null ? article.getSection() : "");
+        return listItemView;
     }
 
     private String formatDateTime(String input) {

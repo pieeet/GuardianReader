@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity
     private int defaultEdition;
     private NavigationView navigationView;
     private Menu mMenu;
-    private Bundle mSavedInstanceState;
 
 
     @Override
@@ -86,7 +85,6 @@ public class MainActivity extends AppCompatActivity
 
         //retrieve data in case of screen rotation
         if (savedInstanceState != null) {
-            mSavedInstanceState = savedInstanceState;
             restoreInstanceState(savedInstanceState);
         } else {
             initInstanceState();
@@ -152,19 +150,6 @@ public class MainActivity extends AppCompatActivity
                 .replace(CONTENT_CONTAINER, fragment)
                 .commit();
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mSavedInstanceState == null) {
-            try {
-                fragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
-                        && articles.isEmpty());
-            } catch (NullPointerException ignored) {}
-        }
-        mSavedInstanceState = null;
-    }
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -364,7 +349,6 @@ public class MainActivity extends AppCompatActivity
             }
             uriString = uriBuilder.toString();
         }
-
         return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 
@@ -417,7 +401,6 @@ public class MainActivity extends AppCompatActivity
                         fragment.showNoSavedArticlesContainer(true);
                     }
                 }
-
             }
         }
     }

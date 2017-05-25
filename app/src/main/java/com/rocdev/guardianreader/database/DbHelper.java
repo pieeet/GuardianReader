@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  *
  */
 
-public class DbHelper extends SQLiteOpenHelper {
+class DbHelper extends SQLiteOpenHelper {
 
     /** Name of the database file */
     private static final String DATABASE_NAME = "guardianreader.db";
@@ -19,7 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
      */
     private static final int DATABASE_VERSION = 1;
 
-    public DbHelper(Context context) {
+    DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

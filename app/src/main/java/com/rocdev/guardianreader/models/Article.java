@@ -30,11 +30,11 @@ public class Article implements Parcelable {
     /**
      *
      * @param _ID from saved article
-     * @param title
-     * @param date
-     * @param url
-     * @param section
-     * @param thumbUrl
+     * @param title title
+     * @param date date
+     * @param url url article
+     * @param section section
+     * @param thumbUrl url thumbnail
      */
     public Article(long _ID, String title, String date, String url, String section, String thumbUrl) {
 

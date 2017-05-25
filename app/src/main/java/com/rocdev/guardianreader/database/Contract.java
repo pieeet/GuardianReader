@@ -1,6 +1,5 @@
 package com.rocdev.guardianreader.database;
 
-import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -22,14 +21,14 @@ public class Contract {
      * content authority is the package name for the app, which is guaranteed to be unique on the
      * device.
      */
-    public static final String CONTENT_AUTHORITY = "com.rocdev.guardianreader";
+    static final String CONTENT_AUTHORITY = "com.rocdev.guardianreader";
 
 
     /**
      * Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
      * the content provider.
      */
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
 
     /**
@@ -38,7 +37,7 @@ public class Contract {
      * looking at article data. content://com.rocdev.inventoryTracker/suppliers/ will fail,
      * as the ContentProvider hasn't been given any information on what to do with "suppliers".
      */
-    public static final String PATH_ARTICLES = "articles";
+    static final String PATH_ARTICLES = "articles";
 
 
     public static final class ArticleEntry implements BaseColumns {
@@ -46,21 +45,21 @@ public class Contract {
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_ARTICLES);
 
-        /**
-         * The MIME type of the {@link #CONTENT_URI} for a list of articles.
-         */
-        public static final String CONTENT_LIST_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARTICLES;
+//        /**
+//         * The MIME type of the {@link #CONTENT_URI} for a list of articles.
+//         */
+//        public static final String CONTENT_LIST_TYPE =
+//                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARTICLES;
 
-        /**
-         * The MIME type of the {@link #CONTENT_URI} for a single article.
-         */
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARTICLES;
+//        /**
+//         * The MIME type of the {@link #CONTENT_URI} for a single article.
+//         */
+//        public static final String CONTENT_ITEM_TYPE =
+//                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARTICLES;
 
 
         /** Name of database table for articles */
-        public final static String TABLE_NAME = "articles";
+        final static String TABLE_NAME = "articles";
 
         /**
          * Unique ID number for the article (only for use in the database table).

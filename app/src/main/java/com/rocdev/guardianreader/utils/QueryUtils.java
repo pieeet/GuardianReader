@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * This class is only meant to hold static variables and methods
  */
 
-public class QueryUtils {
+class QueryUtils {
 
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
@@ -37,7 +37,7 @@ public class QueryUtils {
     /**
      * @return a list of {@link Article} objects that has been built up from parsing a JSON response.
      */
-    public static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
+    static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
         StringBuilder output = new StringBuilder();
         URL url = makeUrl(urlStr);
         HttpURLConnection connection = null;
@@ -103,24 +103,27 @@ public class QueryUtils {
         return articles;
     }
 
-    public static ArrayList<Article> extractSavedArticles(Context context) {
+    static ArrayList<Article> extractSavedArticles(Context context) {
         ArrayList<Article> articles = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(Contract.ArticleEntry.CONTENT_URI,
                 null, null, null, null);
-        int idColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry._ID);
-        int titleColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE);
-        int dateColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_DATE);
-        int articleUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_URL);
-        int sectionColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION);
-        int thumbUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_THUMB_URL);
-        while (cursor.moveToNext()) {
-            long _id = cursor.getLong(idColumnIndex);
-            String title = cursor.getString(titleColumnIndex);
-            String date = cursor.getString(dateColumnIndex);
-            String url = cursor.getString(articleUrlColumnIndex);
-            String section = cursor.getString(sectionColumnIndex);
-            String thumbUrl = cursor.getString(thumbUrlColumnIndex);
-            articles.add(new Article(_id, title, date, url, section, thumbUrl));
+        if (cursor != null) {
+            int idColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry._ID);
+            int titleColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE);
+            int dateColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_DATE);
+            int articleUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_URL);
+            int sectionColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION);
+            int thumbUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_THUMB_URL);
+            while (cursor.moveToNext()) {
+                long _id = cursor.getLong(idColumnIndex);
+                String title = cursor.getString(titleColumnIndex);
+                String date = cursor.getString(dateColumnIndex);
+                String url = cursor.getString(articleUrlColumnIndex);
+                String section = cursor.getString(sectionColumnIndex);
+                String thumbUrl = cursor.getString(thumbUrlColumnIndex);
+                articles.add(new Article(_id, title, date, url, section, thumbUrl));
+            }
+            cursor.close();
         }
         return articles;
     }
