@@ -72,6 +72,11 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_environment"
+            android:title="@string/pref_title_environment" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_film"
             android:title="@string/pref_title_film" />
         <CheckBoxPreference

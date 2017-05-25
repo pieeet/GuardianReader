@@ -1,139 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <group
-            android:id="@+id/menu_top"
-            android:checkableBehavior="single"
-            android:title="@string/nav_heading_headlines">
-            <item
-                android:id="@+id/nav_headlines_aus"
-                android:icon="@drawable/ic_public_black_18dp"
-                android:title="@string/pref_title_headlines_aus" />
-            <item
-                android:id="@+id/nav_headlines_uk"
-                android:icon="@drawable/ic_public_black_18dp"
-                android:title="@string/pref_title_headlines_uk" />
-            <item
-                android:id="@+id/nav_headlines_us"
-                android:icon="@drawable/ic_public_black_18dp"
-                android:title="@string/pref_title_headlines_us" />
-            <item
-                android:id="@+id/nav_headlines_int"
-                android:icon="@drawable/ic_public_black_18dp"
-                android:title="@string/pref_title_headlines_world" />
-        </group>
+    <group
+        android:id="@+id/menu_top"
+        android:checkableBehavior="single"
+        android:title="@string/nav_heading_headlines">
+        <item
+            android:id="@+id/nav_headlines_aus"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:title="@string/pref_title_headlines_aus" />
+        <item
+            android:id="@+id/nav_headlines_uk"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:title="@string/pref_title_headlines_uk" />
+        <item
+            android:id="@+id/nav_headlines_us"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:title="@string/pref_title_headlines_us" />
+        <item
+            android:id="@+id/nav_headlines_int"
+            android:icon="@drawable/ic_public_black_18dp"
+            android:title="@string/pref_title_headlines_world" />
+    </group>
 
-        <group
-            android:id="@+id/menu_bottom"
-            android:checkableBehavior="single">
-            <item
-                android:id="@+id/nav_art_and_design"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_art_design" />
-            <item
-                android:id="@+id/nav_books"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_books" />
-            <item
-                android:id="@+id/nav_business"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_business" />
-            <item
-                android:id="@+id/nav_culture"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_culture" />
-            <item
-                android:id="@+id/nav_education"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_education" />
-            <item
-                android:id="@+id/nav_film"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_film" />
-            <item
-                android:id="@+id/nav_football"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_football" />
-            <item
-                android:id="@+id/nav_law"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_law" />
-            <item
-                android:id="@+id/nav_life_and_style"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_life_style" />
-            <item
-                android:id="@+id/nav_media"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_media" />
-            <item
-                android:id="@+id/nav_money"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_money" />
-            <item
-                android:id="@+id/nav_music"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_music" />
-            <item
-                android:id="@+id/nav_news_australia"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_news_australia" />
-            <item
-                android:id="@+id/nav_news_uk"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_news_uk" />
-            <item
-                android:id="@+id/nav_news_us"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_news_us" />
-            <item
-                android:id="@+id/nav_news_world"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_news_world" />
-            <item
-                android:id="@+id/nav_opinion"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_opinion" />
-            <item
-                android:id="@+id/nav_politics"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_politics" />
-            <item
-                android:id="@+id/nav_science"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_science" />
-            <item
-                android:id="@+id/nav_society"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_society" />
-            <item
-                android:id="@+id/nav_sport"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_sport" />
-            <item
-                android:id="@+id/nav_stage"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_stage" />
-            <item
-                android:id="@+id/nav_tech"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_tech" />
-            <item
-                android:id="@+id/nav_travel"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_travel" />
-            <item
-                android:id="@+id/nav_tv_and_radio"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_tv_radio" />
-            <item
-                android:id="@+id/nav_weather"
-                android:icon="@drawable/ic_bookmark_border_black_18dp"
-                android:title="@string/pref_title_weather" />
-        </group>
+    <group
+        android:id="@+id/menu_bottom"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_art_and_design"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_art_design" />
+        <item
+            android:id="@+id/nav_books"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_books" />
+        <item
+            android:id="@+id/nav_business"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_business" />
+        <item
+            android:id="@+id/nav_culture"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_culture" />
+        <item
+            android:id="@+id/nav_education"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_education" />
+        <item
+            android:id="@+id/nav_environment"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_environment" />
+        <item
+            android:id="@+id/nav_film"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_film" />
+        <item
+            android:id="@+id/nav_football"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_football" />
+        <item
+            android:id="@+id/nav_law"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_law" />
+        <item
+            android:id="@+id/nav_life_and_style"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_life_style" />
+        <item
+            android:id="@+id/nav_media"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_media" />
+        <item
+            android:id="@+id/nav_money"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_money" />
+        <item
+            android:id="@+id/nav_music"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_music" />
+        <item
+            android:id="@+id/nav_news_australia"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_news_australia" />
+        <item
+            android:id="@+id/nav_news_uk"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_news_uk" />
+        <item
+            android:id="@+id/nav_news_us"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_news_us" />
+        <item
+            android:id="@+id/nav_news_world"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_news_world" />
+        <item
+            android:id="@+id/nav_opinion"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_opinion" />
+        <item
+            android:id="@+id/nav_politics"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_politics" />
+        <item
+            android:id="@+id/nav_science"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_science" />
+        <item
+            android:id="@+id/nav_society"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_society" />
+        <item
+            android:id="@+id/nav_sport"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_sport" />
+        <item
+            android:id="@+id/nav_stage"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_stage" />
+        <item
+            android:id="@+id/nav_tech"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_tech" />
+        <item
+            android:id="@+id/nav_travel"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_travel" />
+        <item
+            android:id="@+id/nav_tv_and_radio"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_tv_radio" />
+        <item
+            android:id="@+id/nav_weather"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_weather" />
+    </group>
 
+    <group
+        android:id="@+id/menu_saved_articles_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_saved_articles"
+            android:icon="@drawable/ic_archive_black_18dp"
+            android:title="Saved articles" />
+    </group>
+    <group android:id="@+id/menu_settings_group">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_18dp"
+            android:title="Personalise" />
 
-
+    </group>
 
 
 </menu>

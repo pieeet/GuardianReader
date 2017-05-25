@@ -1,6 +1,8 @@
 package com.rocdev.guardianreader.activities;
 
 import android.app.SearchManager;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,7 +20,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -29,7 +30,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
+import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
 import com.rocdev.guardianreader.R;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     private int defaultEdition;
     private NavigationView navigationView;
     private Menu mMenu;
+    private Bundle mSavedInstanceState;
 
 
     @Override
@@ -81,8 +83,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         setPreferences();
         initNavigation();
+
         //retrieve data in case of screen rotation
         if (savedInstanceState != null) {
+            mSavedInstanceState = savedInstanceState;
             restoreInstanceState(savedInstanceState);
         } else {
             initInstanceState();
@@ -91,7 +95,6 @@ public class MainActivity extends AppCompatActivity
         if (articles.isEmpty()) {
             refreshUI();
         }
-
     }
 
     private void setPreferences() {
@@ -105,7 +108,6 @@ public class MainActivity extends AppCompatActivity
     private void initNavigation() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        loaderId = 1;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -113,11 +115,10 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        for (Section section: Section.values()) {
+        for (Section section : Section.values()) {
             if (!section.equals(Section.SEARCH)) {
                 setNavBarSection(section);
             }
-
         }
     }
 
@@ -155,10 +156,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (!checkConnection()) {
-            refreshUI();
+        if (mSavedInstanceState == null) {
+            try {
+                fragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
+                        && articles.isEmpty());
+            } catch (NullPointerException ignored) {}
         }
+        mSavedInstanceState = null;
     }
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -184,8 +190,13 @@ public class MainActivity extends AppCompatActivity
 
     private void refreshUI() {
         showProgressAnimations();
+        try {
+            fragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
+                    && articles.isEmpty());
+        } catch (NullPointerException ignored) {
+        }
+        String title = titles[currentSection];
         if (checkConnection()) {
-            String title = titles[currentSection];
             //noinspection ConstantConditions
             if (currentSection == Section.SEARCH.ordinal()) {
                 title = searchQuery;
@@ -193,26 +204,30 @@ public class MainActivity extends AppCompatActivity
                     title = searchQuery.substring(0, 12) + "...";
                 }
             }
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(title);
-            }
             loaderId++;
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    // Do something after 5s = 5000ms
-                    Toast.makeText(MainActivity.this, "No network. Try again later", Toast.LENGTH_LONG).show();
-                    if (getSupportActionBar() != null) {
-                        getSupportActionBar().setTitle(R.string.title_no_network);
+            if (currentSection == Section.SAVED.ordinal()) {
+                getLoaderManager().initLoader(loaderId, null, this);
+            } else {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        Toast.makeText(MainActivity.this, "No network. Try again later", Toast.LENGTH_LONG).show();
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setTitle(R.string.title_no_network);
+                        }
+                        articles.clear();
+                        fragment.notifyArticlesChanged(true, false);
+                        stopRefreshButtonAnimation();
                     }
-                    articles.clear();
-                    fragment.notifyArticlesChanged(true, false);
-                    stopRefreshButtonAnimation();
-                }
-            }, 2000);
+                }, 2000);
+            }
+        }
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
         }
     }
 
@@ -301,13 +316,26 @@ public class MainActivity extends AppCompatActivity
         isNewList = true;
         currentPage = 1;
         int id = item.getItemId();
-        for (Section section : Section.values()) {
-            if (section.getIdNav() == id) {
-                if (currentSection != section.ordinal()) {
-                    currentSection = section.ordinal();
-                    refreshUI();
+
+        switch (id) {
+            case R.id.nav_settings:
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                    }
+                }, 300);
+                break;
+            default:
+                for (Section section : Section.values()) {
+                    if (section.getIdNav() == id) {
+                        if (currentSection != section.ordinal()) {
+                            currentSection = section.ordinal();
+                            refreshUI();
+                        }
+                    }
                 }
-            }
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -318,20 +346,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         //build URI with specified parameters
-        isEditorsPicks = currentSection <= Section.HEADLINES_INT.ordinal();
+        isEditorsPicks = currentSection <= Section.HEADLINES_INT.ordinal() ||
+                currentSection == Section.SAVED.ordinal();
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter("api-key", API_KEY);
-        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
-        if (isEditorsPicks) {
-            uriBuilder.appendQueryParameter("show-editors-picks", "true");
-        } else {
-            uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
-            if (currentSection == Section.SEARCH.ordinal()) {
-                uriBuilder.appendQueryParameter("q", searchQuery);
+        String uriString = baseUri.toString();
+        if (currentSection != Section.SAVED.ordinal()) {
+            Uri.Builder uriBuilder = baseUri.buildUpon();
+            uriBuilder.appendQueryParameter("api-key", API_KEY);
+            uriBuilder.appendQueryParameter("show-fields", "thumbnail");
+            if (isEditorsPicks) {
+                uriBuilder.appendQueryParameter("show-editors-picks", "true");
+            } else {
+                uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
+                if (currentSection == Section.SEARCH.ordinal()) {
+                    uriBuilder.appendQueryParameter("q", searchQuery);
+                }
             }
+            uriString = uriBuilder.toString();
         }
-        return new ArticleLoader(this, uriBuilder.toString(), isEditorsPicks);
+
+        return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 
     @Override
@@ -345,6 +379,8 @@ public class MainActivity extends AppCompatActivity
             articles.add(article);
         }
         fragment.notifyArticlesChanged(isNewList, isEditorsPicks);
+        fragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
+                && articles.isEmpty());
         fragment.showProgressContainer(false);
         onLoaderReset(mLoader);
     }
@@ -357,6 +393,50 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onArticleClicked(Article article) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
+    }
+
+    @Override
+    public void onArticleLongClicked(Article article) {
+        if (article.get_ID() == -1) {
+            long id = insertArticle(article);
+            if (id < 1) {
+                Toast.makeText(this, "Error with saving article", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Article saved succefully", Toast.LENGTH_SHORT).show();
+                article.set_ID(id);
+            }
+        } else {
+            if (deleteArticle(article) < 1) {
+                Toast.makeText(this, "Error with deleting article", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Deleted article", Toast.LENGTH_SHORT).show();
+                if (currentSection == Section.SAVED.ordinal()) {
+                    articles.remove(article);
+                    fragment.notifyArticlesChanged(false, isEditorsPicks /* no morebutton */);
+                    if (articles.isEmpty()) {
+                        fragment.showNoSavedArticlesContainer(true);
+                    }
+                }
+
+            }
+        }
+    }
+
+    private long insertArticle(Article article) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE, article.getTitle());
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_URL, article.getUrl());
+        contentValues.put(Contract.ArticleEntry.COLUMN_THUMB_URL, article.getThumbUrl());
+        Uri uri = getContentResolver().insert(Contract.ArticleEntry.CONTENT_URI, contentValues);
+        return ContentUris.parseId(uri);
+    }
+
+    private int deleteArticle(Article article) {
+        Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
+                String.valueOf(article.get_ID()));
+        return getContentResolver().delete(uri, null, null);
     }
 
     @Override
@@ -384,18 +464,17 @@ public class MainActivity extends AppCompatActivity
         return networkInfo != null && networkInfo.isConnected();
     }
 
-
     private void setNavBarSection(Section section) {
         Menu navMenu = navigationView.getMenu();
         navMenu.findItem(section.getIdNav())
                 .setVisible(mSharedPreferences
-                .getBoolean(section.getPrefKey(), true));
+                        .getBoolean(section.getPrefKey(), true));
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
-        for (Section section: Section.values()) {
+        for (Section section : Section.values()) {
             if (section.getPrefKey().equals(key)) {
                 setNavBarSection(section);
             }

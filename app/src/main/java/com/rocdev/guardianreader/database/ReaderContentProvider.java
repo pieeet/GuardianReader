@@ -50,9 +50,7 @@ public class ReaderContentProvider extends ContentProvider {
                 Contract.PATH_ARTICLES, ARTICLES);
         sUriMatcher.addURI(Contract.CONTENT_AUTHORITY,
                 Contract.PATH_ARTICLES + "/#", ARTICLE_ID);
-
     }
-
 
     @Override
     public boolean onCreate() {
@@ -78,7 +76,9 @@ public class ReaderContentProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI: " + uri);
         }
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null) {
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
         return cursor;
     }
 
@@ -112,7 +112,6 @@ public class ReaderContentProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int match = sUriMatcher.match(uri);
-        int rowsDeleted = 0;
         switch (match) {
             case (ARTICLE_ID):
                 return deleteArticle(uri);

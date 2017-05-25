@@ -1,10 +1,14 @@
 package com.rocdev.guardianreader.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +37,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private View listContainer;
     private ListView listView;
     private View progressContainer;
+    private View noSavedArticlesContainer;
     private Button moreButton;
     private List<Article> articles;
     private ArticleAdapter adapter;
@@ -105,6 +110,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             });
         }
         progressContainer = view.findViewById(R.id.progressContainer);
+        noSavedArticlesContainer = view.findViewById(R.id.noSavedArticlesContainer);
         moreButton = (Button) view.findViewById(R.id.moreButton);
         moreButton.setVisibility(View.GONE);
         if (!articles.isEmpty()) {
@@ -120,6 +126,12 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 onArticleClicked(articles.get(i));
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                return onArticleLongClicked(articles.get(i));
             }
         });
         listView.setOnScrollListener(this);
@@ -168,6 +180,14 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         } catch (NullPointerException ignored) {}
     }
 
+    public void showNoSavedArticlesContainer(boolean show) {
+        if (show) {
+            noSavedArticlesContainer.setVisibility(View.VISIBLE);
+        } else {
+            noSavedArticlesContainer.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * toggles more articles button
      *
@@ -196,6 +216,47 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             mListener.onArticleClicked(article);
         }
     }
+
+    public boolean onArticleLongClicked(final Article article) {
+        if (null != mListener) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            String title;
+            String message;
+            Drawable icon;
+            if (article.get_ID() == -1) {
+                title = "Save article";
+                message = "Do you want to save this article?";
+                icon = ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_archive_black_18dp, null);
+
+            } else {
+                title = "Delete article";
+                message = "Do you want to delete this article from your saved list? " +
+                        "This cannot be undone.";
+                icon = ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_unarchive_black_18dp, null);
+            }
+            builder
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mListener.onArticleLongClicked(article);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // do nothing
+                }
+            })
+                    .setIcon(icon)
+                    .show();
+        }
+        return true;
+    }
+
 
     /**
      * invokes loading more articles
@@ -270,6 +331,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     public interface OnFragmentInteractionListener {
         // DONE: Update argument type and name
         void onArticleClicked(Article article);
+        void onArticleLongClicked(Article article);
         void saveListPosition(int position);
         void onMoreArticles();
     }

@@ -1,6 +1,7 @@
 package com.rocdev.guardianreader.models;
 
 import com.rocdev.guardianreader.R;
+import com.rocdev.guardianreader.database.Contract;
 
 /**
  * Created by piet on 22-05-17.
@@ -54,6 +55,11 @@ public enum Section {
             "Education",
             R.id.nav_education,
             "pref_section_education"),
+    ENVIRONMENT(
+            "https://content.guardianapis.com/environment",
+            "Environment",
+            R.id.nav_environment,
+            "pref_section_environment"),
     FILM(
             "https://content.guardianapis.com/film",
             "Film",
@@ -161,6 +167,10 @@ public enum Section {
             "https://content.guardianapis.com/search",
             "Search",
             -1,
+            ""),
+    SAVED(Contract.ArticleEntry.CONTENT_URI.toString(),
+            "Saved Articles",
+            R.id.nav_saved_articles,
             "");
 
     private String url = null;
@@ -168,7 +178,7 @@ public enum Section {
     private int idNav = -1;
     private String prefKey = null;
 
-    private Section(String url, String title, int idNav, String prefKey) {
+    Section(String url, String title, int idNav, String prefKey) {
         this.url = url;
         this.title = title;
         this.idNav = idNav;

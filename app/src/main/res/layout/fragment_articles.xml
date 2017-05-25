@@ -45,6 +45,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/noSavedArticlesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textColor="@color/colorGuardianBlue"
+            android:textSize="24sp"
+            android:padding="36dp"
+            android:text="You currently have no saved articles. Long press an article in the list to save it. "/>
 
     </FrameLayout>
 

@@ -32,11 +32,13 @@
             android:name=".activities.SettingsActivity"
             android:label="@string/action_settings"
             android:parentActivityName=".activities.MainActivity" >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
+        <provider
+            android:name=".database.ReaderContentProvider"
+            android:authorities="com.rocdev.guardianreader" />
     </application>
 
 </manifest>

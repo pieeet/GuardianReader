@@ -16,6 +16,7 @@
         <item>@string/pref_title_business</item>
         <item>@string/pref_title_culture</item>
         <item>@string/pref_title_education</item>
+        <item>@string/pref_title_environment</item>
         <item>@string/pref_title_film</item>
         <item>@string/pref_title_football</item>
         <item>@string/pref_title_law</item>
@@ -38,6 +39,7 @@
         <item>@string/pref_title_tv_radio</item>
         <item>@string/pref_title_weather</item>
         <item>@string/pref_title_search</item>
+        <item>@string/pref_title_saved</item>
     </string-array>
 
 
@@ -67,6 +69,7 @@
     <string name="pref_key_business" translatable="false">pref_section_business</string>
     <string name="pref_key_culture" translatable="false">pref_section_culture</string>
     <string name="pref_key_education" translatable="false">pref_section_education</string>
+    <string name="pref_key_environment" translatable="false">pref_section_environment</string>
     <string name="pref_key_film" translatable="false">pref_section_film</string>
     <string name="pref_key_football" translatable="false">pref_section_football</string>
     <string name="pref_key_law" translatable="false">pref_section_law</string>
@@ -109,6 +112,7 @@
     <string name="pref_title_business">Business</string>
     <string name="pref_title_culture">Culture</string>
     <string name="pref_title_education">Education</string>
+    <string name="pref_title_environment">Environment</string>
     <string name="pref_title_film">Film</string>
     <string name="pref_title_football">Football</string>
     <string name="pref_title_law">Law</string>
@@ -131,6 +135,7 @@
     <string name="pref_title_travel">Travel</string>
     <string name="pref_title_weather">Weather</string>
     <string name="pref_title_search">Search</string>
+    <string name="pref_title_saved">Saved articles</string>
 
     <string name="google_play_url" translatable="false">https://play.google.com/store/apps/details?id=com.rocdev.guardianreader</string>
     <string name="pref_heading_default_edition">Default Edition</string>

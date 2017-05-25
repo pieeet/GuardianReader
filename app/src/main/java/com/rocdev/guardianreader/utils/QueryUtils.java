@@ -1,5 +1,9 @@
 package com.rocdev.guardianreader.utils;
 
+import android.content.Context;
+import android.database.Cursor;
+
+import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
 
 import org.json.JSONArray;
@@ -96,6 +100,28 @@ public class QueryUtils {
         } catch (JSONException ignored) {}
 
         // Return the list of Articles
+        return articles;
+    }
+
+    public static ArrayList<Article> extractSavedArticles(Context context) {
+        ArrayList<Article> articles = new ArrayList<>();
+        Cursor cursor = context.getContentResolver().query(Contract.ArticleEntry.CONTENT_URI,
+                null, null, null, null);
+        int idColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry._ID);
+        int titleColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE);
+        int dateColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_DATE);
+        int articleUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_URL);
+        int sectionColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION);
+        int thumbUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_THUMB_URL);
+        while (cursor.moveToNext()) {
+            long _id = cursor.getLong(idColumnIndex);
+            String title = cursor.getString(titleColumnIndex);
+            String date = cursor.getString(dateColumnIndex);
+            String url = cursor.getString(articleUrlColumnIndex);
+            String section = cursor.getString(sectionColumnIndex);
+            String thumbUrl = cursor.getString(thumbUrlColumnIndex);
+            articles.add(new Article(_id, title, date, url, section, thumbUrl));
+        }
         return articles;
     }
 

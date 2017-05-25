@@ -27,6 +27,15 @@ public class Article implements Parcelable {
         this.thumbUrl = thumbUrl;
     }
 
+    /**
+     *
+     * @param _ID from saved article
+     * @param title
+     * @param date
+     * @param url
+     * @param section
+     * @param thumbUrl
+     */
     public Article(long _ID, String title, String date, String url, String section, String thumbUrl) {
 
         this._ID = _ID;
@@ -40,6 +49,7 @@ public class Article implements Parcelable {
     public long get_ID() {
         return _ID;
     }
+
 
     public void set_ID(long _ID) {
         this._ID = _ID;
