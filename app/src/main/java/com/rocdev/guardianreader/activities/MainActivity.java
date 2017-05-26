@@ -232,6 +232,7 @@ public class MainActivity extends AppCompatActivity
                             articlesFragment.notifyArticlesChanged(true, false);
                             stopRefreshButtonAnimation();
                         } else {
+                            stopRefreshButtonAnimation();
                             refreshUI();
                         }
                     }

@@ -32,7 +32,7 @@ public class SectionsFragment extends Fragment {
         Section[] sectionsArray = Section.values();
         sectionsList = new ArrayList<>();
         for (Section section: sectionsArray) {
-            if (section.getIdNav() != -1) {
+            if (!section.equals(Section.SEARCH)) {
                 sectionsList.add(section);
             }
         }
