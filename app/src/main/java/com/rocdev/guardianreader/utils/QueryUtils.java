@@ -12,12 +12,12 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by piet on 27-12-16.
@@ -25,6 +25,16 @@ import java.util.ArrayList;
  */
 
 class QueryUtils {
+
+    private static final String RESPONSE = "response";
+    private static final String EDITOR_PICKS = "editorsPicks";
+    private static final String RESULTS = "results";
+    private static final String WEB_TITLE = "webTitle";
+    private static final String WEB_PUBLICATION_DATE = "webPublicationDate";
+    private static final String WEB_URL = "webUrl";
+    private static final String SECTION_NAME = "sectionName";
+    private static final String FIELDS = "fields";
+    private static final String THUMBNAIL = "thumbnail";
 
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
@@ -41,91 +51,57 @@ class QueryUtils {
         StringBuilder output = new StringBuilder();
         URL url = makeUrl(urlStr);
         HttpURLConnection connection = null;
-        BufferedReader reader;
-        InputStream in = null;
+        BufferedReader reader = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
-            in = connection.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(in));
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String line = reader.readLine();
             while(line != null) {
                 output.append(line);
                 line = reader.readLine();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        } catch (IOException ignored) {} finally {
             if (connection != null) {
                 connection.disconnect();
             }
-            if (in != null) {
+            if (reader != null) {
                 try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    reader.close();
+                } catch (IOException ignored) {}
             }
         }
-        // Create an empty ArrayList that we can start adding Articles to
         ArrayList<Article> articles = new ArrayList<>();
-
-        // Try to parse the JSON_RESPONSE. If there's a problem with the way the JSON
-        // is formatted, a JSONException exception object will be thrown.
-        // In case of an exception, the method will
-        // return an empty list
         try {
-            // build up a list of Article objects with the corresponding data.
             JSONObject root = new JSONObject(output.toString());
-            JSONObject response = root.getJSONObject("response");
+            JSONObject response = root.getJSONObject(RESPONSE);
             JSONArray results;
             if (isEditorsPick) {
-                results = response.getJSONArray("editorsPicks");
+                results = response.getJSONArray(EDITOR_PICKS);
             } else {
-                results = response.getJSONArray("results");
+                results = response.getJSONArray(RESULTS);
             }
             for (int i = 0; i < results.length(); i++) {
                 JSONObject article = results.getJSONObject(i);
-                String webTitle = article.getString("webTitle");
-                String webPublicationDate = article.getString("webPublicationDate");
-                String webUrl = article.getString("webUrl");
-                String sectionName = article.getString("sectionName");
+                String webTitle = article.getString(WEB_TITLE);
+                String webPublicationDate = article.getString(WEB_PUBLICATION_DATE);
+                String webUrl = article.getString(WEB_URL);
+                String sectionName = article.getString(SECTION_NAME);
                 String thumbnail = null;
                 // there might not be a thumbnail
                 try {
-                    JSONObject fields = article.getJSONObject("fields");
-                    thumbnail = fields.getString("thumbnail");
+                    JSONObject fields = article.getJSONObject(FIELDS);
+                    thumbnail = fields.getString(THUMBNAIL);
                 } catch (Exception ignored) {}
                 articles.add(new Article(webTitle, webPublicationDate, webUrl, sectionName, thumbnail));
             }
         } catch (JSONException ignored) {}
-
-        // Return the list of Articles
         return articles;
     }
 
     static ArrayList<Article> extractSavedArticles(Context context) {
-        ArrayList<Article> articles = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(Contract.ArticleEntry.CONTENT_URI,
                 null, null, null, null);
-        if (cursor != null) {
-            int idColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry._ID);
-            int titleColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE);
-            int dateColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_DATE);
-            int articleUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_URL);
-            int sectionColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION);
-            int thumbUrlColumnIndex = cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_THUMB_URL);
-            while (cursor.moveToNext()) {
-                long _id = cursor.getLong(idColumnIndex);
-                String title = cursor.getString(titleColumnIndex);
-                String date = cursor.getString(dateColumnIndex);
-                String url = cursor.getString(articleUrlColumnIndex);
-                String section = cursor.getString(sectionColumnIndex);
-                String thumbUrl = cursor.getString(thumbUrlColumnIndex);
-                articles.add(new Article(_id, title, date, url, section, thumbUrl));
-            }
-            cursor.close();
-        }
-        return articles;
+        return makeListFromCursor(cursor);
     }
 
     private static URL makeUrl(String urlStr) {
@@ -136,6 +112,23 @@ class QueryUtils {
             e.printStackTrace();
         }
         return url;
+    }
+
+    private static ArrayList<Article> makeListFromCursor(Cursor cursor) {
+        ArrayList<Article> articles = new ArrayList<>();
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                long _id = cursor.getLong(cursor.getColumnIndex(Contract.ArticleEntry._ID));
+                String title = cursor.getString(cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE));
+                String date = cursor.getString(cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_DATE));
+                String url = cursor.getString(cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_URL));
+                String section = cursor.getString(cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION));
+                String thumbUrl = cursor.getString(cursor.getColumnIndex(Contract.ArticleEntry.COLUMN_THUMB_URL));
+                articles.add(new Article(_id, title, date, url, section, thumbUrl));
+            }
+            cursor.close();
+        }
+        return articles;
     }
 
 
