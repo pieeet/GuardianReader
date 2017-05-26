@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.rocdev.guardianreader.database.Contract;
+import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
 import com.rocdev.guardianreader.R;
@@ -66,13 +68,16 @@ public class MainActivity extends AppCompatActivity
     private boolean isNewList;
     private boolean isEditorsPicks;
     private ArrayList<Article> articles;
-    private ArticlesFragment fragment;
+    private ArticlesFragment articlesFragment;
+    private SectionsFragment sectionsFragment;
     private int listPosition;
     private String searchQuery;
     private SharedPreferences mSharedPreferences;
     private int defaultEdition;
     private NavigationView navigationView;
     private Menu mMenu;
+    private boolean isTwoPane;
+
 
 
     @Override
@@ -80,6 +85,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
+        isTwoPane = findViewById(R.id.fragment_container) != null;
         setPreferences();
         initNavigation();
 
@@ -89,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             initInstanceState();
         }
-        initFragment();
+        initFragments();
         if (articles.isEmpty()) {
             refreshUI();
         }
@@ -143,12 +149,23 @@ public class MainActivity extends AppCompatActivity
         currentSection = defaultEdition;
     }
 
-    private void initFragment() {
-        fragment = ArticlesFragment.newInstance(articles, listPosition, !isEditorsPicks);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(CONTENT_CONTAINER, fragment)
-                .commit();
+    private void initFragments() {
+        articlesFragment = ArticlesFragment.newInstance(articles, listPosition, !isEditorsPicks);
+        FragmentManager fm = getSupportFragmentManager();
+        if (isTwoPane) {
+            sectionsFragment = new SectionsFragment();
+            fm.beginTransaction()
+                    .replace(R.id.content_pane_left, sectionsFragment)
+                    .commit();
+            fm.beginTransaction()
+                    .replace(R.id.content_pane_right, articlesFragment)
+                    .commit();
+
+        } else {
+            fm.beginTransaction()
+                    .replace(CONTENT_CONTAINER, articlesFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -184,7 +201,7 @@ public class MainActivity extends AppCompatActivity
     private void refreshUI() {
         showProgressAnimations();
         try {
-            fragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
+            articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                     && articles.isEmpty());
         } catch (NullPointerException ignored) {}
         String title = titles[currentSection];
@@ -212,7 +229,7 @@ public class MainActivity extends AppCompatActivity
                                 getSupportActionBar().setTitle(R.string.title_no_network);
                             }
                             articles.clear();
-                            fragment.notifyArticlesChanged(true, false);
+                            articlesFragment.notifyArticlesChanged(true, false);
                             stopRefreshButtonAnimation();
                         } else {
                             refreshUI();
@@ -276,7 +293,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showProgressAnimations() {
-        fragment.showProgressContainer(true);
+        articlesFragment.showProgressContainer(true);
         startRefreshButtonAnimation();
     }
 
@@ -372,10 +389,10 @@ public class MainActivity extends AppCompatActivity
         for (Article article : data) {
             articles.add(article);
         }
-        fragment.notifyArticlesChanged(isNewList, isEditorsPicks);
-        fragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
+        articlesFragment.notifyArticlesChanged(isNewList, isEditorsPicks);
+        articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                 && articles.isEmpty());
-        fragment.showProgressContainer(false);
+        articlesFragment.showProgressContainer(false);
         onLoaderReset(mLoader);
     }
 
@@ -406,9 +423,9 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "Deleted article", Toast.LENGTH_SHORT).show();
                 if (currentSection == Section.SAVED.ordinal()) {
                     articles.remove(article);
-                    fragment.notifyArticlesChanged(false, isEditorsPicks /* no morebutton */);
+                    articlesFragment.notifyArticlesChanged(false, isEditorsPicks /* no morebutton */);
                     if (articles.isEmpty()) {
-                        fragment.showNoSavedArticlesContainer(true);
+                        articlesFragment.showNoSavedArticlesContainer(true);
                     }
                 }
             }
