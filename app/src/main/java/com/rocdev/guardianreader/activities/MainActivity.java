@@ -152,6 +152,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!checkConnection()) {
+            refreshUI();
+        }
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         // invoke search intent
@@ -199,7 +207,6 @@ public class MainActivity extends AppCompatActivity
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // Do something after 5s = 5000ms
                         Toast.makeText(MainActivity.this, "No network. Try again later", Toast.LENGTH_LONG).show();
                         if (getSupportActionBar() != null) {
                             getSupportActionBar().setTitle(R.string.title_no_network);
