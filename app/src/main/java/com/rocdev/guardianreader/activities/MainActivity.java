@@ -186,8 +186,7 @@ public class MainActivity extends AppCompatActivity
         try {
             fragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                     && articles.isEmpty());
-        } catch (NullPointerException ignored) {
-        }
+        } catch (NullPointerException ignored) {}
         String title = titles[currentSection];
         if (checkConnection()) {
             //noinspection ConstantConditions
@@ -207,13 +206,17 @@ public class MainActivity extends AppCompatActivity
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, "No network. Try again later", Toast.LENGTH_LONG).show();
-                        if (getSupportActionBar() != null) {
-                            getSupportActionBar().setTitle(R.string.title_no_network);
+                        if (!checkConnection()) {
+                            Toast.makeText(MainActivity.this, "No network. Try again later", Toast.LENGTH_LONG).show();
+                            if (getSupportActionBar() != null) {
+                                getSupportActionBar().setTitle(R.string.title_no_network);
+                            }
+                            articles.clear();
+                            fragment.notifyArticlesChanged(true, false);
+                            stopRefreshButtonAnimation();
+                        } else {
+                            refreshUI();
                         }
-                        articles.clear();
-                        fragment.notifyArticlesChanged(true, false);
-                        stopRefreshButtonAnimation();
                     }
                 }, 2000);
             }
