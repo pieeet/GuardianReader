@@ -1,5 +1,7 @@
 package com.rocdev.guardianreader.models;
 
+import android.content.Context;
+
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.database.Contract;
 
@@ -239,4 +241,5 @@ public enum Section {
     public int getIcon() {
         return icon;
     }
+
 }

@@ -63,9 +63,8 @@ public class ReaderContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
                         @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        int match = sUriMatcher.match(uri);
         Cursor cursor;
-        switch (match) {
+        switch (sUriMatcher.match(uri)) {
             case ARTICLES:
                 cursor = db.query(Contract.ArticleEntry.TABLE_NAME,
                         projection,

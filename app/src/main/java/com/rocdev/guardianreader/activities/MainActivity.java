@@ -23,9 +23,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -43,6 +45,8 @@ import com.rocdev.guardianreader.utils.Secret;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.key;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity
      *******************************/
     private static final int CONTENT_CONTAINER = R.id.content_container;
     private static final String API_KEY = Secret.getApiKey();
-//    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
      * INSTANCE VARIABLES
@@ -77,7 +81,6 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private Menu mMenu;
     private boolean isTwoPane;
-
 
 
     @Override
@@ -112,16 +115,22 @@ public class MainActivity extends AppCompatActivity
     private void initNavigation() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        for (Section section : Section.values()) {
-            if (!section.equals(Section.SEARCH)) {
-                setNavBarSection(section);
+
+        if (!isTwoPane) {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+
+            navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+
+
+            for (Section section : Section.values()) {
+                if (!section.equals(Section.SEARCH)) {
+                    setNavBarSection(section);
+                }
             }
         }
     }
@@ -203,7 +212,8 @@ public class MainActivity extends AppCompatActivity
         try {
             articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                     && articles.isEmpty());
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
         String title = titles[currentSection];
         if (checkConnection()) {
             //noinspection ConstantConditions
@@ -476,10 +486,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setNavBarSection(Section section) {
-        Menu navMenu = navigationView.getMenu();
-        navMenu.findItem(section.getIdNav())
-                .setVisible(mSharedPreferences
-                        .getBoolean(section.getPrefKey(), true));
+        if (!isTwoPane) {
+            Menu navMenu = navigationView.getMenu();
+            navMenu.findItem(section.getIdNav())
+                    .setVisible(mSharedPreferences.getBoolean(section.getPrefKey(), true));
+        }
+
     }
 
     @Override
