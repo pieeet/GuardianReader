@@ -23,11 +23,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -45,21 +43,26 @@ import com.rocdev.guardianreader.utils.Secret;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.key;
-
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<List<Article>>,
         ArticlesFragment.OnFragmentInteractionListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        SectionsFragment.SectionsFragmentListener {
 
     /*******************************
      * CONSTANTS
      *******************************/
     private static final int CONTENT_CONTAINER = R.id.content_container;
     private static final String API_KEY = Secret.getApiKey();
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String KEY_ARTICLES = "articles";
+    private static final String KEY_CURRENT_SECTION = "currentSection";
+    private static final String KEY_CURRENT_PAGE = "currentPage";
+    private static final String KEY_LOADER_ID = "loaderId";
+    private static final String KEY_IS_EDITOR_PICKS = "isEditorPicks";
+    private static final String KEY_LIST_POSITION = "listPosition";
+//    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
      * INSTANCE VARIABLES
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity
     private boolean isNewList;
     private boolean isEditorsPicks;
     private ArrayList<Article> articles;
+    private ArrayList<Section> sections;
     private ArticlesFragment articlesFragment;
     private SectionsFragment sectionsFragment;
     private int listPosition;
@@ -115,33 +119,39 @@ public class MainActivity extends AppCompatActivity
     private void initNavigation() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         if (!isTwoPane) {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.addDrawerListener(toggle);
             toggle.syncState();
-
             navigationView = (NavigationView) findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
-
-
             for (Section section : Section.values()) {
-                if (!section.equals(Section.SEARCH)) {
-                    setNavBarSection(section);
-                }
+                setNavBarSection(section);
+            }
+        } else {
+            refreshSections();
+        }
+    }
+
+    private void refreshSections() {
+        sections = new ArrayList<>();
+        for (Section section : Section.values()) {
+            if (mSharedPreferences.getBoolean(section.getPrefKey(), true)
+                    && section != Section.SEARCH) {
+                sections.add(section);
             }
         }
     }
 
     private void restoreInstanceState(Bundle savedInstanceState) {
-        articles = savedInstanceState.getParcelableArrayList("articles");
-        currentPage = savedInstanceState.getInt("currentPage");
-        currentSection = savedInstanceState.getInt("currentSection");
-        loaderId = savedInstanceState.getInt("loaderId");
-        isEditorsPicks = savedInstanceState.getBoolean("isEditorPicks");
-        listPosition = savedInstanceState.getInt("listPosition");
+        articles = savedInstanceState.getParcelableArrayList(KEY_ARTICLES);
+        currentPage = savedInstanceState.getInt(KEY_CURRENT_PAGE);
+        currentSection = savedInstanceState.getInt(KEY_CURRENT_SECTION);
+        loaderId = savedInstanceState.getInt(KEY_LOADER_ID);
+        isEditorsPicks = savedInstanceState.getBoolean(KEY_IS_EDITOR_PICKS);
+        listPosition = savedInstanceState.getInt(KEY_LIST_POSITION);
         onLoaderReset(mLoader);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(titles[currentSection]);
@@ -162,7 +172,7 @@ public class MainActivity extends AppCompatActivity
         articlesFragment = ArticlesFragment.newInstance(articles, listPosition, !isEditorsPicks);
         FragmentManager fm = getSupportFragmentManager();
         if (isTwoPane) {
-            sectionsFragment = new SectionsFragment();
+            sectionsFragment = SectionsFragment.newInstance(sections);
             fm.beginTransaction()
                     .replace(R.id.content_pane_left, sectionsFragment)
                     .commit();
@@ -198,12 +208,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("articles", articles);
-        outState.putInt("currentSection", currentSection);
-        outState.putInt("currentPage", currentPage);
-        outState.putInt("loaderId", loaderId);
-        outState.putBoolean("isEditorPicks", isEditorsPicks);
-        outState.putInt("listPosition", listPosition);
+        outState.putParcelableArrayList(KEY_ARTICLES, articles);
+        outState.putInt(KEY_CURRENT_SECTION, currentSection);
+        outState.putInt(KEY_CURRENT_PAGE, currentPage);
+        outState.putInt(KEY_LOADER_ID, loaderId);
+        outState.putBoolean(KEY_IS_EDITOR_PICKS, isEditorsPicks);
+        outState.putInt(KEY_LIST_POSITION, listPosition);
         super.onSaveInstanceState(outState);
     }
 
@@ -234,7 +244,8 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         if (!checkConnection()) {
-                            Toast.makeText(MainActivity.this, "No network. Try again later", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "No network. Try again later",
+                                    Toast.LENGTH_LONG).show();
                             if (getSupportActionBar() != null) {
                                 getSupportActionBar().setTitle(R.string.title_no_network);
                             }
@@ -365,7 +376,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         //build URI with specified parameters
@@ -486,21 +496,40 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setNavBarSection(Section section) {
-        if (!isTwoPane) {
+
+        if (section != Section.SEARCH) {
+            boolean isVisible = mSharedPreferences.getBoolean(section.getPrefKey(), true);
             Menu navMenu = navigationView.getMenu();
             navMenu.findItem(section.getIdNav())
-                    .setVisible(mSharedPreferences.getBoolean(section.getPrefKey(), true));
+                    .setVisible(isVisible);
         }
-
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
-        for (Section section : Section.values()) {
-            if (section.getPrefKey().equals(key)) {
-                setNavBarSection(section);
+
+        if (isTwoPane) {
+            refreshSections();
+            sectionsFragment.refreshListView(sections);
+        } else {
+            for (Section section : Section.values()) {
+                if (section.getPrefKey().equals(key)) {
+                    setNavBarSection(section);
+                }
             }
         }
     }
+
+    @Override
+    public void onSectionClicked(Section section) {
+        if (currentSection != section.ordinal()) {
+            isNewList = true;
+            currentPage = 1;
+            articles.clear();
+            currentSection = section.ordinal();
+            refreshUI();
+        }
+    }
+
 }

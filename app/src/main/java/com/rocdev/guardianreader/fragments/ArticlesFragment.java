@@ -9,21 +9,24 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.rocdev.guardianreader.activities.MainActivity;
 import com.rocdev.guardianreader.utils.ArticleAdapter;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -49,7 +52,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     /**
      * required (Framework) empty constructor
      */
-    public ArticlesFragment() {}
+    public ArticlesFragment() {
+    }
 
 
     /**
@@ -92,6 +96,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
 
     /**
      * initializes views
+     *
      * @param view the root view
      */
     private void initViews(View view) {
@@ -141,8 +146,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
                 onMoreArticles();
             }
         });
-    }
 
+    }
 
 
     @Override
@@ -177,7 +182,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
             } else {
                 progressContainer.setVisibility(View.GONE);
             }
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void showNoSavedArticlesContainer(boolean show) {
@@ -246,11 +252,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // do nothing
-                }
-            })
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // do nothing
+                        }
+                    })
                     .setIcon(icon)
                     .show();
         }
@@ -291,7 +297,8 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      *******************************/
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {}
+    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+    }
 
     /**
      * Shows or hides the more articles button
@@ -318,6 +325,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         }
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -331,8 +339,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     public interface OnFragmentInteractionListener {
         // DONE: Update argument type and name
         void onArticleClicked(Article article);
+
         void onArticleLongClicked(Article article);
+
         void saveListPosition(int position);
+
         void onMoreArticles();
     }
 }

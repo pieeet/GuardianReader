@@ -38,8 +38,8 @@
         <item>@string/pref_title_travel</item>
         <item>@string/pref_title_tv_radio</item>
         <item>@string/pref_title_weather</item>
-        <item>@string/pref_title_search</item>
         <item>@string/pref_title_saved</item>
+        <item>@string/pref_title_search</item>
     </string-array>
 
 

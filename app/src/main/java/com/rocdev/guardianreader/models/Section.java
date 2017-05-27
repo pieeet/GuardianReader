@@ -1,6 +1,5 @@
 package com.rocdev.guardianreader.models;
 
-import android.content.Context;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.database.Contract;
@@ -10,7 +9,7 @@ import com.rocdev.guardianreader.database.Contract;
  *
  */
 
-public enum Section {
+public enum Section  {
 
     HEADLINES_AUS(
             "https://content.guardianapis.com/au",
@@ -196,17 +195,20 @@ public enum Section {
             R.id.nav_weather,
             "pref_section_weather",
             R.drawable.ic_bookmark_border_black_18dp),
-    SEARCH(
-            "https://content.guardianapis.com/search",
-            "Search",
-            -1,
-            "",
-            -1),
+
     SAVED(Contract.ArticleEntry.CONTENT_URI.toString(),
             "Saved Articles",
             R.id.nav_saved_articles,
             "",
-            R.drawable.ic_archive_black_18dp);
+            R.drawable.ic_archive_black_18dp),
+
+    // Not in sections list
+    SEARCH(
+            "https://content.guardianapis.com/search",
+                    "Search",
+                    -1,
+                    "",
+                    -1);
 
     private String url = null;
     private String title = null;
@@ -221,6 +223,8 @@ public enum Section {
         this.prefKey = prefKey;
         this.icon = icon;
     }
+
+
 
     public String getUrl() {
         return url;
@@ -241,5 +245,11 @@ public enum Section {
     public int getIcon() {
         return icon;
     }
+
+
+
+
+
+
 
 }
