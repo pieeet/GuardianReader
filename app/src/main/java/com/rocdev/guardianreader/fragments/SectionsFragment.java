@@ -52,8 +52,7 @@ public class SectionsFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Section section = sectionsList.get(i);
-                mListener.onSectionClicked(section);
+                mListener.onSectionClicked(sectionsList.get(i));
             }
         });
         return rootView;

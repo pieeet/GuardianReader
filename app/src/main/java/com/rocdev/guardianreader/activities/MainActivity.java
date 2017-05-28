@@ -131,11 +131,11 @@ public class MainActivity extends AppCompatActivity
                 setNavBarSection(section);
             }
         } else {
-            refreshSections();
+            refreshSectionsPane();
         }
     }
 
-    private void refreshSections() {
+    private void refreshSectionsPane() {
         sections = new ArrayList<>();
         for (Section section : Section.values()) {
             if (mSharedPreferences.getBoolean(section.getPrefKey(), true)
@@ -222,8 +222,7 @@ public class MainActivity extends AppCompatActivity
         try {
             articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                     && articles.isEmpty());
-        } catch (NullPointerException ignored) {
-        }
+        } catch (NullPointerException ignored) {}
         String title = titles[currentSection];
         if (checkConnection()) {
             //noinspection ConstantConditions
@@ -341,8 +340,7 @@ public class MainActivity extends AppCompatActivity
             // Remove the animation.
             m.getActionView().clearAnimation();
             m.setActionView(null);
-        } catch (NullPointerException ignored) {
-        }
+        } catch (NullPointerException ignored) {}
     }
 
     @Override
@@ -496,7 +494,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setNavBarSection(Section section) {
-
         if (section != Section.SEARCH) {
             boolean isVisible = mSharedPreferences.getBoolean(section.getPrefKey(), true);
             Menu navMenu = navigationView.getMenu();
@@ -508,9 +505,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
-
         if (isTwoPane) {
-            refreshSections();
+            refreshSectionsPane();
             sectionsFragment.refreshListView(sections);
         } else {
             for (Section section : Section.values()) {

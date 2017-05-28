@@ -46,7 +46,7 @@ public class SectionsAdapter extends ArrayAdapter<Section> {
         ImageView imageView = (ImageView) sectionView.findViewById(R.id.section_image_icon);
         imageView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), section.getIcon(), null));
         TextView textView = (TextView) sectionView.findViewById(R.id.section_title_textview);
-        textView.setText(section.getTitle());
+        textView.setText(context.getResources().getString(section.getTitle()));
         return sectionView;
     }
 }
