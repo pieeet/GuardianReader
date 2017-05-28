@@ -7,7 +7,7 @@ android {
         applicationId "com.rocdev.guardianreader"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 7
+        versionCode 8
         versionName "2.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
