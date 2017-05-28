@@ -52,16 +52,24 @@ public class MainActivity extends AppCompatActivity
         SectionsFragment.SectionsFragmentListener {
 
     /*******************************
-     * CONSTANTS
+     * STATIC
      *******************************/
     private static final int CONTENT_CONTAINER = R.id.content_container;
-    private static final String API_KEY = Secret.getApiKey();
+    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
     private static final String KEY_ARTICLES = "articles";
     private static final String KEY_CURRENT_SECTION = "currentSection";
     private static final String KEY_CURRENT_PAGE = "currentPage";
     private static final String KEY_LOADER_ID = "loaderId";
     private static final String KEY_IS_EDITOR_PICKS = "isEditorPicks";
     private static final String KEY_LIST_POSITION = "listPosition";
+    private static final String PARAM_NAME_API_KEY = "api-key";
+    private static final String PARAM_NAME_SHOW_FIELDS = "show-fields";
+    private static final String PARAM_VALUE_SHOW_FIELDS = "thumbnail";
+    private static final String PARAM_NAME_EDITOR_PICKS = "show-editors-picks";
+    private static final String PARAM_VALUE_EDITOR_PICKS = "true";
+    private static final String PARAM_NAME_PAGE = "page";
+    private static final String PARAM_NAME_QUERY = "q";
+    private static final String PREF_DEFAULT_EDITION_IF_UNSET = "3";
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
@@ -113,29 +121,43 @@ public class MainActivity extends AppCompatActivity
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
         defaultEdition = Integer.parseInt(mSharedPreferences.getString(
-                getString(R.string.pref_key_default_edition), "3"));
+                getString(R.string.pref_key_default_edition), PREF_DEFAULT_EDITION_IF_UNSET));
     }
 
     private void initNavigation() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // NO DRAWER IN TWO PANE LAYOUT
         if (!isTwoPane) {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
-            navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
-            for (Section section : Section.values()) {
-                setNavBarSection(section);
-            }
+            setUpDrawer(toolbar);
         } else {
-            refreshSectionsPane();
+            setUpOrRefreshSelectedSections();
         }
     }
 
-    private void refreshSectionsPane() {
+    private void setUpDrawer(Toolbar toolbar) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        setUpNavBarSections();
+    }
+
+    private void setUpNavBarSections() {
+        for (Section section : Section.values()) {
+            if (section != Section.SEARCH) {
+                Menu navMenu = navigationView.getMenu();
+                navMenu.findItem(section.getIdNav())
+                        .setVisible(mSharedPreferences.getBoolean(section.getPrefKey(),
+                                true /* default */ ));
+            }
+        }
+    }
+
+    private void setUpOrRefreshSelectedSections() {
         sections = new ArrayList<>();
         for (Section section : Section.values()) {
             if (mSharedPreferences.getBoolean(section.getPrefKey(), true)
@@ -382,20 +404,24 @@ public class MainActivity extends AppCompatActivity
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         String uriString = baseUri.toString();
         if (currentSection != Section.SAVED.ordinal()) {
-            Uri.Builder uriBuilder = baseUri.buildUpon();
-            uriBuilder.appendQueryParameter("api-key", API_KEY);
-            uriBuilder.appendQueryParameter("show-fields", "thumbnail");
-            if (isEditorsPicks) {
-                uriBuilder.appendQueryParameter("show-editors-picks", "true");
-            } else {
-                uriBuilder.appendQueryParameter("page", String.valueOf(currentPage));
-                if (currentSection == Section.SEARCH.ordinal()) {
-                    uriBuilder.appendQueryParameter("q", searchQuery);
-                }
-            }
-            uriString = uriBuilder.toString();
+            uriString = buildUriWithParams(baseUri).toString();
         }
         return new ArticleLoader(this, uriString, isEditorsPicks);
+    }
+
+    private Uri buildUriWithParams(Uri baseUri) {
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        uriBuilder.appendQueryParameter(PARAM_NAME_API_KEY, PARAM_VALUE_API_KEY);
+        uriBuilder.appendQueryParameter(PARAM_NAME_SHOW_FIELDS, PARAM_VALUE_SHOW_FIELDS);
+        if (isEditorsPicks) {
+            uriBuilder.appendQueryParameter(PARAM_NAME_EDITOR_PICKS, PARAM_VALUE_EDITOR_PICKS);
+        } else {
+            uriBuilder.appendQueryParameter(PARAM_NAME_PAGE, String.valueOf(currentPage));
+            if (currentSection == Section.SEARCH.ordinal()) {
+                uriBuilder.appendQueryParameter(PARAM_NAME_QUERY, searchQuery);
+            }
+        }
+        return uriBuilder.build();
     }
 
     @Override
@@ -493,27 +519,15 @@ public class MainActivity extends AppCompatActivity
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    private void setNavBarSection(Section section) {
-        if (section != Section.SEARCH) {
-            boolean isVisible = mSharedPreferences.getBoolean(section.getPrefKey(), true);
-            Menu navMenu = navigationView.getMenu();
-            navMenu.findItem(section.getIdNav())
-                    .setVisible(isVisible);
-        }
-    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
         if (isTwoPane) {
-            refreshSectionsPane();
+            setUpOrRefreshSelectedSections();
             sectionsFragment.refreshListView(sections);
         } else {
-            for (Section section : Section.values()) {
-                if (section.getPrefKey().equals(key)) {
-                    setNavBarSection(section);
-                }
-            }
+            setUpNavBarSections();
         }
     }
 

@@ -7,10 +7,10 @@
     <string name="action_settings">Personalise</string>
 
     <string-array name="titles">
-        <item>Australia headlines</item>
-        <item>UK headlines</item>
-        <item>US headlines</item>
-        <item>International headlines</item>
+        <item>@string/pref_title_headlines_aus</item>
+        <item>@string/pref_title_headlines_uk</item>
+        <item>@string/pref_title_headlines_us</item>
+        <item>@string/pref_title_headlines_world</item>
         <item>@string/pref_title_art_design</item>
         <item>@string/pref_title_books</item>
         <item>@string/pref_title_business</item>
