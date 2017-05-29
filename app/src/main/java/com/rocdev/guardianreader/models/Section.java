@@ -211,9 +211,9 @@ public enum Section  {
                     -1);
 
     private String url = null;
-    private int title = -1;
-    private int idNav = -1;
-    private String prefKey = null;
+    private int title;
+    private int idNav;
+    private String prefKey;
     private int icon;
 
     Section(String url, int title, int idNav, String prefKey, int icon) {
@@ -223,7 +223,6 @@ public enum Section  {
         this.prefKey = prefKey;
         this.icon = icon;
     }
-
 
 
     public String getUrl() {
