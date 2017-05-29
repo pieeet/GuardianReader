@@ -1,8 +1,6 @@
 package com.rocdev.guardianreader.activities;
 
 import android.app.SearchManager;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +21,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +29,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
@@ -43,7 +39,6 @@ import com.rocdev.guardianreader.utils.QueryUtils;
 import com.rocdev.guardianreader.utils.Secret;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -428,8 +423,7 @@ public class MainActivity extends AppCompatActivity
                 currentSection == Section.SAVED.ordinal();
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         String uriString = baseUri.toString();
-        if (currentSection != Section.SAVED.ordinal())
-            uriString = buildUriWithParams(baseUri).toString();
+        if (currentSection != Section.SAVED.ordinal()) uriString = buildUriWithParams(baseUri).toString();
         return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 
@@ -521,7 +515,6 @@ public class MainActivity extends AppCompatActivity
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
-
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

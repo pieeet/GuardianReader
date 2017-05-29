@@ -7,3 +7,6 @@
 /build
 /captures
 .externalNativeBuild
+libs/
+src/main/res/drawable-v21/
+**/Secret.java
