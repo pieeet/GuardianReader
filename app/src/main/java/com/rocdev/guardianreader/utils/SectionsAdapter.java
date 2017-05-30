@@ -17,6 +17,7 @@ import com.rocdev.guardianreader.models.Section;
 import java.util.List;
 
 
+
 /**
  * Created by piet on 26-05-17.
  *
@@ -36,17 +37,27 @@ public class SectionsAdapter extends ArrayAdapter<Section> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View sectionView = convertView;
+        ViewHolder holder;
         if (sectionView == null) {
             sectionView = LayoutInflater.from(getContext())
                     .inflate(R.layout.section_list_item, parent, false);
+            holder = new ViewHolder();
+            holder.icon = (ImageView) sectionView.findViewById(R.id.section_image_icon);
+            holder.title = (TextView) sectionView.findViewById(R.id.section_title_textview);
+            sectionView.setTag(holder);
+        } else {
+            holder = (ViewHolder) sectionView.getTag();
         }
-        ImageView imageView = (ImageView) sectionView.findViewById(R.id.section_image_icon);
-        TextView textView = (TextView) sectionView.findViewById(R.id.section_title_textview);
         Section section = getItem(position);
         if (section != null) {
-            imageView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), section.getIcon(), null));
-            textView.setText(context.getResources().getString(section.getTitle()));
+            holder.icon.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), section.getIcon(), null));
+            holder.title.setText(context.getResources().getString(section.getTitle()));
         }
         return sectionView;
+    }
+
+    private static class ViewHolder {
+        ImageView icon;
+        TextView title;
     }
 }

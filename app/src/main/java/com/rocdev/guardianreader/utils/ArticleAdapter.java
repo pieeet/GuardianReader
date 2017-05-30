@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.rocdev.guardianreader.R.id.dateTextView;
+import static com.rocdev.guardianreader.R.id.titleTextView;
+
 
 /**
  * Created by piet on 27-12-16.
@@ -40,24 +43,30 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View listItemView = convertView;
+        ViewHolder holder;
+
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext())
                     .inflate(R.layout.article_list_item, parent, false);
+            holder = new ViewHolder();
+            holder.imgView = (ImageView) listItemView.findViewById(R.id.thumbnail);
+            holder.title = (TextView) listItemView.findViewById(titleTextView);
+            holder.date = (TextView) listItemView.findViewById(dateTextView);
+            holder.section = (TextView) listItemView.findViewById(R.id.sectionTextView);
+            listItemView.setTag(holder);
+        } else {
+            holder = (ViewHolder) listItemView.getTag();
         }
         Article article = getItem(position);
-        ImageView imgView = (ImageView) listItemView.findViewById(R.id.thumbnail);
-        // anders laadt verkeerde plaatje
+
         //http://stackoverflow.com/questions/25429683/picasso-loads-pictures-to-the-wrong-imageview-in-a-list-adapter
-        Picasso.with(context).cancelRequest(imgView);
+        Picasso.with(context).cancelRequest(holder.imgView);
         if ((article != null ? article.getThumbUrl() : null) != null) {
-            Picasso.with(context).load(article.getThumbUrl()).into(imgView);
+            Picasso.with(context).load(article.getThumbUrl()).into(holder.imgView);
         }
-        TextView titleTextView = (TextView) listItemView.findViewById(R.id.titleTextView);
-        titleTextView.setText(article != null ? article.getTitle() : "");
-        TextView dateTextView = (TextView) listItemView.findViewById(R.id.dateTextView);
-        dateTextView.setText(formatDateTime(article != null ? article.getDate() : ""));
-        TextView sectionTextView = (TextView) listItemView.findViewById(R.id.sectionTextView);
-        sectionTextView.setText(article != null ? article.getSection() : "");
+        holder.title.setText(article != null ? article.getTitle() : "");
+        holder.date.setText(formatDateTime(article != null ? article.getDate() : ""));
+        holder.section.setText(article != null ? article.getSection() : "");
         return listItemView;
     }
 
@@ -72,5 +81,12 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         }
         SimpleDateFormat sdfOut = new SimpleDateFormat("d MMMM yyyy HH:mm", Locale.getDefault());
         return sdfOut.format(dateIn);
+    }
+
+    private static class ViewHolder {
+        ImageView imgView;
+        TextView title;
+        TextView date;
+        TextView section;
     }
 }
