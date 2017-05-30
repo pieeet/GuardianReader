@@ -9,18 +9,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.rocdev.guardianreader.activities.MainActivity;
 import com.rocdev.guardianreader.utils.ArticleAdapter;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;

@@ -1,7 +1,6 @@
 package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rocdev.guardianreader.R;
-import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
 
 import java.util.List;
@@ -26,7 +24,7 @@ import java.util.List;
 
 public class SectionsAdapter extends ArrayAdapter<Section> {
 
-    Context context;
+    private Context context;
 
 
     public SectionsAdapter(@NonNull Context context, List<Section> sections) {
@@ -42,11 +40,13 @@ public class SectionsAdapter extends ArrayAdapter<Section> {
             sectionView = LayoutInflater.from(getContext())
                     .inflate(R.layout.section_list_item, parent, false);
         }
-        Section section = getItem(position);
         ImageView imageView = (ImageView) sectionView.findViewById(R.id.section_image_icon);
-        imageView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), section.getIcon(), null));
         TextView textView = (TextView) sectionView.findViewById(R.id.section_title_textview);
-        textView.setText(context.getResources().getString(section.getTitle()));
+        Section section = getItem(position);
+        if (section != null) {
+            imageView.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), section.getIcon(), null));
+            textView.setText(context.getResources().getString(section.getTitle()));
+        }
         return sectionView;
     }
 }
