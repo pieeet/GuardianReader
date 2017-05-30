@@ -1,7 +1,10 @@
 package com.rocdev.guardianreader.utils;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
@@ -17,14 +20,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by piet on 27-12-16.
  * This class is only meant to hold static variables and methods
  */
 
-class QueryUtils {
+public class QueryUtils {
 
     private static final String RESPONSE = "response";
     private static final String EDITOR_PICKS = "editorsPicks";
@@ -129,6 +131,23 @@ class QueryUtils {
             cursor.close();
         }
         return articles;
+    }
+
+    public static long insertArticle(Article article, Context context) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE, article.getTitle());
+        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_URL, article.getUrl());
+        contentValues.put(Contract.ArticleEntry.COLUMN_THUMB_URL, article.getThumbUrl());
+        Uri uri = context.getContentResolver().insert(Contract.ArticleEntry.CONTENT_URI, contentValues);
+        return ContentUris.parseId(uri);
+    }
+
+    public static int deleteArticle(Article article, Context context) {
+        Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
+                String.valueOf(article.get_ID()));
+        return context.getContentResolver().delete(uri, null, null);
     }
 
 

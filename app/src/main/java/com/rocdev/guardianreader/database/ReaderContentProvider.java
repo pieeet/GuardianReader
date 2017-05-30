@@ -48,6 +48,7 @@ public class ReaderContentProvider extends ContentProvider {
         //Articles
         sUriMatcher.addURI(Contract.CONTENT_AUTHORITY,
                 Contract.PATH_ARTICLES, ARTICLES);
+        //Article
         sUriMatcher.addURI(Contract.CONTENT_AUTHORITY,
                 Contract.PATH_ARTICLES + "/#", ARTICLE_ID);
     }

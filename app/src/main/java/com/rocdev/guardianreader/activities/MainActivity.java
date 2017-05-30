@@ -1,8 +1,6 @@
 package com.rocdev.guardianreader.activities;
 
 import android.app.SearchManager;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,16 +29,17 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
+import com.rocdev.guardianreader.utils.QueryUtils;
 import com.rocdev.guardianreader.utils.Secret;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity
     private static final String PARAM_NAME_PAGE = "page";
     private static final String PARAM_NAME_QUERY = "q";
     private static final String PREF_DEFAULT_EDITION_IF_UNSET = "3";
+    private static final String KEY_PAUSE_TIME = "pauseTime";
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
@@ -93,11 +93,13 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private Menu mMenu;
     private boolean isTwoPane;
+    private boolean onPaused;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onPaused = false;
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
         isTwoPane = findViewById(R.id.fragment_container) != null;
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity
                 Menu navMenu = navigationView.getMenu();
                 navMenu.findItem(section.getIdNav())
                         .setVisible(mSharedPreferences.getBoolean(section.getPrefKey(),
-                                true /* default */ ));
+                                true /* default */));
             }
         }
     }
@@ -212,9 +214,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (!checkConnection()) {
-            refreshUI();
+        if (onPaused) {
+            long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
+            long currentTime = new GregorianCalendar().getTimeInMillis();
+            long timePassed = currentTime - pauseTime;
+            // refresh if pause > 15 minutes
+            if (!checkConnection() || timePassed > (1000 * 60 * 15)) {
+                Toast.makeText(this, "Refreshing articles...", Toast.LENGTH_SHORT).show();
+                isNewList = true;
+                currentPage = 1;
+                articles.clear();
+                refreshUI();
+            }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putLong(KEY_PAUSE_TIME, new GregorianCalendar().getTimeInMillis()).apply();
+        onPaused = true;
     }
 
     @Override
@@ -244,16 +264,12 @@ public class MainActivity extends AppCompatActivity
         try {
             articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                     && articles.isEmpty());
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
         String title = titles[currentSection];
         if (checkConnection()) {
             //noinspection ConstantConditions
-            if (currentSection == Section.SEARCH.ordinal()) {
-                title = searchQuery;
-                if (searchQuery.length() > 12) {
-                    title = searchQuery.substring(0, 12) + "...";
-                }
-            }
+            if (currentSection == Section.SEARCH.ordinal()) title = searchQuery;
             loaderId++;
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
@@ -265,14 +281,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         if (!checkConnection()) {
-                            Toast.makeText(MainActivity.this, "No network. Try again later",
-                                    Toast.LENGTH_LONG).show();
-                            if (getSupportActionBar() != null) {
-                                getSupportActionBar().setTitle(R.string.title_no_network);
-                            }
-                            articles.clear();
-                            articlesFragment.notifyArticlesChanged(true, false);
-                            stopRefreshButtonAnimation();
+                            setNoNetWorkStateWarning();
                         } else {
                             stopRefreshButtonAnimation();
                             refreshUI();
@@ -284,6 +293,17 @@ public class MainActivity extends AppCompatActivity
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }
+    }
+
+    protected void setNoNetWorkStateWarning() {
+        Toast.makeText(MainActivity.this, "No network. Try again later",
+                Toast.LENGTH_LONG).show();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.title_no_network);
+        }
+        articles.clear();
+        articlesFragment.notifyArticlesChanged(true, false);
+        stopRefreshButtonAnimation();
     }
 
 
@@ -362,7 +382,8 @@ public class MainActivity extends AppCompatActivity
             // Remove the animation.
             m.getActionView().clearAnimation();
             m.setActionView(null);
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     @Override
@@ -370,7 +391,6 @@ public class MainActivity extends AppCompatActivity
         isNewList = true;
         currentPage = 1;
         int id = item.getItemId();
-
         switch (id) {
             case R.id.nav_settings:
                 final Handler handler = new Handler();
@@ -403,9 +423,7 @@ public class MainActivity extends AppCompatActivity
                 currentSection == Section.SAVED.ordinal();
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         String uriString = baseUri.toString();
-        if (currentSection != Section.SAVED.ordinal()) {
-            uriString = buildUriWithParams(baseUri).toString();
-        }
+        if (currentSection != Section.SAVED.ordinal()) uriString = buildUriWithParams(baseUri).toString();
         return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 
@@ -428,12 +446,8 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader<List<Article>> loader, List<Article> data) {
         mLoader = loader;
         stopRefreshButtonAnimation();
-        if (isNewList) {
-            articles.clear();
-        }
-        for (Article article : data) {
-            articles.add(article);
-        }
+        if (isNewList) articles.clear();
+        for (Article article : data) articles.add(article);
         articlesFragment.notifyArticlesChanged(isNewList, isEditorsPicks);
         articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                 && articles.isEmpty());
@@ -454,7 +468,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onArticleLongClicked(Article article) {
         if (article.get_ID() == -1) {
-            long id = insertArticle(article);
+            long id = QueryUtils.insertArticle(article, this);
             if (id < 1) {
                 Toast.makeText(this, "Error with saving article", Toast.LENGTH_SHORT).show();
             } else {
@@ -462,7 +476,7 @@ public class MainActivity extends AppCompatActivity
                 article.set_ID(id);
             }
         } else {
-            if (deleteArticle(article) < 1) {
+            if (QueryUtils.deleteArticle(article, this) < 1) {
                 Toast.makeText(this, "Error with deleting article", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Deleted article", Toast.LENGTH_SHORT).show();
@@ -475,23 +489,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-    }
-
-    private long insertArticle(Article article) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
-        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
-        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_TITLE, article.getTitle());
-        contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_URL, article.getUrl());
-        contentValues.put(Contract.ArticleEntry.COLUMN_THUMB_URL, article.getThumbUrl());
-        Uri uri = getContentResolver().insert(Contract.ArticleEntry.CONTENT_URI, contentValues);
-        return ContentUris.parseId(uri);
-    }
-
-    private int deleteArticle(Article article) {
-        Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
-                String.valueOf(article.get_ID()));
-        return getContentResolver().delete(uri, null, null);
     }
 
     @Override
@@ -518,7 +515,6 @@ public class MainActivity extends AppCompatActivity
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
-
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
