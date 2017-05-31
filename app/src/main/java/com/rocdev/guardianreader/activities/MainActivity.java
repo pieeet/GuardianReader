@@ -366,6 +366,9 @@ public class MainActivity extends AppCompatActivity
             m = mMenu.findItem(R.id.action_refresh);
         }
         if (m != null) {
+            if (m.getActionView() != null) {
+                stopRefreshButtonAnimation();
+            }
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             ImageView iv = (ImageView) inflater.inflate(R.layout.iv_refresh, null);
             Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
