@@ -38,27 +38,34 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         this.context = context;
     }
 
-
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View listItemView = convertView;
+        View view = convertView;
         ViewHolder holder;
-
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext())
+        if (view == null) {
+            view = LayoutInflater.from(getContext())
                     .inflate(R.layout.article_list_item, parent, false);
-            holder = new ViewHolder();
-            holder.imgView = (ImageView) listItemView.findViewById(R.id.thumbnail);
-            holder.title = (TextView) listItemView.findViewById(titleTextView);
-            holder.date = (TextView) listItemView.findViewById(dateTextView);
-            holder.section = (TextView) listItemView.findViewById(R.id.sectionTextView);
-            listItemView.setTag(holder);
+            holder = createHolder(view);
+            view.setTag(holder);
         } else {
-            holder = (ViewHolder) listItemView.getTag();
+            holder = (ViewHolder) view.getTag();
         }
         Article article = getItem(position);
+        setListItemData(holder, article);
+        return view;
+    }
 
+    private ViewHolder createHolder(View view) {
+        ViewHolder holder = new ViewHolder();
+        holder.imgView = (ImageView) view.findViewById(R.id.thumbnail);
+        holder.title = (TextView) view.findViewById(titleTextView);
+        holder.date = (TextView) view.findViewById(dateTextView);
+        holder.section = (TextView) view.findViewById(R.id.sectionTextView);
+        return holder;
+    }
+
+    private void setListItemData(ViewHolder holder, Article article) {
         //http://stackoverflow.com/questions/25429683/picasso-loads-pictures-to-the-wrong-imageview-in-a-list-adapter
         Picasso.with(context).cancelRequest(holder.imgView);
         if ((article != null ? article.getThumbUrl() : null) != null) {
@@ -67,7 +74,6 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         holder.title.setText(article != null ? article.getTitle() : "");
         holder.date.setText(formatDateTime(article != null ? article.getDate() : ""));
         holder.section.setText(article != null ? article.getSection() : "");
-        return listItemView;
     }
 
     private String formatDateTime(String input) {
@@ -83,7 +89,7 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         return sdfOut.format(dateIn);
     }
 
-    private static class ViewHolder {
+    private class ViewHolder {
         ImageView imgView;
         TextView title;
         TextView date;
