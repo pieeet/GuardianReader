@@ -379,7 +379,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void stopRefreshButtonAnimation() {
-        // Get our refresh item from the menu
         try {
             MenuItem m = mMenu.findItem(R.id.action_refresh);
             // Remove the animation.

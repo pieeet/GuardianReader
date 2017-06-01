@@ -148,7 +148,7 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_18dp"
-            android:title="Personalise" />
+            android:title="@string/action_personalise" />
 
     </group>
 
