@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import static com.rocdev.guardianreader.utils.QueryUtils.insertArticle;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -425,7 +427,8 @@ public class MainActivity extends AppCompatActivity
                 currentSection == Section.SAVED.ordinal();
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         String uriString = baseUri.toString();
-        if (currentSection != Section.SAVED.ordinal()) uriString = buildUriWithParams(baseUri).toString();
+        if (currentSection != Section.SAVED.ordinal())
+            uriString = buildUriWithParams(baseUri).toString();
         return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 
@@ -470,26 +473,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onArticleLongClicked(Article article) {
         if (article.get_ID() == -1) {
-            long id = QueryUtils.insertArticle(article, this);
-            if (id < 1) {
-                Toast.makeText(this, "Error with saving article", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Article saved succefully", Toast.LENGTH_SHORT).show();
-                article.set_ID(id);
-            }
+            QueryUtils.insertArticle(article, this);
         } else {
-            if (QueryUtils.deleteArticle(article, this) < 1) {
-                Toast.makeText(this, "Error with deleting article", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Deleted article", Toast.LENGTH_SHORT).show();
-                if (currentSection == Section.SAVED.ordinal()) {
-                    articles.remove(article);
-                    articlesFragment.notifyArticlesChanged(false, isEditorsPicks /* no morebutton */);
-                    if (articles.isEmpty()) {
-                        articlesFragment.showNoSavedArticlesContainer(true);
-                    }
+            QueryUtils.deleteArticle(article, this);
+            if (currentSection == Section.SAVED.ordinal()) {
+                articles.remove(article);
+                articlesFragment.notifyArticlesChanged(false, isEditorsPicks /* no morebutton */);
+                if (articles.isEmpty()) {
+                    articlesFragment.showNoSavedArticlesContainer(true);
                 }
             }
+
         }
     }
 
