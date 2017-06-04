@@ -17,6 +17,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.rocdev.guardianreader.utils.ArticleAdMobAdapter;
 import com.rocdev.guardianreader.utils.ArticleAdapter;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
@@ -39,10 +43,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private View noSavedArticlesContainer;
     private Button moreButton;
     private List<Article> articles;
-    private ArticleAdapter adapter;
+    private ArticleAdMobAdapter adapter;
     private OnFragmentInteractionListener mListener;
     private boolean hasMoreButton;
     private int listPosition;
+    private AdView ad;
 
 
     /**
@@ -76,7 +81,10 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         if (getArguments() != null) {
             articles = getArguments().getParcelableArrayList("articles");
             listPosition = getArguments().getInt("listPosition");
-            adapter = new ArticleAdapter(getActivity(), articles);
+            ad = new AdView(getContext());
+            ad.setAdSize(AdSize.BANNER);
+            ad.setAdUnitId(getString(R.string.banner_ad_unit_id));
+
             hasMoreButton = getArguments().getBoolean("hasMoreButton");
         }
     }
@@ -98,6 +106,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private void initViews(View view) {
         listContainer = view.findViewById(R.id.listContainer);
         listView = (ListView) view.findViewById(R.id.listView);
+        adapter = new ArticleAdMobAdapter(getContext(), articles, ad);
         listView.setAdapter(adapter);
 
         //scroll to correct listposition on screen rotation

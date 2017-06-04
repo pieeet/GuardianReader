@@ -29,6 +29,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.MobileAds;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobileAds.initialize(this, getString(R.string.banner_ad_unit_id));
         onPaused = false;
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
