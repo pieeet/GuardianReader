@@ -5,9 +5,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.widget.Toast;
 
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
+import com.rocdev.guardianreader.models.Section;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -141,13 +143,31 @@ public class QueryUtils {
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_URL, article.getUrl());
         contentValues.put(Contract.ArticleEntry.COLUMN_THUMB_URL, article.getThumbUrl());
         Uri uri = context.getContentResolver().insert(Contract.ArticleEntry.CONTENT_URI, contentValues);
+
+        long id = ContentUris.parseId(uri);
+        if (id < 1) {
+            Toast.makeText(context, "Error with saving article", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Article saved succefully", Toast.LENGTH_SHORT).show();
+            article.set_ID(id);
+        }
+
         return ContentUris.parseId(uri);
     }
 
     public static int deleteArticle(Article article, Context context) {
         Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
                 String.valueOf(article.get_ID()));
-        return context.getContentResolver().delete(uri, null, null);
+
+        int deletedRows = context.getContentResolver().delete(uri, null, null);
+
+        if (deletedRows < 1) {
+            Toast.makeText(context, "Error with deleting article", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Deleted article", Toast.LENGTH_SHORT).show();
+
+        }
+        return deletedRows;
     }
 
 
