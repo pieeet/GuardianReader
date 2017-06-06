@@ -384,9 +384,37 @@ public class MainActivity extends AppCompatActivity
                 currentPage = 1;
                 navigationView.getMenu().getItem(currentSection).setChecked(true);
                 refreshUI();
+                break;
+            case R.id.action_guardian_app:
+                startGuardianAppDialog();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    private void startGuardianAppDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Guardian App")
+                .setMessage("This app works very well together with the app from The Guardian. " +
+                        "Would you like to install it?")
+                .setIcon(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_shop_black_18dp, null))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=com.guardian")));
+                    }
+                })
+                .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {}
+                }).show();
+    }
+
+
+
 
     private void showProgressAnimations() {
         articlesFragment.showProgressContainer(true);
