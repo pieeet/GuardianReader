@@ -353,6 +353,11 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.google_play_url)));
                 startActivity(browserIntent);
                 break;
+            case R.id.action_saved_articles:
+                currentSection = Section.SAVED.ordinal();
+                isNewList = true;
+                currentPage = 1;
+                refreshUI();
         }
         return super.onOptionsItemSelected(item);
     }

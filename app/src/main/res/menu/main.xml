@@ -9,10 +9,18 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_rate"
+        android:id="@+id/action_saved_articles"
         android:orderInCategory="200"
+        android:title="Saved articles"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_rate"
+        android:orderInCategory="300"
         android:title="Rate app"
         app:showAsAction="never" />
+
+
 
     <item android:id="@+id/action_search"
         android:title="Search"

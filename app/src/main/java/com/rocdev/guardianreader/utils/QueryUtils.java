@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
-import com.rocdev.guardianreader.models.Section;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
  * This class is only meant to hold static variables and methods
  */
 
-public class QueryUtils {
+class QueryUtils {
 
     private static final String RESPONSE = "response";
     private static final String EDITOR_PICKS = "editorsPicks";
@@ -135,7 +134,7 @@ public class QueryUtils {
         return articles;
     }
 
-    public static long insertArticle(Article article, Context context) {
+    static long insertArticle(Article article, Context context) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
@@ -155,7 +154,7 @@ public class QueryUtils {
         return ContentUris.parseId(uri);
     }
 
-    public static int deleteArticle(Article article, Context context) {
+    static int deleteArticle(Article article, Context context) {
         Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
                 String.valueOf(article.get_ID()));
 

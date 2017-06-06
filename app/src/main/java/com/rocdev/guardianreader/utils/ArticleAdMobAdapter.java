@@ -38,8 +38,6 @@ import static com.rocdev.guardianreader.R.id.titleTextView;
  */
 
 public class ArticleAdMobAdapter extends BaseAdapter {
-    private static final int FIRST_ADD_POSITION = 9;
-    private static final int ADD_INTERVAL = 10;
     private static final String EMPTY_STRING = "";
     private static final String DATE_FORMAT_IN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final String DATE_FORMAT_OUT = "d MMMM yyyy HH:mm";
@@ -144,7 +142,10 @@ public class ArticleAdMobAdapter extends BaseAdapter {
             Article article = item.article;
             setListItemData(holder, article);
         } else if (type == ItemWrapper.TYPE_AD) {
-            AdRequest adRequest = new AdRequest.Builder().build();
+            AdRequest adRequest = new AdRequest.Builder()
+                    //TODO remove before production
+                    .addTestDevice("211FE69AEAB7D31887757EB42F4B4FE7")
+                    .build();
             holder.adView.setAdListener(new AdLoadListener(holder));
             holder.adView.loadAd(adRequest);
         }
