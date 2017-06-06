@@ -6,6 +6,7 @@
     <color name="colorGuardianBlue">#005689</color>
     <color name="colorTextListitemTitle">#07334c</color>
     <color name="sidebar_text">#FFFFFF</color>
+    <color name="grey_background">#d7e1f2</color>
 
 
 </resources>

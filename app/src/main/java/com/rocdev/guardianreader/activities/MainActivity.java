@@ -31,12 +31,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.MobileAds;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
+import com.rocdev.guardianreader.utils.ArticleAdMobAdapter;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
-import com.rocdev.guardianreader.utils.QueryUtils;
 import com.rocdev.guardianreader.utils.Secret;
 
 import java.util.ArrayList;
@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity
         LoaderManager.LoaderCallbacks<List<Article>>,
         ArticlesFragment.OnFragmentInteractionListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        SectionsFragment.SectionsFragmentListener {
+        SectionsFragment.SectionsFragmentListener,
+        ArticleAdMobAdapter.ArticleAdMobAdapterListener {
 
     /*******************************
      * STATIC
@@ -464,27 +465,6 @@ public class MainActivity extends AppCompatActivity
         getLoaderManager().destroyLoader(loaderId);
     }
 
-    @Override
-    public void onArticleClicked(Article article) {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
-    }
-
-    @Override
-    public void onArticleLongClicked(Article article) {
-        if (article.get_ID() == -1) {
-            QueryUtils.insertArticle(article, this);
-        } else {
-            QueryUtils.deleteArticle(article, this);
-            if (currentSection == Section.SAVED.ordinal()) {
-                articles.remove(article);
-                articlesFragment.notifyArticlesChanged(false, isEditorsPicks /* no morebutton */);
-                if (articles.isEmpty()) {
-                    articlesFragment.showNoSavedArticlesContainer(true);
-                }
-            }
-
-        }
-    }
 
     @Override
     public void saveListPosition(int position) {
@@ -533,4 +513,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void removeSavedArticle(Article article) {
+        if (currentSection == Section.SAVED.ordinal()) {
+            for (Article a: articles) {
+                if (a.equals(article)) {
+                    articles.remove(a);
+                    break;
+                }
+            }
+            if (articles.isEmpty()) {
+                articlesFragment.showNoSavedArticlesContainer(true);
+            }
+            articlesFragment.notifyArticlesChanged(true, true);
+        }
+
+
+    }
 }

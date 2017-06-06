@@ -1,27 +1,21 @@
 package com.rocdev.guardianreader.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.rocdev.guardianreader.utils.ArticleAdMobAdapter;
-import com.rocdev.guardianreader.utils.ArticleAdapter;
+//import com.rocdev.guardianreader.utils.ArticleAdapter;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 
@@ -37,7 +31,6 @@ import java.util.List;
  */
 public class ArticlesFragment extends Fragment implements AbsListView.OnScrollListener {
 
-    private View listContainer;
     private ListView listView;
     private View progressContainer;
     private View noSavedArticlesContainer;
@@ -47,14 +40,12 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     private OnFragmentInteractionListener mListener;
     private boolean hasMoreButton;
     private int listPosition;
-    private AdView ad;
-
+    private boolean isLoading; /*prevent more button appearing while loading due to scroll listener*/
 
     /**
      * required (Framework) empty constructor
      */
-    public ArticlesFragment() {
-    }
+    public ArticlesFragment() {}
 
 
     /**
@@ -81,10 +72,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         if (getArguments() != null) {
             articles = getArguments().getParcelableArrayList("articles");
             listPosition = getArguments().getInt("listPosition");
-            ad = new AdView(getContext());
-            ad.setAdSize(AdSize.BANNER);
-            ad.setAdUnitId(getString(R.string.banner_ad_unit_id));
-
             hasMoreButton = getArguments().getBoolean("hasMoreButton");
         }
     }
@@ -104,9 +91,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * @param view the root view
      */
     private void initViews(View view) {
-        listContainer = view.findViewById(R.id.listContainer);
+        AdView adView = new AdView(getContext());
+        adView.setAdSize(AdSize.BANNER);
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
         listView = (ListView) view.findViewById(R.id.listView);
-        adapter = new ArticleAdMobAdapter(getContext(), articles, ad);
+        adapter = new ArticleAdMobAdapter(getContext(), articles, adView);
         listView.setAdapter(adapter);
 
         //scroll to correct listposition on screen rotation
@@ -132,26 +121,14 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * initializes listeners
      */
     private void initListeners() {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                onArticleClicked(articles.get(i));
-            }
-        });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                return onArticleLongClicked(articles.get(i));
-            }
-        });
         listView.setOnScrollListener(this);
         moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showMoreButton(false);
                 onMoreArticles();
             }
         });
-
     }
 
 
@@ -169,11 +146,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * @param isEditorPicks if true hide moreButton
      */
     public void notifyArticlesChanged(boolean isNewList, boolean isEditorPicks) {
+        isLoading = false;
         hasMoreButton = !isEditorPicks;
         showMoreButton(false);
         adapter.notifyDataSetChanged();
         progressContainer.setVisibility(View.GONE);
-        listContainer.setVisibility(View.VISIBLE);
         if (isNewList) {
             listPosition = 0;
             listView.smoothScrollToPosition(listPosition);
@@ -216,63 +193,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         }
     }
 
-
-    /**
-     * Invokes going to article in browser or Guardian App (if installed)
-     *
-     * @param article the selected article
-     */
-    public void onArticleClicked(Article article) {
-        if (null != mListener) {
-            mListener.onArticleClicked(article);
-        }
-    }
-
-    public boolean onArticleLongClicked(final Article article) {
-        if (null != mListener) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            String title;
-            String message;
-            Drawable icon;
-            if (article.get_ID() == -1) {
-                title = "Save article";
-                message = "Do you want to save this article?";
-                icon = ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.ic_archive_black_18dp, null);
-
-            } else {
-                title = "Delete article";
-                message = "Do you want to delete this article from your saved list? " +
-                        "This cannot be undone.";
-                icon = ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.ic_unarchive_black_18dp, null);
-            }
-            builder
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mListener.onArticleLongClicked(article);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // do nothing
-                        }
-                    })
-                    .setIcon(icon)
-                    .show();
-        }
-        return true;
-    }
-
-
     /**
      * invokes loading more articles
      */
     public void onMoreArticles() {
+        isLoading = true;
         if (mListener != null) {
             mListener.onMoreArticles();
         }
@@ -323,7 +248,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         if (absListView.getId() == listView.getId() && hasMoreButton && !articles.isEmpty()) {
             int lastItem = firstVisibleItem + visibleItemCount;
             if (lastItem >= totalItemCount) {
-                showMoreButton(true);
+                if (!isLoading) showMoreButton(true);
             } else {
                 showMoreButton(false);
             }
@@ -342,10 +267,6 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // DONE: Update argument type and name
-        void onArticleClicked(Article article);
-
-        void onArticleLongClicked(Article article);
 
         void saveListPosition(int position);
 
