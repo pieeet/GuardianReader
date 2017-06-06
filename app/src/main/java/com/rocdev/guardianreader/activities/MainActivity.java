@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             initInstanceState();
         }
+        navigationView.getMenu().getItem(currentSection).setChecked(true);
         initFragments();
         if (articles.isEmpty()) {
             refreshUI();
@@ -147,6 +148,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         setUpNavBarSections();
     }
 
@@ -357,6 +359,7 @@ public class MainActivity extends AppCompatActivity
                 currentSection = Section.SAVED.ordinal();
                 isNewList = true;
                 currentPage = 1;
+                navigationView.getMenu().getItem(currentSection).setChecked(true);
                 refreshUI();
         }
         return super.onOptionsItemSelected(item);
