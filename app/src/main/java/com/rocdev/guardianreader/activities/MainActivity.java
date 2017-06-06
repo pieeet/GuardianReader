@@ -2,6 +2,7 @@ package com.rocdev.guardianreader.activities;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -15,9 +16,11 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             initInstanceState();
         }
-        navigationView.getMenu().getItem(currentSection).setChecked(true);
+
         initFragments();
         if (articles.isEmpty()) {
             refreshUI();
@@ -218,6 +221,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        navigationView.getMenu().getItem(currentSection).setChecked(true);
         if (onPaused) {
             long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
             long currentTime = new GregorianCalendar().getTimeInMillis();
@@ -316,9 +320,28 @@ public class MainActivity extends AppCompatActivity
         if (!isTwoPane) {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) drawer.closeDrawer(GravityCompat.START);
-            else super.onBackPressed();
+            else closeAppWithConfirm();
+        } else closeAppWithConfirm();
+    }
 
-        } else super.onBackPressed();
+    private void closeAppWithConfirm() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setTitle("Close app")
+                .setMessage("Are you sure you want to close the app?.")
+                .setIcon(ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_warning_black_18dp, null))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {}
+                })
+                .show();
     }
 
 
