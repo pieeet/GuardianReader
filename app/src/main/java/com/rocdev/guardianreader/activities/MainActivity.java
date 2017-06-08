@@ -221,7 +221,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        navigationView.getMenu().getItem(currentSection).setChecked(true);
+        if (!isTwoPane) {
+            navigationView.getMenu().getItem(currentSection).setChecked(true);
+        }
         if (onPaused) {
             long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
             long currentTime = new GregorianCalendar().getTimeInMillis();
@@ -339,7 +341,8 @@ public class MainActivity extends AppCompatActivity
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {}
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
                 })
                 .show();
     }
@@ -409,11 +412,10 @@ public class MainActivity extends AppCompatActivity
                 })
                 .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {}
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
                 }).show();
     }
-
-
 
 
     private void showProgressAnimations() {
@@ -524,12 +526,10 @@ public class MainActivity extends AppCompatActivity
         getLoaderManager().destroyLoader(loaderId);
     }
 
-
     @Override
     public void saveListPosition(int position) {
         listPosition = position;
     }
-
 
     @Override
     public void onMoreArticles() {
@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void removeSavedArticle(Article article) {
         if (currentSection == Section.SAVED.ordinal()) {
-            for (Article a: articles) {
+            for (Article a : articles) {
                 if (a.equals(article)) {
                     articles.remove(a);
                     break;
@@ -586,7 +586,5 @@ public class MainActivity extends AppCompatActivity
             }
             articlesFragment.notifyArticlesChanged(true, true);
         }
-
-
     }
 }
