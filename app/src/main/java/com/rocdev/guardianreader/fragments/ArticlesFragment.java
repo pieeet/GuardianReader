@@ -5,22 +5,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+
+
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+
 import android.widget.Button;
-import android.widget.ListView;
 
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.rocdev.guardianreader.utils.ArticleAdMobAdapter;
-//import com.rocdev.guardianreader.utils.ArticleAdapter;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
+import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 /**
@@ -29,14 +32,17 @@ import java.util.List;
  * {@link ArticlesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class ArticlesFragment extends Fragment implements AbsListView.OnScrollListener {
+public class ArticlesFragment extends Fragment {
 
-    private ListView listView;
+//    private ListView listView;
+    private RecyclerView mRecyclerView;
     private View progressContainer;
     private View noSavedArticlesContainer;
     private Button moreButton;
     private List<Article> articles;
-    private ArticleAdMobAdapter adapter;
+//    private ArticleAdMobAdapter adapter;
+    private ArticleAdMobRecyclerAdapter adapter;
+    RecyclerView.LayoutManager mLayoutManager;
     private OnFragmentInteractionListener mListener;
     private boolean hasMoreButton;
     private int listPosition;
@@ -79,7 +85,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_articles, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_articles_recycler_view, container, false);
         initViews(rootView);
         initListeners();
         return rootView;
@@ -94,16 +100,20 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         AdView adView = new AdView(getContext());
         adView.setAdSize(AdSize.BANNER);
         adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
-        listView = (ListView) view.findViewById(R.id.listView);
-        adapter = new ArticleAdMobAdapter(getContext(), articles, adView);
-        listView.setAdapter(adapter);
+        //listView = (ListView) view.findViewById(R.id.listView);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        //adapter = new ArticleAdMobAdapter(getContext(), articles, adView);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        adapter = new ArticleAdMobRecyclerAdapter(getContext(), articles, adView);
+        mRecyclerView.setAdapter(adapter);
 
         //scroll to correct listposition on screen rotation
         if (listPosition > 0) {
-            listView.post(new Runnable() {
+            mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    listView.smoothScrollToPosition(listPosition);
+                    mRecyclerView.smoothScrollToPosition(listPosition);
 
                 }
             });
@@ -121,7 +131,33 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
      * initializes listeners
      */
     private void initListeners() {
-        listView.setOnScrollListener(this);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                int visibleItemCount = recyclerView.getChildCount();
+                LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                int firstVisibleItem = lm.findFirstVisibleItemPosition();
+                int totalItemCount = lm.getItemCount();
+                if (firstVisibleItem != 0) {
+                    listPosition = firstVisibleItem + visibleItemCount;
+                }
+
+                if (hasMoreButton && !articles.isEmpty()) {
+                    int lastItem = firstVisibleItem + visibleItemCount;
+                    if (lastItem >= totalItemCount) {
+                        if (!isLoading) showMoreButton(true);
+                    } else {
+                        showMoreButton(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
         moreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,11 +185,11 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
         isLoading = false;
         hasMoreButton = !isEditorPicks;
         showMoreButton(false);
-        adapter.notifyDataSetChanged();
+        adapter.notifyAdapterDataSetChanged(articles);
         progressContainer.setVisibility(View.GONE);
         if (isNewList) {
             listPosition = 0;
-            listView.smoothScrollToPosition(listPosition);
+            mRecyclerView.smoothScrollToPosition(listPosition);
         }
     }
 
@@ -222,38 +258,7 @@ public class ArticlesFragment extends Fragment implements AbsListView.OnScrollLi
     }
 
 
-    /*******************************
-     * OnScrollListener methods
-     *******************************/
 
-    @Override
-    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-    }
-
-    /**
-     * Shows or hides the more articles button
-     *
-     * @param absListView      the listview
-     * @param firstVisibleItem first visible listitem
-     * @param visibleItemCount number of visible items
-     * @param totalItemCount   total number of items
-     */
-    @Override
-    public void onScroll(AbsListView absListView, int firstVisibleItem,
-                         int visibleItemCount, int totalItemCount) {
-        if (firstVisibleItem != 0) {
-            listPosition = firstVisibleItem + visibleItemCount;
-        }
-
-        if (absListView.getId() == listView.getId() && hasMoreButton && !articles.isEmpty()) {
-            int lastItem = firstVisibleItem + visibleItemCount;
-            if (lastItem >= totalItemCount) {
-                if (!isLoading) showMoreButton(true);
-            } else {
-                showMoreButton(false);
-            }
-        }
-    }
 
 
     /**

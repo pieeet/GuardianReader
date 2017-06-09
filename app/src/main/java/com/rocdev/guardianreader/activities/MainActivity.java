@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.google.android.gms.ads.MobileAds;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleAdMobAdapter;
+import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
 import com.rocdev.guardianreader.R;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity
         ArticlesFragment.OnFragmentInteractionListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
         SectionsFragment.SectionsFragmentListener,
-        ArticleAdMobAdapter.ArticleAdMobAdapterListener {
+        ArticleAdMobRecyclerAdapter.ArticleAdMobRecyclerAdapterListener {
 
     /*******************************
      * STATIC
@@ -117,7 +118,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             initInstanceState();
         }
-
         initFragments();
         if (articles.isEmpty()) {
             refreshUI();
@@ -151,7 +151,6 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         setUpNavBarSections();
     }
 
