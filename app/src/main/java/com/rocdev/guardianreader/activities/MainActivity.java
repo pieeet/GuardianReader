@@ -34,7 +34,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.MobileAds;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
-import com.rocdev.guardianreader.utils.ArticleAdMobAdapter;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
@@ -75,6 +74,8 @@ public class MainActivity extends AppCompatActivity
     private static final String PARAM_NAME_QUERY = "q";
     private static final String PREF_DEFAULT_EDITION_IF_UNSET = "3";
     private static final String KEY_PAUSE_TIME = "pauseTime";
+    private static final int TIME_REFRESH_INTERVAL = 1000 * 60 * 15;
+    private static final int TIME_POST_DELAYED = 2000;
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO change before production
         MobileAds.initialize(this, getString(R.string.banner_ad_unit_id));
         onPaused = false;
         titles = getResources().getStringArray(R.array.titles);
@@ -228,7 +230,7 @@ public class MainActivity extends AppCompatActivity
             long currentTime = new GregorianCalendar().getTimeInMillis();
             long timePassed = currentTime - pauseTime;
             // refresh if pause > 15 minutes
-            if (!checkConnection() || timePassed > (1000 * 60 * 15)) {
+            if (!checkConnection() || timePassed > TIME_REFRESH_INTERVAL) {
                 Toast.makeText(this, "Refreshing articles...", Toast.LENGTH_SHORT).show();
                 isNewList = true;
                 currentPage = 1;
@@ -296,7 +298,7 @@ public class MainActivity extends AppCompatActivity
                             refreshUI();
                         }
                     }
-                }, 2000);
+                }, TIME_POST_DELAYED);
             }
         }
         if (getSupportActionBar() != null) {

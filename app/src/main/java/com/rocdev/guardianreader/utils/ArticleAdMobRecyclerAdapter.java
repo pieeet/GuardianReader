@@ -8,10 +8,10 @@ import android.net.Uri;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,13 +46,16 @@ public class ArticleAdMobRecyclerAdapter extends
     private ArrayList<ItemWrapper> wrappedItems;
     private List<Article> articles;
     private AdView adView;
+    private Button moreButton;
     private Context context;
     private boolean articleIsSaved;
     private ArticleAdMobRecyclerAdapterListener mListener;
     private int currentAdPosition;
+    private boolean hasMoreButton;
 
 
-    public ArticleAdMobRecyclerAdapter(Context context, List<Article> articles, AdView adView) {
+    public ArticleAdMobRecyclerAdapter(Context context, List<Article> articles,
+                                       AdView adView, boolean hasMoreButton) {
         this.adView = adView;
         this.articles = articles;
         this.context = context;
@@ -63,32 +66,34 @@ public class ArticleAdMobRecyclerAdapter extends
                     "ArticleAdMobRecyclerAdapterListener");
         }
         wrappedItems = new ArrayList<>();
-        fillWrappedItems();
-        wrappedItems.add(new ItemWrapper(adView));
+        fillWrappedItems(hasMoreButton);
+
     }
 
 
-    public void notifyAdapterDataSetChanged(List<Article> articles) {
-        this.articles = articles;
+
+
+    public void notifyAdapterDataSetChanged(boolean hasMoreButton) {
         wrappedItems.clear();
         currentAdPosition = 0;
-        fillWrappedItems();
-        notifyDataSetChanged();
+        this.hasMoreButton = hasMoreButton;
+        fillWrappedItems(hasMoreButton);
+        super.notifyDataSetChanged();
+
     }
 
-    private void fillWrappedItems() {
+    private void fillWrappedItems(boolean hasMoreButton) {
         for (Article article : articles) {
             wrappedItems.add(new ItemWrapper(article));
         }
         if (!wrappedItems.isEmpty()) {
-
-                wrappedItems.remove(currentAdPosition);
-
+            wrappedItems.remove(currentAdPosition);
             currentAdPosition = wrappedItems.size();
             wrappedItems.add(currentAdPosition, new ItemWrapper(adView));
-
+            if (hasMoreButton) {
+                wrappedItems.add(currentAdPosition + 1, new ItemWrapper(moreButton));
+            }
         }
-
     }
 
 
@@ -101,10 +106,13 @@ public class ArticleAdMobRecyclerAdapter extends
                 View article = inflater.inflate(R.layout.article_list_item, parent, false);
                 return new ItemViewHolder(article);
             case ItemWrapper.TYPE_AD:
-                //fall through
-            default:
                 View ad = inflater.inflate(R.layout.ad_list_item, parent, false);
                 return new AdViewHolder(ad);
+            case ItemWrapper.TYPE_BUTTON:
+                // fall through
+            default:
+                View button = inflater.inflate(R.layout.more_button_list_item, parent, false);
+                return new ButtonViewHolder(button);
         }
     }
 
@@ -193,6 +201,15 @@ public class ArticleAdMobRecyclerAdapter extends
                         .build();
                 adViewHolder.adView.setAdListener(new AdLoadListener(adViewHolder));
                 adViewHolder.adView.loadAd(adRequest);
+                break;
+            case ItemWrapper.TYPE_BUTTON:
+                ButtonViewHolder buttonViewHolder = (ButtonViewHolder) holder;
+                buttonViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mListener.onMoreArticles();
+                    }
+                });
         }
     }
 
@@ -235,6 +252,7 @@ public class ArticleAdMobRecyclerAdapter extends
     private static class AdViewHolder extends RecyclerView.ViewHolder {
         AdView adView;
         ImageView placeholder;
+
         AdViewHolder(View itemView) {
             super(itemView);
             this.adView = (AdView) itemView.findViewById(R.id.adView);
@@ -242,14 +260,25 @@ public class ArticleAdMobRecyclerAdapter extends
         }
     }
 
+    private static class ButtonViewHolder extends RecyclerView.ViewHolder {
+        Button button;
+
+        ButtonViewHolder(View itemView) {
+            super(itemView);
+            this.button = (Button) itemView.findViewById(R.id.moreButton);
+
+        }
+    }
+
 
     private class ItemWrapper {
         static final int TYPE_NORMAL = 0;
         static final int TYPE_AD = 1;
-        static final int TYPE_COUNT = 2;
+        static final int TYPE_BUTTON = 2;
 
         Article article;
         AdView adItem;
+        Button button;
         int type;
 
         ItemWrapper(Article article) {
@@ -260,6 +289,11 @@ public class ArticleAdMobRecyclerAdapter extends
         ItemWrapper(AdView adView) {
             this.type = TYPE_AD;
             this.adItem = adView;
+        }
+
+        ItemWrapper(Button button) {
+            this.type = TYPE_BUTTON;
+            this.button = button;
         }
     }
 
@@ -282,7 +316,10 @@ public class ArticleAdMobRecyclerAdapter extends
 
     public interface ArticleAdMobRecyclerAdapterListener {
         void removeSavedArticle(Article article);
+        void onMoreArticles();
     }
+
+
 
 
 }

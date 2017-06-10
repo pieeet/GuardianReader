@@ -24,6 +24,7 @@ import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rocdev.guardianreader.R.id.moreButton;
 
 
 /**
@@ -38,7 +39,6 @@ public class ArticlesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private View progressContainer;
     private View noSavedArticlesContainer;
-    private Button moreButton;
     private List<Article> articles;
 //    private ArticleAdMobAdapter adapter;
     private ArticleAdMobRecyclerAdapter adapter;
@@ -87,7 +87,6 @@ public class ArticlesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_articles_recycler_view, container, false);
         initViews(rootView);
-        initListeners();
         return rootView;
     }
 
@@ -105,7 +104,7 @@ public class ArticlesFragment extends Fragment {
         //adapter = new ArticleAdMobAdapter(getContext(), articles, adView);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        adapter = new ArticleAdMobRecyclerAdapter(getContext(), articles, adView);
+        adapter = new ArticleAdMobRecyclerAdapter(getContext(), articles, adView, hasMoreButton);
         mRecyclerView.setAdapter(adapter);
 
         //scroll to correct listposition on screen rotation
@@ -120,52 +119,12 @@ public class ArticlesFragment extends Fragment {
         }
         progressContainer = view.findViewById(R.id.progressContainer);
         noSavedArticlesContainer = view.findViewById(R.id.noSavedArticlesContainer);
-        moreButton = (Button) view.findViewById(R.id.moreButton);
-        moreButton.setVisibility(View.GONE);
         if (!articles.isEmpty()) {
             showProgressContainer(false);
         }
     }
 
-    /**
-     * initializes listeners
-     */
-    private void initListeners() {
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                int visibleItemCount = recyclerView.getChildCount();
-                LinearLayoutManager lm = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-                int firstVisibleItem = lm.findFirstVisibleItemPosition();
-                int totalItemCount = lm.getItemCount();
-                if (firstVisibleItem != 0) {
-                    listPosition = firstVisibleItem + visibleItemCount;
-                }
 
-                if (hasMoreButton && !articles.isEmpty()) {
-                    int lastItem = firstVisibleItem + visibleItemCount;
-                    if (lastItem >= totalItemCount) {
-                        if (!isLoading) showMoreButton(true);
-                    } else {
-                        showMoreButton(false);
-                    }
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
-        moreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showMoreButton(false);
-                onMoreArticles();
-            }
-        });
-    }
 
 
     @Override
@@ -184,8 +143,7 @@ public class ArticlesFragment extends Fragment {
     public void notifyArticlesChanged(boolean isNewList, boolean isEditorPicks) {
         isLoading = false;
         hasMoreButton = !isEditorPicks;
-        showMoreButton(false);
-        adapter.notifyAdapterDataSetChanged(articles);
+        adapter.notifyAdapterDataSetChanged(hasMoreButton);
         progressContainer.setVisibility(View.GONE);
         if (isNewList) {
             listPosition = 0;
@@ -200,8 +158,7 @@ public class ArticlesFragment extends Fragment {
             } else {
                 progressContainer.setVisibility(View.GONE);
             }
-        } catch (NullPointerException ignored) {
-        }
+        } catch (NullPointerException ignored) {}
     }
 
     public void showNoSavedArticlesContainer(boolean show) {
@@ -212,22 +169,7 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
-    /**
-     * toggles more articles button
-     *
-     * @param show true show, false hide
-     */
-    protected void showMoreButton(boolean show) {
-        try {
-            if (show) {
-                moreButton.setVisibility(View.VISIBLE);
-            } else {
-                moreButton.setVisibility(View.GONE);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     /**
      * invokes loading more articles
@@ -235,7 +177,6 @@ public class ArticlesFragment extends Fragment {
     public void onMoreArticles() {
         isLoading = true;
         if (mListener != null) {
-            mListener.onMoreArticles();
         }
     }
 
@@ -272,9 +213,6 @@ public class ArticlesFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-
         void saveListPosition(int position);
-
-        void onMoreArticles();
     }
 }
