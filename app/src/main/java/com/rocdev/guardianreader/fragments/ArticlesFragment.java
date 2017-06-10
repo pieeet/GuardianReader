@@ -39,6 +39,7 @@ public class ArticlesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private View progressContainer;
     private View noSavedArticlesContainer;
+    private View listContainer;
     private List<Article> articles;
 //    private ArticleAdMobAdapter adapter;
     private ArticleAdMobRecyclerAdapter adapter;
@@ -106,6 +107,7 @@ public class ArticlesFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         adapter = new ArticleAdMobRecyclerAdapter(getContext(), articles, adView, hasMoreButton);
         mRecyclerView.setAdapter(adapter);
+        listContainer = view.findViewById(R.id.listContainer);
 
         //scroll to correct listposition on screen rotation
         if (listPosition > 0) {
@@ -117,6 +119,7 @@ public class ArticlesFragment extends Fragment {
                 }
             });
         }
+
         progressContainer = view.findViewById(R.id.progressContainer);
         noSavedArticlesContainer = view.findViewById(R.id.noSavedArticlesContainer);
         if (!articles.isEmpty()) {
@@ -144,11 +147,21 @@ public class ArticlesFragment extends Fragment {
         isLoading = false;
         hasMoreButton = !isEditorPicks;
         adapter.notifyAdapterDataSetChanged(hasMoreButton);
-        progressContainer.setVisibility(View.GONE);
+        showProgressContainer(false);
         if (isNewList) {
             listPosition = 0;
             mRecyclerView.smoothScrollToPosition(listPosition);
         }
+    }
+
+    public void showListContainer(boolean show) {
+        try {
+            if (show) {
+                listContainer.setVisibility(View.VISIBLE);
+            } else {
+                listContainer.setVisibility(View.INVISIBLE);
+            }
+        } catch (NullPointerException ignored) {}
     }
 
     public void showProgressContainer(boolean show) {

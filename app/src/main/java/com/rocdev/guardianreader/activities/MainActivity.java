@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -41,6 +42,7 @@ import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.Secret;
+import com.rocdev.guardianreader.utils.QueryUtils;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -121,9 +123,7 @@ public class MainActivity extends AppCompatActivity
             initInstanceState();
         }
         initFragments();
-        if (articles.isEmpty()) {
-            refreshUI();
-        }
+
     }
 
     private void setPreferences() {
@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity
         listPosition = 0;
         // the section that is shown on app start
         currentSection = defaultEdition;
+        isNewList = true;
     }
 
     private void initFragments() {
@@ -235,6 +236,11 @@ public class MainActivity extends AppCompatActivity
                 isNewList = true;
                 currentPage = 1;
                 articles.clear();
+                refreshUI();
+            }
+        } else {
+            if (articles.isEmpty()) {
+                isNewList = true;
                 refreshUI();
             }
         }
@@ -386,7 +392,10 @@ public class MainActivity extends AppCompatActivity
                 currentSection = Section.SAVED.ordinal();
                 isNewList = true;
                 currentPage = 1;
-                navigationView.getMenu().getItem(currentSection).setChecked(true);
+                if (!isTwoPane) {
+                    navigationView.getMenu().getItem(currentSection).setChecked(true);
+                }
+
                 refreshUI();
                 break;
             case R.id.action_guardian_app:
@@ -421,6 +430,9 @@ public class MainActivity extends AppCompatActivity
 
     private void showProgressAnimations() {
         articlesFragment.showProgressContainer(true);
+        if (isNewList) {
+            articlesFragment.showListContainer(false);
+        }
         startRefreshButtonAnimation();
     }
 
@@ -519,6 +531,7 @@ public class MainActivity extends AppCompatActivity
         articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                 && articles.isEmpty());
         articlesFragment.showProgressContainer(false);
+        articlesFragment.showListContainer(true);
         onLoaderReset(mLoader);
     }
 
@@ -534,11 +547,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMoreArticles() {
+        isNewList = false;
         showProgressAnimations();
         if (checkConnection()) {
             currentPage++;
             loaderId++;
-            isNewList = false;
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
             refreshUI();
@@ -573,8 +586,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void removeSavedArticle(Article article) {
+
+    private void removeSavedArticle(Article article) {
         if (currentSection == Section.SAVED.ordinal()) {
             for (Article a : articles) {
                 if (a.equals(article)) {
@@ -587,5 +600,53 @@ public class MainActivity extends AppCompatActivity
             }
             articlesFragment.notifyArticlesChanged(true, true);
         }
+    }
+
+    boolean articleIsSaved;
+
+    @Override
+    public boolean onItemLongClicked(final Article article) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String title = "";
+        String message = "";
+        Drawable icon = null;
+
+        if (article != null) {
+            if (article.get_ID() == -1) {
+                articleIsSaved = false;
+                title = "Save article";
+                message = "Do you want to save this article?";
+                icon = ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_archive_black_18dp, null);
+            } else {
+                articleIsSaved = true;
+                title = "Delete article";
+                message = "Do you want to delete this article from your saved articles list? " +
+                        "This cannot be undone.";
+                icon = ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.ic_unarchive_black_18dp, null);
+            }
+        }
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (articleIsSaved) {
+                            QueryUtils.deleteArticle(article, MainActivity.this);
+                            removeSavedArticle(article);
+                        } else {
+                            QueryUtils.insertArticle(article, MainActivity.this);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                })
+                .setIcon(icon)
+                .show();
+        return true;
     }
 }

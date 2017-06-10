@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * This class is only meant to hold static variables and methods
  */
 
-class QueryUtils {
+public class QueryUtils {
 
     private static final String RESPONSE = "response";
     private static final String EDITOR_PICKS = "editorsPicks";
@@ -134,7 +134,7 @@ class QueryUtils {
         return articles;
     }
 
-    static long insertArticle(Article article, Context context) {
+    public static long insertArticle(Article article, Context context) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
@@ -154,7 +154,7 @@ class QueryUtils {
         return ContentUris.parseId(uri);
     }
 
-    static int deleteArticle(Article article, Context context) {
+    public static int deleteArticle(Article article, Context context) {
         Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
                 String.valueOf(article.get_ID()));
 

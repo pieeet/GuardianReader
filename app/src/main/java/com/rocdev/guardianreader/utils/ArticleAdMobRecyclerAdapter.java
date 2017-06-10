@@ -32,7 +32,6 @@ import java.util.TimeZone;
 
 /**
  * Created by piet on 08-06-17.
- *
  */
 
 public class ArticleAdMobRecyclerAdapter extends
@@ -67,11 +66,7 @@ public class ArticleAdMobRecyclerAdapter extends
         }
         wrappedItems = new ArrayList<>();
         fillWrappedItems(hasMoreButton);
-
     }
-
-
-
 
     public void notifyAdapterDataSetChanged(boolean hasMoreButton) {
         wrappedItems.clear();
@@ -86,14 +81,12 @@ public class ArticleAdMobRecyclerAdapter extends
         for (Article article : articles) {
             wrappedItems.add(new ItemWrapper(article));
         }
-        if (!wrappedItems.isEmpty()) {
-            wrappedItems.remove(currentAdPosition);
-            currentAdPosition = wrappedItems.size();
-            wrappedItems.add(currentAdPosition, new ItemWrapper(adView));
-            if (hasMoreButton) {
-                wrappedItems.add(currentAdPosition + 1, new ItemWrapper(moreButton));
-            }
+        currentAdPosition = wrappedItems.size();
+        wrappedItems.add(currentAdPosition, new ItemWrapper(adView));
+        if (hasMoreButton) {
+            wrappedItems.add(currentAdPosition + 1, new ItemWrapper(moreButton));
         }
+
     }
 
 
@@ -146,49 +139,7 @@ public class ArticleAdMobRecyclerAdapter extends
                 itemViewHolder.container.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        String title = "";
-                        String message = "";
-                        Drawable icon = null;
-                        if (article != null) {
-                            if (article.get_ID() == -1) {
-                                articleIsSaved = false;
-                                title = "Save article";
-                                message = "Do you want to save this article?";
-                                icon = ResourcesCompat.getDrawable(context.getResources(),
-                                        R.drawable.ic_archive_black_18dp, null);
-                            } else {
-                                articleIsSaved = true;
-                                title = "Delete article";
-                                message = "Do you want to delete this article from your saved articles list? " +
-                                        "This cannot be undone.";
-                                icon = ResourcesCompat.getDrawable(context.getResources(),
-                                        R.drawable.ic_unarchive_black_18dp, null);
-                            }
-                        }
-                        builder
-                                .setTitle(title)
-                                .setMessage(message)
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        if (articleIsSaved) {
-                                            QueryUtils.deleteArticle(article, context);
-                                            mListener.removeSavedArticle(article);
-                                        } else {
-                                            QueryUtils.insertArticle(article, context);
-                                        }
-
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                    }
-                                })
-                                .setIcon(icon)
-                                .show();
-                        return true;
+                        return mListener.onItemLongClicked(article);
                     }
                 });
                 break;
@@ -315,11 +266,9 @@ public class ArticleAdMobRecyclerAdapter extends
     }
 
     public interface ArticleAdMobRecyclerAdapterListener {
-        void removeSavedArticle(Article article);
         void onMoreArticles();
+        boolean onItemLongClicked(Article article);
     }
-
-
 
 
 }
