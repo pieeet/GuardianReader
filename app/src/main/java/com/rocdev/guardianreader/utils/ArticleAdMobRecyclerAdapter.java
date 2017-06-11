@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static android.R.attr.button;
+
 /**
  * Created by piet on 08-06-17.
  */
@@ -47,10 +49,9 @@ public class ArticleAdMobRecyclerAdapter extends
     private AdView adView;
     private Button moreButton;
     private Context context;
-    private boolean articleIsSaved;
     private ArticleAdMobRecyclerAdapterListener mListener;
     private int currentAdPosition;
-    private boolean hasMoreButton;
+    private ButtonViewHolder buttonViewHolder;
 
 
     public ArticleAdMobRecyclerAdapter(Context context, List<Article> articles,
@@ -71,7 +72,6 @@ public class ArticleAdMobRecyclerAdapter extends
     public void notifyAdapterDataSetChanged(boolean hasMoreButton) {
         wrappedItems.clear();
         currentAdPosition = 0;
-        this.hasMoreButton = hasMoreButton;
         fillWrappedItems(hasMoreButton);
         super.notifyDataSetChanged();
 
@@ -83,10 +83,15 @@ public class ArticleAdMobRecyclerAdapter extends
         }
         currentAdPosition = wrappedItems.size();
         wrappedItems.add(currentAdPosition, new ItemWrapper(adView));
-        if (hasMoreButton) {
-            wrappedItems.add(currentAdPosition + 1, new ItemWrapper(moreButton));
-        }
 
+        if (hasMoreButton) {
+            ItemWrapper buttonWrapper = new ItemWrapper(moreButton);
+            wrappedItems.add(currentAdPosition + 1, buttonWrapper);
+            if (buttonViewHolder != null) {
+                buttonViewHolder.button.setEnabled(true);
+                buttonViewHolder.button.setText("10 more");
+            }
+        }
     }
 
 
@@ -154,10 +159,12 @@ public class ArticleAdMobRecyclerAdapter extends
                 adViewHolder.adView.loadAd(adRequest);
                 break;
             case ItemWrapper.TYPE_BUTTON:
-                ButtonViewHolder buttonViewHolder = (ButtonViewHolder) holder;
+                buttonViewHolder = (ButtonViewHolder) holder;
                 buttonViewHolder.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        buttonViewHolder.button.setEnabled(false);
+                        buttonViewHolder.button.setText("...");
                         mListener.onMoreArticles();
                     }
                 });

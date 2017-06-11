@@ -119,15 +119,12 @@ public class ArticlesFragment extends Fragment {
                 }
             });
         }
-
         progressContainer = view.findViewById(R.id.progressContainer);
         noSavedArticlesContainer = view.findViewById(R.id.noSavedArticlesContainer);
         if (!articles.isEmpty()) {
             showProgressContainer(false);
         }
     }
-
-
 
 
     @Override
@@ -182,16 +179,6 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
-
-
-    /**
-     * invokes loading more articles
-     */
-    public void onMoreArticles() {
-        isLoading = true;
-        if (mListener != null) {
-        }
-    }
 
 
     @Override
