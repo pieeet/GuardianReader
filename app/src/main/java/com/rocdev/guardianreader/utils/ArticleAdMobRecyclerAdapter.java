@@ -55,8 +55,9 @@ public class ArticleAdMobRecyclerAdapter extends
 
 
     public ArticleAdMobRecyclerAdapter(Context context, List<Article> articles,
-                                       AdView adView, boolean hasMoreButton) {
+                                       AdView adView, boolean hasMoreButton, Button moreButton) {
         this.adView = adView;
+        this.moreButton = moreButton;
         this.articles = articles;
         this.context = context;
         if (context instanceof ArticleAdMobRecyclerAdapterListener) {

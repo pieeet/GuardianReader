@@ -87,7 +87,7 @@ public class ArticlesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_articles_recycler_view, container, false);
-        initViews(rootView);
+        initViews(rootView, inflater);
         return rootView;
     }
 
@@ -96,16 +96,19 @@ public class ArticlesFragment extends Fragment {
      *
      * @param view the root view
      */
-    private void initViews(View view) {
+    private void initViews(View view, LayoutInflater inflater) {
         AdView adView = new AdView(getContext());
         adView.setAdSize(AdSize.BANNER);
         adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+
+        View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
+        Button moreButton = (Button) buttonView.findViewById(R.id.moreButton);
         //listView = (ListView) view.findViewById(R.id.listView);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         //adapter = new ArticleAdMobAdapter(getContext(), articles, adView);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        adapter = new ArticleAdMobRecyclerAdapter(getContext(), articles, adView, hasMoreButton);
+        adapter = new ArticleAdMobRecyclerAdapter(getContext(), articles, adView, hasMoreButton, moreButton);
         mRecyclerView.setAdapter(adapter);
         listContainer = view.findViewById(R.id.listContainer);
 
