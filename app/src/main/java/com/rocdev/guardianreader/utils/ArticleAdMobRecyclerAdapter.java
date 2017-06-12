@@ -1,12 +1,6 @@
 package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static android.R.attr.button;
-
 /**
  * Created by piet on 08-06-17.
+ *
  */
 
 public class ArticleAdMobRecyclerAdapter extends
@@ -43,6 +36,7 @@ public class ArticleAdMobRecyclerAdapter extends
     private static final String EMPTY_STRING = "";
     private static final String DATE_FORMAT_IN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static final String DATE_FORMAT_OUT = "d MMMM yyyy HH:mm";
+    private static final String TIME_ZONE_IN = "UTC";
 
     private ArrayList<ItemWrapper> wrappedItems;
     private List<Article> articles;
@@ -67,18 +61,18 @@ public class ArticleAdMobRecyclerAdapter extends
                     "ArticleAdMobRecyclerAdapterListener");
         }
         wrappedItems = new ArrayList<>();
-        fillWrappedItems(hasMoreButton);
+        populateWrappedItems(hasMoreButton);
     }
 
     public void notifyAdapterDataSetChanged(boolean hasMoreButton) {
         wrappedItems.clear();
         currentAdPosition = 0;
-        fillWrappedItems(hasMoreButton);
+        populateWrappedItems(hasMoreButton);
         super.notifyDataSetChanged();
 
     }
 
-    private void fillWrappedItems(boolean hasMoreButton) {
+    private void populateWrappedItems(boolean hasMoreButton) {
         for (Article article : articles) {
             wrappedItems.add(new ItemWrapper(article));
         }
@@ -90,7 +84,7 @@ public class ArticleAdMobRecyclerAdapter extends
             wrappedItems.add(currentAdPosition + 1, buttonWrapper);
             if (buttonViewHolder != null) {
                 buttonViewHolder.button.setEnabled(true);
-                buttonViewHolder.button.setText("10 more");
+                buttonViewHolder.button.setText(R.string.more_button_text);
             }
         }
     }
@@ -98,7 +92,6 @@ public class ArticleAdMobRecyclerAdapter extends
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         LayoutInflater inflater = LayoutInflater.from(context);
         switch (viewType) {
             case ItemWrapper.TYPE_NORMAL:
@@ -125,56 +118,64 @@ public class ArticleAdMobRecyclerAdapter extends
         ItemWrapper item = wrappedItems.get(position);
         switch (item.type) {
             case ItemWrapper.TYPE_NORMAL:
-                ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
                 final Article article = item.article;
-                Picasso.with(context).cancelRequest(itemViewHolder.imgView);
-                if ((article != null ? article.getThumbUrl() : null) != null) {
-                    Picasso.with(context).load(article.getThumbUrl()).into(itemViewHolder.imgView);
-                }
-                itemViewHolder.title.setText(article != null ? article.getTitle() : EMPTY_STRING);
-                itemViewHolder.date.setText(formatDateTime(article != null ? article.getDate() : EMPTY_STRING));
-                itemViewHolder.section.setText(article != null ? article.getSection() : EMPTY_STRING);
-                itemViewHolder.container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (article != null) {
-                            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
-                        }
-                    }
-                });
-                itemViewHolder.container.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        return mListener.onItemLongClicked(article);
-                    }
-                });
+                setArticleItemHolder((ItemViewHolder) holder, article);
                 break;
 
             case ItemWrapper.TYPE_AD:
-                AdViewHolder adViewHolder = (AdViewHolder) holder;
-                AdRequest adRequest = new AdRequest.Builder()
-                        //TODO remove before production
-                        .addTestDevice("211FE69AEAB7D31887757EB42F4B4FE7")
-                        .build();
-                adViewHolder.adView.setAdListener(new AdLoadListener(adViewHolder));
-                adViewHolder.adView.loadAd(adRequest);
+                setAdItemHolder((AdViewHolder) holder);
                 break;
             case ItemWrapper.TYPE_BUTTON:
-                buttonViewHolder = (ButtonViewHolder) holder;
-                buttonViewHolder.button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        buttonViewHolder.button.setEnabled(false);
-                        buttonViewHolder.button.setText("...");
-                        mListener.onMoreArticles();
-                    }
-                });
+                setButtonViewHolder((ButtonViewHolder) holder);
         }
+    }
+
+    private void setArticleItemHolder(ItemViewHolder holder, final Article article) {
+        Picasso.with(context).cancelRequest(holder.imgView);
+        if ((article != null ? article.getThumbUrl() : null) != null) {
+            Picasso.with(context).load(article.getThumbUrl()).into(holder.imgView);
+        }
+        holder.title.setText(article != null ? article.getTitle() : EMPTY_STRING);
+        holder.date.setText(formatDateTime(article != null ? article.getDate() : EMPTY_STRING));
+        holder.section.setText(article != null ? article.getSection() : EMPTY_STRING);
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onItemClicked(article);
+            }
+        });
+        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return mListener.onItemLongClicked(article);
+            }
+        });
+    }
+
+    private void setAdItemHolder(AdViewHolder adViewHolder) {
+        AdRequest adRequest = new AdRequest.Builder()
+                //TODO remove before production
+                .addTestDevice(context.getString(R.string.test_device_code))
+                .build();
+        adViewHolder.adView.setAdListener(new AdLoadListener(adViewHolder));
+        adViewHolder.adView.loadAd(adRequest);
+    }
+
+    private void setButtonViewHolder(ButtonViewHolder holder) {
+        this.buttonViewHolder = holder;
+        holder.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttonViewHolder.button.setEnabled(false);
+                buttonViewHolder.button.setText("...");
+                mListener.onMoreArticles();
+            }
+        });
     }
 
     private String formatDateTime(String input) {
         SimpleDateFormat sdfIn = new SimpleDateFormat(DATE_FORMAT_IN);
-        sdfIn.setTimeZone(TimeZone.getTimeZone("UTC"));
+        sdfIn.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_IN));
         Date dateIn = new Date();
         try {
             dateIn = sdfIn.parse(input);
@@ -225,10 +226,8 @@ public class ArticleAdMobRecyclerAdapter extends
         ButtonViewHolder(View itemView) {
             super(itemView);
             this.button = (Button) itemView.findViewById(R.id.moreButton);
-
         }
     }
-
 
     private class ItemWrapper {
         static final int TYPE_NORMAL = 0;
@@ -275,8 +274,7 @@ public class ArticleAdMobRecyclerAdapter extends
 
     public interface ArticleAdMobRecyclerAdapterListener {
         void onMoreArticles();
+        void onItemClicked(Article article);
         boolean onItemLongClicked(Article article);
     }
-
-
 }

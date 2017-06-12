@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     private static final String KEY_PAUSE_TIME = "pauseTime";
     private static final int TIME_REFRESH_INTERVAL = 1000 * 60 * 15;
     private static final int TIME_POST_DELAYED = 2000;
+    private static final int CLOSE_DRAWER_DELAY = 300;
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
@@ -232,7 +233,7 @@ public class MainActivity extends AppCompatActivity
             long timePassed = currentTime - pauseTime;
             // refresh if pause > 15 minutes
             if (!checkConnection() || timePassed > TIME_REFRESH_INTERVAL) {
-                Toast.makeText(this, "Refreshing articles...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.toast_refreshing_articles, Toast.LENGTH_SHORT).show();
                 isNewList = true;
                 currentPage = 1;
                 articles.clear();
@@ -313,7 +314,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected void setNoNetWorkStateWarning() {
-        Toast.makeText(MainActivity.this, "No network. Try again later",
+        Toast.makeText(MainActivity.this, R.string.toast_no_network_alert,
                 Toast.LENGTH_LONG).show();
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(R.string.title_no_network);
@@ -336,17 +337,17 @@ public class MainActivity extends AppCompatActivity
     private void closeAppWithConfirm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder
-                .setTitle("Close app")
-                .setMessage("Are you sure you want to close the app?.")
+                .setTitle(R.string.dialog_close_app_title)
+                .setMessage(R.string.dialog_close_app_message)
                 .setIcon(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_warning_black_18dp, null))
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.dialog_confirm_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         finish();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dialog_confirm_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
@@ -395,7 +396,6 @@ public class MainActivity extends AppCompatActivity
                 if (!isTwoPane) {
                     navigationView.getMenu().getItem(currentSection).setChecked(true);
                 }
-
                 refreshUI();
                 break;
             case R.id.action_guardian_app:
@@ -408,19 +408,18 @@ public class MainActivity extends AppCompatActivity
 
     private void startGuardianAppDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Guardian App")
-                .setMessage("This app works very well together with the app from The Guardian. " +
-                        "Would you like to install it?")
+        builder.setTitle(R.string.dialog_guardian_app_title)
+                .setMessage(R.string.dialog_guardian_app_message)
                 .setIcon(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_shop_black_18dp, null))
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.dialog_confirm_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://play.google.com/store/apps/details?id=com.guardian")));
+                                Uri.parse(getString(R.string.guardian_app_play_store))));
                     }
                 })
-                .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dialog_confirm_no_thanks, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
@@ -477,15 +476,13 @@ public class MainActivity extends AppCompatActivity
                     public void run() {
                         startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                     }
-                }, 300);
+                }, CLOSE_DRAWER_DELAY);
                 break;
             default:
                 for (Section section : Section.values()) {
-                    if (section.getIdNav() == id) {
-                        if (currentSection != section.ordinal()) {
-                            currentSection = section.ordinal();
-                            refreshUI();
-                        }
+                    if (section.getIdNav() == id && currentSection != section.ordinal()) {
+                        currentSection = section.ordinal();
+                        refreshUI();
                     }
                 }
         }
@@ -586,7 +583,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void removeSavedArticle(Article article) {
         if (currentSection == Section.SAVED.ordinal()) {
             for (Article a : articles) {
@@ -602,34 +598,42 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    boolean articleIsSaved;
+
+    @Override
+    public void onItemClicked(Article article) {
+        if (article != null) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
+        }
+    }
+
+    //Needs to be global
+    private boolean articleIsSaved;
 
     @Override
     public boolean onItemLongClicked(final Article article) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String title = "";
-        String message = "";
+        String title = getString(R.string.empty_string);
+        String message = getString(R.string.empty_string);
         Drawable icon = null;
 
         if (article != null) {
             if (article.get_ID() == -1) {
                 articleIsSaved = false;
-                title = "Save article";
-                message = "Do you want to save this article?";
+                title = getString(R.string.dialog_save_article_title);
+                message = getString(R.string.dialog_save_article_message);
                 icon = ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_archive_black_18dp, null);
             } else {
                 articleIsSaved = true;
-                title = "Delete article";
-                message = "Do you want to delete this article from your saved articles list? " +
-                        "This cannot be undone.";
+                title = getString(R.string.dialog_delete_article_title);
+                message = getString(R.string.dialog_delete_article_message);
                 icon = ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_unarchive_black_18dp, null);
             }
         }
         builder.setTitle(title)
                 .setMessage(message)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.dialog_confirm_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (articleIsSaved) {
@@ -640,7 +644,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dialog_confirm_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
@@ -649,4 +653,6 @@ public class MainActivity extends AppCompatActivity
                 .show();
         return true;
     }
+
+
 }

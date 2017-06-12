@@ -3,12 +3,24 @@ package com.rocdev.guardianreader.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by piet on 27-12-16.
  *
  */
 
 public class Article implements Parcelable {
+
+    //Keys jsonObject
+    private static final String WEB_TITLE = "webTitle";
+    private static final String WEB_PUBLICATION_DATE = "webPublicationDate";
+    private static final String WEB_URL = "webUrl";
+    private static final String SECTION_NAME = "sectionName";
+    private static final String FIELDS = "fields";
+    private static final String THUMBNAIL = "thumbnail";
+
     private long _ID;
     private String title;
     private String date;
@@ -17,27 +29,44 @@ public class Article implements Parcelable {
     private String thumbUrl;
 
 
-
-    public Article(String title, String date, String url, String section, String thumbUrl) {
-        this._ID = -1;
-        this.title = title;
-        this.date = date;
-        this.url = url;
-        this.section = section;
-        this.thumbUrl = thumbUrl;
-    }
+//    public Article(String title, String date, String url, String section, String thumbUrl) {
+//        this._ID = -1;
+//        this.title = title;
+//        this.date = date;
+//        this.url = url;
+//        this.section = section;
+//        this.thumbUrl = thumbUrl;
+//    }
 
     /**
      *
-     * @param _ID from saved article
-     * @param title title
-     * @param date date
-     * @param url url article
-     * @param section section
+     * @param jsonObject The retrieved JSONObject from api-call
+     * @throws JSONException JSONException thrown
+     */
+    public Article(JSONObject jsonObject) throws JSONException {
+        this._ID = -1;
+        title = jsonObject.getString(WEB_TITLE);
+        date = jsonObject.getString(WEB_PUBLICATION_DATE);
+        url = jsonObject.getString(WEB_URL);
+        section = jsonObject.getString(SECTION_NAME);
+        thumbUrl = null;
+        // there might not be a thumbnail
+        try {
+            JSONObject fields = jsonObject.getJSONObject(FIELDS);
+            thumbUrl = fields.getString(THUMBNAIL);
+        } catch (Exception ignored) {
+        }
+    }
+
+    /**
+     * @param _ID      from saved article
+     * @param title    title
+     * @param date     date
+     * @param url      url article
+     * @param section  section
      * @param thumbUrl url thumbnail
      */
     public Article(long _ID, String title, String date, String url, String section, String thumbUrl) {
-
         this._ID = _ID;
         this.title = title;
         this.date = date;
@@ -49,7 +78,6 @@ public class Article implements Parcelable {
     public long get_ID() {
         return _ID;
     }
-
 
     public void set_ID(long _ID) {
         this._ID = _ID;
@@ -67,36 +95,21 @@ public class Article implements Parcelable {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public String getSection() {
         return section;
     }
 
-    public void setSection(String section) {
-        this.section = section;
-    }
-
     public String getThumbUrl() {
         return thumbUrl;
     }
 
-    public void setThumbUrl(String thumbUrl) {
-        this.thumbUrl = thumbUrl;
-    }
 
 
-    protected Article(Parcel in) {
+    private Article(Parcel in) {
         _ID = in.readLong();
         title = in.readString();
         date = in.readString();

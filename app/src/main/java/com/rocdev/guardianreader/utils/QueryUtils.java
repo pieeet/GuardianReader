@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
 
@@ -32,12 +33,6 @@ public class QueryUtils {
     private static final String RESPONSE = "response";
     private static final String EDITOR_PICKS = "editorsPicks";
     private static final String RESULTS = "results";
-    private static final String WEB_TITLE = "webTitle";
-    private static final String WEB_PUBLICATION_DATE = "webPublicationDate";
-    private static final String WEB_URL = "webUrl";
-    private static final String SECTION_NAME = "sectionName";
-    private static final String FIELDS = "fields";
-    private static final String THUMBNAIL = "thumbnail";
 
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
@@ -84,18 +79,11 @@ public class QueryUtils {
                 results = response.getJSONArray(RESULTS);
             }
             for (int i = 0; i < results.length(); i++) {
-                JSONObject article = results.getJSONObject(i);
-                String webTitle = article.getString(WEB_TITLE);
-                String webPublicationDate = article.getString(WEB_PUBLICATION_DATE);
-                String webUrl = article.getString(WEB_URL);
-                String sectionName = article.getString(SECTION_NAME);
-                String thumbnail = null;
-                // there might not be a thumbnail
                 try {
-                    JSONObject fields = article.getJSONObject(FIELDS);
-                    thumbnail = fields.getString(THUMBNAIL);
-                } catch (Exception ignored) {}
-                articles.add(new Article(webTitle, webPublicationDate, webUrl, sectionName, thumbnail));
+                    articles.add(new Article(results.getJSONObject(i)));
+                } catch (JSONException ignored) {
+                    // just skip the article
+                }
             }
         } catch (JSONException ignored) {}
         return articles;
@@ -145,9 +133,9 @@ public class QueryUtils {
 
         long id = ContentUris.parseId(uri);
         if (id < 1) {
-            Toast.makeText(context, "Error with saving article", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.save_article_error, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "Article saved succefully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.save_article_success, Toast.LENGTH_SHORT).show();
             article.set_ID(id);
         }
 
@@ -161,10 +149,9 @@ public class QueryUtils {
         int deletedRows = context.getContentResolver().delete(uri, null, null);
 
         if (deletedRows < 1) {
-            Toast.makeText(context, "Error with deleting article", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.delete_article_error, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "Deleted article", Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(context, R.string.delete_article_success, Toast.LENGTH_SHORT).show();
         }
         return deletedRows;
     }
