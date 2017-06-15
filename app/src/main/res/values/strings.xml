@@ -142,7 +142,7 @@
     <string name="pref_key_default_edition">pref_default_edition</string>
     <string name="title_no_network">No network…</string>
 
-    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_ad_unit_id_test_ad" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
     <string name="more_button_text">10 more</string>
     <string name="save_article_error">Error with saving article</string>
     <string name="save_article_success">Article saved succefully</string>
@@ -164,6 +164,8 @@
     <string name="toast_refreshing_articles">Refreshing articles…</string>
     <string name="empty_string" />
     <string name="test_device_code_nexus5x" translatable="false">91E22C61954590BECD82911B901E2A4B</string>
+    <string name="test_device_code_nexus9" translatable="false">211FE69AEAB7D31887757EB42F4B4FE7</string>
+    <string name="more_button_disabled">…</string>
 
 
 </resources>

@@ -13,8 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.Button;
-
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.rocdev.guardianreader.R;
@@ -24,7 +23,6 @@ import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rocdev.guardianreader.R.id.moreButton;
 
 
 /**
@@ -41,13 +39,12 @@ public class ArticlesFragment extends Fragment {
     private View noSavedArticlesContainer;
     private View listContainer;
     private List<Article> articles;
-//    private ArticleAdMobAdapter adapter;
+    private List<Object> listItems;
     private ArticleAdMobRecyclerAdapter adapter;
-    RecyclerView.LayoutManager mLayoutManager;
     private OnFragmentInteractionListener mListener;
     private boolean hasMoreButton;
     private int listPosition;
-    private boolean isLoading; /*prevent more button appearing while loading due to scroll listener*/
+    private LayoutInflater inflater;
 
     /**
      * required (Framework) empty constructor
@@ -86,8 +83,9 @@ public class ArticlesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        this.inflater = inflater;
         View rootView = inflater.inflate(R.layout.fragment_articles_recycler_view, container, false);
-        initViews(rootView, inflater);
+        initViews(rootView);
         return rootView;
     }
 
@@ -96,19 +94,13 @@ public class ArticlesFragment extends Fragment {
      *
      * @param view the root view
      */
-    private void initViews(View view, LayoutInflater inflater) {
-        AdView adView = new AdView(getContext());
-        adView.setAdSize(AdSize.BANNER);
-        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
-
-        View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
-        Button moreButton = (Button) buttonView.findViewById(R.id.moreButton);
-        //listView = (ListView) view.findViewById(R.id.listView);
+    private void initViews(View view) {
+        populateListItems();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        //adapter = new ArticleAdMobAdapter(getContext(), articles, adView);
-        mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        adapter = new ArticleAdMobRecyclerAdapter(getContext(), articles, adView, hasMoreButton, moreButton);
+        adapter = new ArticleAdMobRecyclerAdapter(getContext(), listItems, hasMoreButton);
         mRecyclerView.setAdapter(adapter);
         listContainer = view.findViewById(R.id.listContainer);
 
@@ -129,11 +121,48 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onPause() {
         mListener.saveListPosition(listPosition);
         super.onPause();
+    }
+
+    /*
+    check https://github.com/googleads/googleads-mobile-android-examples
+     */
+
+    private void populateListItems() {
+        listItems = new ArrayList<>();
+        if (articles != null) {
+            for (Article article: articles) {
+                listItems.add(article);
+            }
+        }
+        AdView adView = new AdView(getContext());
+        adView.setAdSize(AdSize.BANNER);
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id_test_ad));
+        listItems.add(adView);
+        loadAdView(listItems.size() - 1);
+        if (hasMoreButton) {
+            View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
+            listItems.add(buttonView);
+        }
+    }
+
+    private void loadAdView(final int index) {
+        if (index >= listItems.size()) {
+            return;
+        }
+        Object item = listItems.get(index);
+        if (!(item instanceof AdView)) {
+            throw new ClassCastException("Expected item at index " + index + " to be an AdView");
+        }
+        final AdView adView = (AdView) item;
+        AdRequest.Builder builder = new AdRequest.Builder();
+        //TODO disable/enable before/after production
+        builder.addTestDevice(getString(R.string.test_device_code_nexus9));
+        builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
+        adView.loadAd(builder.build());
     }
 
 
@@ -144,9 +173,10 @@ public class ArticlesFragment extends Fragment {
      * @param isEditorPicks if true hide moreButton
      */
     public void notifyArticlesChanged(boolean isNewList, boolean isEditorPicks) {
-        isLoading = false;
         hasMoreButton = !isEditorPicks;
-        adapter.notifyAdapterDataSetChanged(hasMoreButton);
+        populateListItems();
+
+        adapter.notifyAdapterDataSetChanged(hasMoreButton, listItems);
         showProgressContainer(false);
         if (isNewList) {
             listPosition = 0;
@@ -182,8 +212,6 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -200,9 +228,6 @@ public class ArticlesFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
-
-
 
 
     /**

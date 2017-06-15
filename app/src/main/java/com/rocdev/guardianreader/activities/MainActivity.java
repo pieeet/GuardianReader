@@ -25,14 +25,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TODO change before production
-        MobileAds.initialize(this, getString(R.string.banner_ad_unit_id));
+        MobileAds.initialize(this, getString(R.string.banner_ad_unit_id_test_ad));
         onPaused = false;
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
@@ -124,6 +128,7 @@ public class MainActivity extends AppCompatActivity
             initInstanceState();
         }
         initFragments();
+
 
     }
 
@@ -389,15 +394,6 @@ public class MainActivity extends AppCompatActivity
                         getString(R.string.google_play_url)));
                 startActivity(browserIntent);
                 break;
-            case R.id.action_saved_articles:
-                currentSection = Section.SAVED.ordinal();
-                isNewList = true;
-                currentPage = 1;
-                if (!isTwoPane) {
-                    navigationView.getMenu().getItem(currentSection).setChecked(true);
-                }
-                refreshUI();
-                break;
             case R.id.action_guardian_app:
                 startGuardianAppDialog();
                 break;
@@ -523,7 +519,10 @@ public class MainActivity extends AppCompatActivity
         mLoader = loader;
         stopRefreshButtonAnimation();
         if (isNewList) articles.clear();
-        for (Article article : data) articles.add(article);
+        for (Article article : data) {
+            articles.add(article);
+        }
+
         articlesFragment.notifyArticlesChanged(isNewList, isEditorsPicks);
         articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                 && articles.isEmpty());
@@ -531,6 +530,7 @@ public class MainActivity extends AppCompatActivity
         articlesFragment.showListContainer(true);
         onLoaderReset(mLoader);
     }
+
 
     @Override
     public void onLoaderReset(Loader<List<Article>> loader) {

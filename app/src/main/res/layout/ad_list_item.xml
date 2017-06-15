@@ -23,7 +23,8 @@
             android:paddingTop="16dp"
             android:visibility="gone"
             ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id" />
+            ads:adUnitId="@string/banner_ad_unit_id_test_ad"
+            />
 
         <ImageView
             android:id="@+id/adViewPlaceholder"
