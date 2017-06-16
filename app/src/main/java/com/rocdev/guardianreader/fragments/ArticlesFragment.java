@@ -157,9 +157,6 @@ public class ArticlesFragment extends Fragment {
         }
         final AdView adView = (AdView) item;
         AdRequest.Builder builder = new AdRequest.Builder();
-        //TODO disable/enable before/after production
-        builder.addTestDevice(getString(R.string.test_device_code_nexus9));
-        builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
         adView.loadAd(builder.build());
     }
 

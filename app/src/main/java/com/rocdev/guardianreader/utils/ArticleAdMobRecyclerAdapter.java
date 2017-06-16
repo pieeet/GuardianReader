@@ -153,9 +153,6 @@ public class ArticleAdMobRecyclerAdapter extends
 
     private void setAdItemHolder(AdViewHolder adViewHolder) {
         AdRequest adRequest = new AdRequest.Builder()
-                //TODO remove before production
-                .addTestDevice(context.getString(R.string.test_device_code_nexus5x))
-                .addTestDevice(context.getString(R.string.test_device_code_nexus9))
                 .build();
         adViewHolder.adView.setAdListener(new AdLoadListener(adViewHolder));
         adViewHolder.adView.loadAd(adRequest);
