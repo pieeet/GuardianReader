@@ -142,7 +142,9 @@
     <string name="pref_key_default_edition">pref_default_edition</string>
     <string name="title_no_network">No network…</string>
 
-    <string name="banner_ad_unit_id_test_ad" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_ad_unit_id_test_ad" translatable="false">ca-app-pub-3940256099942544~3347511713.</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-5360801122277083/1900074450</string>
+    <string name="app_id" translatable="false">ca-app-pub-5360801122277083~9423341257</string>
     <string name="more_button_text">10 more</string>
     <string name="save_article_error">Error with saving article</string>
     <string name="save_article_success">Article saved succefully</string>

@@ -29,15 +29,6 @@ public class Article implements Parcelable {
     private String thumbUrl;
 
 
-//    public Article(String title, String date, String url, String section, String thumbUrl) {
-//        this._ID = -1;
-//        this.title = title;
-//        this.date = date;
-//        this.url = url;
-//        this.section = section;
-//        this.thumbUrl = thumbUrl;
-//    }
-
     /**
      *
      * @param jsonObject The retrieved JSONObject from api-call

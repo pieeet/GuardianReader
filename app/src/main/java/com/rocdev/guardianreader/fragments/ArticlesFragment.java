@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
@@ -138,9 +137,8 @@ public class ArticlesFragment extends Fragment {
                 listItems.add(article);
             }
         }
-        AdView adView = new AdView(getContext());
-        adView.setAdSize(AdSize.BANNER);
-        adView.setAdUnitId(getString(R.string.banner_ad_unit_id_test_ad));
+        View adContainer = inflater.inflate(R.layout.ad_list_item, null);
+        AdView adView = (AdView) adContainer.findViewById(R.id.adView);
         listItems.add(adView);
         loadAdView(listItems.size() - 1);
         if (hasMoreButton) {

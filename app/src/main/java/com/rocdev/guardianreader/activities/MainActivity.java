@@ -25,18 +25,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
@@ -112,8 +108,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO change before production
-        MobileAds.initialize(this, getString(R.string.banner_ad_unit_id_test_ad));
+        MobileAds.initialize(this, getString(R.string.app_id));
         onPaused = false;
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
@@ -128,8 +123,6 @@ public class MainActivity extends AppCompatActivity
             initInstanceState();
         }
         initFragments();
-
-
     }
 
     private void setPreferences() {
