@@ -99,7 +99,7 @@ public class ArticlesFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        adapter = new ArticleAdMobRecyclerAdapter(getContext(), listItems, hasMoreButton);
+        adapter = new ArticleAdMobRecyclerAdapter(getContext(), listItems);
         mRecyclerView.setAdapter(adapter);
         listContainer = view.findViewById(R.id.listContainer);
 
@@ -158,7 +158,7 @@ public class ArticlesFragment extends Fragment {
         hasMoreButton = !isEditorPicks;
         populateListItems();
 
-        adapter.notifyAdapterDataSetChanged(hasMoreButton, listItems);
+        adapter.notifyAdapterDataSetChanged(listItems);
         showProgressContainer(false);
         if (isNewList) {
             listPosition = 0;

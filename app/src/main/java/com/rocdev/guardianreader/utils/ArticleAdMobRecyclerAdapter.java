@@ -46,17 +46,15 @@ public class ArticleAdMobRecyclerAdapter extends
     private static final int VIEW_TYPE_BUTTON = 2;
 
     private List<Object> listItems;
-    private boolean hasMoreButton;
 
     private Context context;
     private ArticleAdMobRecyclerAdapterListener mListener;
     private ButtonViewHolder buttonViewHolder;
 
 
-    public ArticleAdMobRecyclerAdapter(Context context, List<Object> listItems, boolean hasMoreButton) {
+    public ArticleAdMobRecyclerAdapter(Context context, List<Object> listItems) {
         this.listItems = listItems;
         this.context = context;
-        this.hasMoreButton = hasMoreButton;
 
         if (context instanceof ArticleAdMobRecyclerAdapterListener) {
             mListener = (ArticleAdMobRecyclerAdapterListener) context;
@@ -66,8 +64,7 @@ public class ArticleAdMobRecyclerAdapter extends
         }
     }
 
-    public void notifyAdapterDataSetChanged(boolean hasMoreButton, List<Object> items) {
-        this.hasMoreButton = hasMoreButton;
+    public void notifyAdapterDataSetChanged(List<Object> items) {
         if (buttonViewHolder != null) {
             buttonViewHolder.button.setEnabled(true);
             buttonViewHolder.button.setText(R.string.more_button_text);
