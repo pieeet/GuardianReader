@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        />
+        android:contentDescription="section_icon" />
 
     <TextView
         android:id="@+id/section_title_textview"

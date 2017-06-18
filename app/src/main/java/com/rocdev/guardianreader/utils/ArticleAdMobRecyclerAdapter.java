@@ -2,7 +2,6 @@ package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
@@ -74,9 +70,7 @@ public class ArticleAdMobRecyclerAdapter extends
             listItems.add(object);
         }
         super.notifyDataSetChanged();
-
     }
-
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -197,6 +191,7 @@ public class ArticleAdMobRecyclerAdapter extends
         TextView title;
         TextView date;
         TextView section;
+
         ItemViewHolder(View itemView) {
             super(itemView);
             this.container = itemView;

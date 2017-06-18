@@ -33,7 +33,6 @@ import java.util.List;
  */
 public class ArticlesFragment extends Fragment {
 
-    //    private ListView listView;
     private RecyclerView mRecyclerView;
     private View progressContainer;
     private View noSavedArticlesContainer;

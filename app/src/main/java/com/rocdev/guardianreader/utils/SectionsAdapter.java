@@ -27,7 +27,6 @@ public class SectionsAdapter extends ArrayAdapter<Section> {
 
     private Context context;
 
-
     public SectionsAdapter(@NonNull Context context, List<Section> sections) {
         super(context, 0, sections);
         this.context = context;
