@@ -86,8 +86,8 @@ public class ArticleAdMobRecyclerAdapter extends
                 View article = inflater.inflate(R.layout.article_list_item, parent, false);
                 return new ItemViewHolder(article);
             case VIEW_TYPE_AD:
-                View ad = inflater.inflate(R.layout.ad_list_item, parent, false);
-                return new AdViewHolder(ad);
+                View adView = inflater.inflate(R.layout.ad_list_item, parent, false);
+                return new AdViewHolder(adView);
             case VIEW_TYPE_BUTTON:
                 // fall through
             default:
@@ -119,7 +119,7 @@ public class ArticleAdMobRecyclerAdapter extends
                 setArticleItemHolder((ItemViewHolder) holder, article);
                 break;
             case VIEW_TYPE_AD:
-                setAdItemHolder((AdViewHolder) holder);
+                setAdItemHolder(holder, position);
                 break;
             case VIEW_TYPE_BUTTON:
                 // fall through
@@ -150,14 +150,15 @@ public class ArticleAdMobRecyclerAdapter extends
         });
     }
 
-    private void setAdItemHolder(AdViewHolder adViewHolder) {
-        AdRequest adRequest = new AdRequest.Builder()
-                //TODO remove before production
-                .addTestDevice(context.getString(R.string.test_device_code_nexus5x))
-                .addTestDevice(context.getString(R.string.test_device_code_nexus9))
-                .build();
-        adViewHolder.adView.setAdListener(new AdLoadListener(adViewHolder));
-        adViewHolder.adView.loadAd(adRequest);
+    private void setAdItemHolder(RecyclerView.ViewHolder holder, int position) {
+        AdViewHolder adViewHolder = (AdViewHolder) holder;
+        NativeExpressAdView adView = (NativeExpressAdView) listItems.get(position);
+        ViewGroup adContainer = (ViewGroup) adViewHolder.itemView;
+        adContainer.removeAllViews();
+        if (adView.getParent() != null) {
+            ((ViewGroup)adView.getParent()).removeView(adView);
+        }
+        adContainer.addView(adView);
     }
 
     private void setButtonItemHolder(ButtonViewHolder holder) {
@@ -207,13 +208,9 @@ public class ArticleAdMobRecyclerAdapter extends
     }
 
     private static class AdViewHolder extends RecyclerView.ViewHolder {
-        NativeExpressAdView adView;
-        ImageView placeholder;
 
         AdViewHolder(View itemView) {
             super(itemView);
-            this.adView = (NativeExpressAdView) itemView.findViewById(R.id.adView);
-            this.placeholder = (ImageView) itemView.findViewById(R.id.adViewPlaceholder);
         }
     }
 
@@ -226,28 +223,9 @@ public class ArticleAdMobRecyclerAdapter extends
         }
     }
 
-    private class AdLoadListener extends AdListener {
-        NativeExpressAdView adView;
-        ImageView placeholder;
-
-        AdLoadListener(AdViewHolder viewHolder) {
-            adView = viewHolder.adView;
-            placeholder = viewHolder.placeholder;
-        }
-
-        @Override
-        public void onAdLoaded() {
-            adView.setVisibility(View.VISIBLE);
-            placeholder.setVisibility(View.GONE);
-            super.onAdLoaded();
-        }
-    }
-
     public interface ArticleAdMobRecyclerAdapterListener {
         void onMoreArticles();
-
         void onItemClicked(Article article);
-
         boolean onItemLongClicked(Article article);
     }
 }

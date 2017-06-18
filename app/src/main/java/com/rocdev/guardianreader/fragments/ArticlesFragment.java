@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.NativeExpressAdView;
 
 import com.rocdev.guardianreader.R;
@@ -22,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -31,7 +33,7 @@ import java.util.List;
  */
 public class ArticlesFragment extends Fragment {
 
-//    private ListView listView;
+    //    private ListView listView;
     private RecyclerView mRecyclerView;
     private View progressContainer;
     private View noSavedArticlesContainer;
@@ -48,7 +50,8 @@ public class ArticlesFragment extends Fragment {
     /**
      * required (Framework) empty constructor
      */
-    public ArticlesFragment() {}
+    public ArticlesFragment() {
+    }
 
 
     /**
@@ -94,11 +97,11 @@ public class ArticlesFragment extends Fragment {
      * @param view the root view
      */
     private void initViews(View view) {
-        populateListItems();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        populateListItems();
         adapter = new ArticleAdMobRecyclerAdapter(getContext(), listItems);
         mRecyclerView.setAdapter(adapter);
         listContainer = view.findViewById(R.id.listContainer);
@@ -127,23 +130,50 @@ public class ArticlesFragment extends Fragment {
     }
 
     /*
-    check https://github.com/googleads/googleads-mobile-android-examples
+    check
+    https://github.com/googleads/googleads-mobile-android-examples
+    https://www.youtube.com/watch?v=LZCZSeFTvyk&list=PLOU2XLYxmsIKX0pUJV3uqp6N3NeHwHh0c&index=11
      */
 
     private void populateListItems() {
         listItems = new ArrayList<>();
         if (articles != null) {
-            for (Article article: articles) {
+            for (Article article : articles) {
                 listItems.add(article);
             }
         }
-        View adContainer = inflater.inflate(R.layout.ad_list_item, null);
-        NativeExpressAdView adView = (NativeExpressAdView) adContainer.findViewById(R.id.adView);
-        listItems.add(adView);
-//        loadAdView(listItems.size() - 1);
         if (hasMoreButton) {
             View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
             listItems.add(buttonView);
+        }
+        addNativeExpressAds();
+    }
+
+    private void addNativeExpressAds() {
+        if (!articles.isEmpty()) {
+            final NativeExpressAdView adView = new NativeExpressAdView(getContext());
+            adView.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
+            final AdRequest.Builder builder = new AdRequest.Builder();
+            builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
+            builder.addTestDevice(getString(R.string.test_device_code_nexus9));
+            int adPosition;
+            if (hasMoreButton) {
+                adPosition = listItems.size() - 1;
+            } else {
+                adPosition = listItems.size();
+            }
+            listItems.add(adPosition, adView);
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    final float density = getContext().getResources().getDisplayMetrics().density;
+                    AdSize size = new AdSize(
+                            (int) (mRecyclerView.getWidth() / density) - 16 /*margin*/, 120 /*height*/
+                    );
+                    adView.setAdSize(size);
+                    adView.loadAd(builder.build());
+                }
+            });
         }
     }
 
@@ -173,7 +203,8 @@ public class ArticlesFragment extends Fragment {
             } else {
                 listContainer.setVisibility(View.INVISIBLE);
             }
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void showProgressContainer(boolean show) {
@@ -183,7 +214,8 @@ public class ArticlesFragment extends Fragment {
             } else {
                 progressContainer.setVisibility(View.GONE);
             }
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void showNoSavedArticlesContainer(boolean show) {
