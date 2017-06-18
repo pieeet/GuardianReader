@@ -2,6 +2,7 @@ package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.squareup.picasso.Picasso;
@@ -103,7 +105,7 @@ public class ArticleAdMobRecyclerAdapter extends
         Object item = listItems.get(position);
         if (item instanceof Article) {
             type = VIEW_TYPE_ARTICLE;
-        } else if (item instanceof AdView) {
+        } else if (item instanceof NativeExpressAdView) {
             type = VIEW_TYPE_AD;
         } else {
             type = VIEW_TYPE_BUTTON;
@@ -208,12 +210,12 @@ public class ArticleAdMobRecyclerAdapter extends
     }
 
     private static class AdViewHolder extends RecyclerView.ViewHolder {
-        AdView adView;
+        NativeExpressAdView adView;
         ImageView placeholder;
 
         AdViewHolder(View itemView) {
             super(itemView);
-            this.adView = (AdView) itemView.findViewById(R.id.adView);
+            this.adView = (NativeExpressAdView) itemView.findViewById(R.id.adView);
             this.placeholder = (ImageView) itemView.findViewById(R.id.adViewPlaceholder);
         }
     }
@@ -228,7 +230,7 @@ public class ArticleAdMobRecyclerAdapter extends
     }
 
     private class AdLoadListener extends AdListener {
-        AdView adView;
+        NativeExpressAdView adView;
         ImageView placeholder;
 
         AdLoadListener(AdViewHolder viewHolder) {

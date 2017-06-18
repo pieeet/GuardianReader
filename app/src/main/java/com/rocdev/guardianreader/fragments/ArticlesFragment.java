@@ -12,9 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.google.android.gms.ads.NativeExpressAdView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
@@ -44,6 +43,7 @@ public class ArticlesFragment extends Fragment {
     private boolean hasMoreButton;
     private int listPosition;
     private LayoutInflater inflater;
+
 
     /**
      * required (Framework) empty constructor
@@ -138,29 +138,13 @@ public class ArticlesFragment extends Fragment {
             }
         }
         View adContainer = inflater.inflate(R.layout.ad_list_item, null);
-        AdView adView = (AdView) adContainer.findViewById(R.id.adView);
+        NativeExpressAdView adView = (NativeExpressAdView) adContainer.findViewById(R.id.adView);
         listItems.add(adView);
-        loadAdView(listItems.size() - 1);
+//        loadAdView(listItems.size() - 1);
         if (hasMoreButton) {
             View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
             listItems.add(buttonView);
         }
-    }
-
-    private void loadAdView(final int index) {
-        if (index >= listItems.size()) {
-            return;
-        }
-        Object item = listItems.get(index);
-        if (!(item instanceof AdView)) {
-            throw new ClassCastException("Expected item at index " + index + " to be an AdView");
-        }
-        final AdView adView = (AdView) item;
-        AdRequest.Builder builder = new AdRequest.Builder();
-        //TODO disable/enable before/after production
-        builder.addTestDevice(getString(R.string.test_device_code_nexus9));
-        builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
-        adView.loadAd(builder.build());
     }
 
 
