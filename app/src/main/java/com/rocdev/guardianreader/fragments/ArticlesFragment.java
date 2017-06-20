@@ -155,6 +155,7 @@ public class ArticlesFragment extends Fragment {
             final AdRequest.Builder builder = new AdRequest.Builder();
             builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
             builder.addTestDevice(getString(R.string.test_device_code_nexus9));
+            builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
             int adPosition;
             if (hasMoreButton) {
                 adPosition = listItems.size() - 1;

@@ -170,6 +170,10 @@
     <string name="toast_refreshing_articles">Refreshing articles…</string>
     <string name="empty_string" />
     <string name="more_button_disabled">…</string>
+    <string name="title_activity_article">Article</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
