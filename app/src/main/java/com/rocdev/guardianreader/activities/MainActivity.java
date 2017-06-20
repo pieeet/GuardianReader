@@ -595,7 +595,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemClicked(Article article) {
         if (article != null) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
+//            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
+            Intent intent = new Intent(this, ArticleActivity.class);
+            intent.putExtra("article", article);
+            startActivity(intent);
         }
     }
 
