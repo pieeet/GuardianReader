@@ -3,6 +3,7 @@ package com.rocdev.guardianreader.fragments;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -24,7 +26,7 @@ import com.rocdev.guardianreader.models.Article;
  * Use the {@link ArticleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArticleFragment extends Fragment {
+public class ArticleFragment extends Fragment implements DownloadListener {
 
     private static final String KEY_ARTICLE = "article";
     private Article article;
@@ -69,8 +71,22 @@ public class ArticleFragment extends Fragment {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webView.setWebViewClient(new ArticleWebViewClient());
+        webView.setDownloadListener(this);
         webView.loadUrl(article.getUrl());
+
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        //TODO attach listener
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        //TODO detach listener
     }
 
     public boolean goPageBack() {
@@ -81,7 +97,10 @@ public class ArticleFragment extends Fragment {
         return false;
     }
 
-
+    @Override
+    public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
+        //TODO start download animation
+    }
 
     private class ArticleWebViewClient extends WebViewClient {
 
@@ -105,6 +124,20 @@ public class ArticleFragment extends Fragment {
             }
             return true;
         }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+
+            //TODO stop animation here
+
+        }
+    }
+
+
+    public interface ArticleFragmentListener {
+        void startDownloadAnimation();
+        void stopDownLoadAnimation();
     }
 
 

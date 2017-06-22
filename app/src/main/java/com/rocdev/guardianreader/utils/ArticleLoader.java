@@ -15,9 +15,9 @@ import java.util.List;
 
 public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
 
-    private String mUrl;
-    private boolean mIsEditorsPick;
-    private Context mContext;
+    private final String mUrl;
+    private final boolean mIsEditorsPick;
+    private final Context mContext;
 
 
     public ArticleLoader(Context context, String url, boolean isEditorsPick) {

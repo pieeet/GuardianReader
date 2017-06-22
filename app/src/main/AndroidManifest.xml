@@ -32,7 +32,8 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/action_personalise"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -40,13 +41,15 @@
 
         <provider
             android:name=".database.ReaderContentProvider"
-            android:authorities="com.rocdev.guardianreader" />
+            android:authorities="com.rocdev.guardianreader"
+            android:exported="false"/>
 
         <activity
             android:name=".activities.ArticleActivity"
             android:label="@string/title_activity_article"
             android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.rocdev.guardianreader.activities.MainActivity" />

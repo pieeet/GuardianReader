@@ -53,8 +53,10 @@ public class SettingsFragment extends PreferenceFragment
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
-        if (key.equals(PREF_KEY_DEFAULT_EDITION) || key.equals(PREF_KEY_DEFAULT_BROWSER));
-        setSummaries();
+        if (key.equals(PREF_KEY_DEFAULT_EDITION) || key.equals(PREF_KEY_DEFAULT_BROWSER)) {
+            setSummaries();
+        }
+
     }
 
     private void setSummaries() {

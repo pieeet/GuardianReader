@@ -41,9 +41,9 @@ public class ArticleAdMobRecyclerAdapter extends
     private static final int VIEW_TYPE_AD = 1;
     private static final int VIEW_TYPE_BUTTON = 2;
 
-    private List<Object> listItems;
+    private final List<Object> listItems;
 
-    private Context context;
+    private final Context context;
     private ArticleAdMobRecyclerAdapterListener mListener;
     private ButtonViewHolder buttonViewHolder;
 
@@ -186,11 +186,11 @@ public class ArticleAdMobRecyclerAdapter extends
     }
 
     private static class ItemViewHolder extends RecyclerView.ViewHolder {
-        View container;
-        ImageView imgView;
-        TextView title;
-        TextView date;
-        TextView section;
+        final View container;
+        final ImageView imgView;
+        final TextView title;
+        final TextView date;
+        final TextView section;
 
         ItemViewHolder(View itemView) {
             super(itemView);
@@ -210,7 +210,7 @@ public class ArticleAdMobRecyclerAdapter extends
     }
 
     private class ButtonViewHolder extends RecyclerView.ViewHolder {
-        Button button;
+        final Button button;
 
         ButtonViewHolder(View itemView) {
             super(itemView);

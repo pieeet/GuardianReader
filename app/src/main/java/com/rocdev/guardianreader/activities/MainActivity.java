@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    protected void setNoNetWorkStateWarning() {
+    private void setNoNetWorkStateWarning() {
         Toast.makeText(MainActivity.this, R.string.toast_no_network_alert,
                 Toast.LENGTH_LONG).show();
         if (getSupportActionBar() != null) {

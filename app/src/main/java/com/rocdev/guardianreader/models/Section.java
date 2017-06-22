@@ -211,10 +211,10 @@ public enum Section  {
                     -1);
 
     private String url = null;
-    private int title;
-    private int idNav;
-    private String prefKey;
-    private int icon;
+    private final int title;
+    private final int idNav;
+    private final String prefKey;
+    private final int icon;
 
     Section(String url, int title, int idNav, String prefKey, int icon) {
         this.url = url;

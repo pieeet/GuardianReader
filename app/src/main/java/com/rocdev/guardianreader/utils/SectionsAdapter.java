@@ -25,7 +25,7 @@ import java.util.List;
 
 public class SectionsAdapter extends ArrayAdapter<Section> {
 
-    private Context context;
+    private final Context context;
 
     public SectionsAdapter(@NonNull Context context, List<Section> sections) {
         super(context, 0, sections);
