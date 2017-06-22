@@ -284,7 +284,6 @@ public class MainActivity extends AppCompatActivity
         }
         String title = titles[currentSection];
         if (checkConnection()) {
-            //noinspection ConstantConditions
             if (currentSection == Section.SEARCH.ordinal()) title = searchQuery;
             loaderId++;
             getLoaderManager().initLoader(loaderId, null, this);
@@ -595,10 +594,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemClicked(Article article) {
         if (article != null) {
-//            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
-            Intent intent = new Intent(this, ArticleActivity.class);
-            intent.putExtra("article", article);
-            startActivity(intent);
+            int browserValue = Integer.parseInt(mSharedPreferences.getString(getString(
+                    R.string.pref_key_default_browser), "0"));
+            if (browserValue == 0) {
+                Intent intent = new Intent(this, ArticleActivity.class);
+                intent.putExtra("article", article);
+                startActivity(intent);
+            } else if (browserValue == 1) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
+            }
         }
     }
 
@@ -611,7 +615,6 @@ public class MainActivity extends AppCompatActivity
         String title = getString(R.string.empty_string);
         String message = getString(R.string.empty_string);
         Drawable icon = null;
-
         if (article != null) {
             if (article.get_ID() == -1) {
                 articleIsSaved = false;

@@ -16,8 +16,14 @@ import com.rocdev.guardianreader.R;
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    ListPreference defaultEditionListPreference;
-    SharedPreferences mSharedPreferences;
+
+    private static final String PREF_KEY_DEFAULT_EDITION = "pref_key_default_edition";
+    private static final String PREF_KEY_DEFAULT_BROWSER = "pref_key_default_browser";
+
+
+    private ListPreference defaultEditionListPreference;
+    private ListPreference defaultBrowserListPreference;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,8 +33,9 @@ public class SettingsFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.preferences);
         defaultEditionListPreference = (ListPreference) findPreference(
                 getString(R.string.pref_key_default_edition));
+        defaultBrowserListPreference = (ListPreference) findPreference(getString(R.string.pref_key_default_browser));
         mSharedPreferences = getPreferenceManager().getSharedPreferences();
-        setSummary();
+        setSummaries();
     }
 
     @Override
@@ -44,15 +51,21 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
-        setSummary();
+        if (key.equals(PREF_KEY_DEFAULT_EDITION) || key.equals(PREF_KEY_DEFAULT_BROWSER));
+        setSummaries();
     }
 
-    private void setSummary() {
-        int value = Integer.parseInt(mSharedPreferences.getString(getString(
+    private void setSummaries() {
+        int editionValue = Integer.parseInt(mSharedPreferences.getString(getString(
                 R.string.pref_key_default_edition), "3"));
-        String[] entries = getResources().getStringArray(R.array.default_entries);
-        defaultEditionListPreference.setSummary(entries[value]);
+        String[] editionEntries = getResources().getStringArray(R.array.default_entries);
+        defaultEditionListPreference.setSummary(editionEntries[editionValue]);
+        int browserValue = Integer.parseInt(mSharedPreferences.getString(getString(
+                R.string.pref_key_default_browser),"0"));
+        String[] browserEntries = getResources().getStringArray(R.array.default_browser_entries);
+        defaultBrowserListPreference.setSummary(browserEntries[browserValue]);
+
     }
 }
