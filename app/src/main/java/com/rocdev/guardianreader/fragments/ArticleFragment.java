@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,11 +27,12 @@ import com.rocdev.guardianreader.models.Article;
  * Use the {@link ArticleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArticleFragment extends Fragment implements DownloadListener {
+public class ArticleFragment extends Fragment {
 
     private static final String KEY_ARTICLE = "article";
     private Article article;
     private WebView webView;
+    private ArticleFragmentListener mListener;
 
 
     public ArticleFragment() {
@@ -71,8 +73,9 @@ public class ArticleFragment extends Fragment implements DownloadListener {
         webSettings.setBuiltInZoomControls(true);
         webSettings.setDisplayZoomControls(false);
         webView.setWebViewClient(new ArticleWebViewClient());
-        webView.setDownloadListener(this);
         webView.loadUrl(article.getUrl());
+
+        Log.i("Fragment", "onCreateView executed");
 
         return rootView;
     }
@@ -80,13 +83,17 @@ public class ArticleFragment extends Fragment implements DownloadListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //TODO attach listener
+        if (context instanceof ArticleFragmentListener) {
+            mListener = (ArticleFragmentListener) context;
+        } else {
+            throw new RuntimeException("Activity should implement ArticleFragmentListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        //TODO detach listener
+        mListener = null;
     }
 
     public boolean goPageBack() {
@@ -97,10 +104,11 @@ public class ArticleFragment extends Fragment implements DownloadListener {
         return false;
     }
 
-    @Override
-    public void onDownloadStart(String s, String s1, String s2, String s3, long l) {
-        //TODO start download animation
+    public void reload() {
+        webView.reload();
     }
+
+
 
     private class ArticleWebViewClient extends WebViewClient {
 
@@ -108,17 +116,17 @@ public class ArticleFragment extends Fragment implements DownloadListener {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
-                Log.i("URL", url);
                 view.loadUrl(url);
             }
             return true;
         }
 
+
+
         @TargetApi(Build.VERSION_CODES.N)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
-            Log.i("URL", url);
             if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
                 view.loadUrl(url);
             }
@@ -128,12 +136,9 @@ public class ArticleFragment extends Fragment implements DownloadListener {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-
-            //TODO stop animation here
-
+            mListener.stopDownLoadAnimation();
         }
     }
-
 
     public interface ArticleFragmentListener {
         void startDownloadAnimation();

@@ -22,15 +22,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
+
 import android.widget.Toast;
 
 import com.google.android.gms.ads.MobileAds;
@@ -48,7 +44,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<List<Article>>,
         ArticlesFragment.OnFragmentInteractionListener,
@@ -298,7 +294,7 @@ public class MainActivity extends AppCompatActivity
                         if (!checkConnection()) {
                             setNoNetWorkStateWarning();
                         } else {
-                            stopRefreshButtonAnimation();
+                            stopRefreshButtonAnimation(mMenu);
                             refreshUI();
                         }
                     }
@@ -318,7 +314,7 @@ public class MainActivity extends AppCompatActivity
         }
         articles.clear();
         articlesFragment.notifyArticlesChanged(true, false);
-        stopRefreshButtonAnimation();
+        stopRefreshButtonAnimation(mMenu);
     }
 
 
@@ -358,6 +354,7 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         mMenu = menu;
+        startRefreshButtonAnimation(mMenu);
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
@@ -420,36 +417,9 @@ public class MainActivity extends AppCompatActivity
         if (isNewList) {
             articlesFragment.showListContainer(false);
         }
-        startRefreshButtonAnimation();
+        startRefreshButtonAnimation(mMenu);
     }
 
-    private void startRefreshButtonAnimation() {
-        MenuItem m = null;
-        if (mMenu != null) {
-            m = mMenu.findItem(R.id.action_refresh);
-        }
-        if (m != null) {
-            if (m.getActionView() != null) {
-                stopRefreshButtonAnimation();
-            }
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            ImageView iv = (ImageView) inflater.inflate(R.layout.iv_refresh, null);
-            Animation rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
-            rotation.setRepeatCount(Animation.INFINITE);
-            iv.startAnimation(rotation);
-            m.setActionView(iv);
-        }
-    }
-
-    private void stopRefreshButtonAnimation() {
-        try {
-            MenuItem m = mMenu.findItem(R.id.action_refresh);
-            // Remove the animation.
-            m.getActionView().clearAnimation();
-            m.setActionView(null);
-        } catch (NullPointerException ignored) {
-        }
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -509,7 +479,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(Loader<List<Article>> loader, List<Article> data) {
         mLoader = loader;
-        stopRefreshButtonAnimation();
+        stopRefreshButtonAnimation(mMenu);
         if (isNewList) articles.clear();
         for (Article article : data) {
             articles.add(article);
