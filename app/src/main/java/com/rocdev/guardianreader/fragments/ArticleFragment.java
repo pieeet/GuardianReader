@@ -136,7 +136,9 @@ public class ArticleFragment extends Fragment {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            mListener.stopDownLoadAnimation();
+            if (mListener != null) {
+                mListener.stopDownLoadAnimation();
+            }
         }
     }
 

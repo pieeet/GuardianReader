@@ -49,7 +49,8 @@
             android:label="@string/title_activity_article"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            tools:targetApi="jelly_bean">
+            tools:targetApi="jelly_bean"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.rocdev.guardianreader.activities.MainActivity" />

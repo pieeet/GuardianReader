@@ -17,8 +17,8 @@ public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
-    private static final String PREF_KEY_DEFAULT_EDITION = "pref_key_default_edition";
-    private static final String PREF_KEY_DEFAULT_BROWSER = "pref_key_default_browser";
+    private static final String PREF_KEY_DEFAULT_EDITION = "pref_default_edition";
+    private static final String PREF_KEY_DEFAULT_BROWSER = "pref_default_browser";
 
 
     private ListPreference defaultEditionListPreference;
