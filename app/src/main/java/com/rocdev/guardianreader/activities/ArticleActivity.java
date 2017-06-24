@@ -1,6 +1,7 @@
 package com.rocdev.guardianreader.activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +37,7 @@ public class ArticleActivity extends BaseActivity
         fragment = ArticleFragment.newInstance(article);
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.article_fragment_container, fragment)
+                .add(R.id.article_fragment_container, fragment)
                 .commit();
     }
 
@@ -48,6 +49,11 @@ public class ArticleActivity extends BaseActivity
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
