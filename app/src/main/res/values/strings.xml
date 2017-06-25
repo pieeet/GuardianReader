@@ -42,7 +42,6 @@
         <item>@string/pref_title_search</item>
     </string-array>
 
-
     <!--List preference default edition-->
     <string-array name="default_entries">
         <item>@string/pref_title_headlines_aus</item>
@@ -57,7 +56,6 @@
         <item>3</item>
     </string-array>
 
-
     <!--List Preference default browser-->
     <string-array name="default_browser_entries">
         <item>@string/pref_in_app_browser</item>
@@ -68,15 +66,11 @@
         <item>1</item>
     </string-array>
 
-    <string name="pref_title_default_browser">Watch article in…</string>
+    <string name="pref_title_default_browser">Read articles in…</string>
     <string name="pref_in_app_browser">In-app browser</string>
     <string name="pref_system_browser">System browser</string>
 
-
-
-
     <!--navbar pref keys -->
-
     <string name="pref_key_aus_headlines" translatable="false">pref_section_headlines_aus</string>
     <string name="pref_key_uk_headlines" translatable="false">pref_section_headlines_uk</string>
     <string name="pref_key_us_headlines" translatable="false">pref_section_headlines_us</string>
@@ -109,7 +103,6 @@
     <string name="pref_key_tv_radio" translatable="false">pref_section_tv_radio</string>
     <string name="pref_key_travel" translatable="false">pref_section_travel</string>
     <string name="pref_key_weather" translatable="false">pref_section_weather</string>
-
 
     <string name="pref_key_change_sections" translatable="false">changeSections</string>
 
@@ -190,9 +183,4 @@
     <string name="empty_string" />
     <string name="more_button_disabled">…</string>
     <string name="title_activity_article">Article</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
 </resources>
