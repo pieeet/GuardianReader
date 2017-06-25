@@ -72,7 +72,7 @@ public class MainActivity extends BaseActivity
     private static final String PARAM_NAME_QUERY = "q";
     private static final String PREF_DEFAULT_EDITION_IF_UNSET = "3";
     private static final String KEY_PAUSE_TIME = "pauseTime";
-    private static final int TIME_REFRESH_INTERVAL = 1000 * 60 * 2;
+    private static final int TIME_REFRESH_INTERVAL = 1000 * 60 * 15;
     private static final int TIME_POST_DELAYED = 2000;
     private static final int CLOSE_DRAWER_DELAY = 300;
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();

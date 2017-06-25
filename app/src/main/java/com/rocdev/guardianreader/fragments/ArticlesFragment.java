@@ -43,6 +43,7 @@ public class ArticlesFragment extends Fragment {
     private boolean hasMoreButton;
     private int listPosition;
     private LayoutInflater inflater;
+    private Context mContext;
 
 
     /**
@@ -96,11 +97,11 @@ public class ArticlesFragment extends Fragment {
      */
     private void initViews(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         populateListItems();
-        adapter = new ArticleAdMobRecyclerAdapter(getContext(), listItems);
+        adapter = new ArticleAdMobRecyclerAdapter(mContext, listItems);
         mRecyclerView.setAdapter(adapter);
         listContainer = view.findViewById(R.id.listContainer);
 
@@ -147,8 +148,8 @@ public class ArticlesFragment extends Fragment {
     }
 
     private void addNativeExpressAds() {
-        if (articles != null && !articles.isEmpty()) {
-            final NativeExpressAdView adView = new NativeExpressAdView(getContext());
+        if (articles != null && !articles.isEmpty() && isAdded()) {
+            final NativeExpressAdView adView = new NativeExpressAdView(mContext);
             adView.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             final AdRequest.Builder builder = new AdRequest.Builder();
             builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
@@ -164,7 +165,7 @@ public class ArticlesFragment extends Fragment {
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    final float density = getContext().getResources().getDisplayMetrics().density;
+                    final float density = mContext.getResources().getDisplayMetrics().density;
                     AdSize size = new AdSize(
                             (int) (mRecyclerView.getWidth() / density) - 16 /*margin*/, 120 /*height*/
                     );
@@ -227,6 +228,7 @@ public class ArticlesFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
