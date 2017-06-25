@@ -152,9 +152,9 @@ public class ArticlesFragment extends Fragment {
             final NativeExpressAdView adView = new NativeExpressAdView(getContext());
             adView.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             final AdRequest.Builder builder = new AdRequest.Builder();
-//            builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
-//            builder.addTestDevice(getString(R.string.test_device_code_nexus9));
-//            builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+            builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
+            builder.addTestDevice(getString(R.string.test_device_code_nexus9));
+            builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
             int adPosition;
             if (hasMoreButton) {
                 adPosition = listItems.size() - 1;
