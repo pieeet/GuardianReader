@@ -9,12 +9,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_guardian_app"
-        android:orderInCategory="300"
-        android:title="Install Guardian App..."
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_rate"
         android:orderInCategory="400"
         android:title="Rate app..."

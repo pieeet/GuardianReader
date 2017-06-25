@@ -382,33 +382,10 @@ public class MainActivity extends BaseActivity
                         getString(R.string.google_play_url)));
                 startActivity(browserIntent);
                 break;
-            case R.id.action_guardian_app:
-                startGuardianAppDialog();
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-
-    private void startGuardianAppDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_guardian_app_title)
-                .setMessage(R.string.dialog_guardian_app_message)
-                .setIcon(ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.ic_shop_black_18dp, null))
-                .setPositiveButton(R.string.dialog_confirm_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse(getString(R.string.guardian_app_play_store))));
-                    }
-                })
-                .setNegativeButton(R.string.dialog_confirm_no_thanks, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                }).show();
-    }
 
 
     private void showProgressAnimations() {
