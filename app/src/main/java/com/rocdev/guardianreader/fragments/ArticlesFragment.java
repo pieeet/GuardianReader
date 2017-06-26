@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.attr.width;
 
 
 /**
@@ -44,6 +47,7 @@ public class ArticlesFragment extends Fragment {
     private int listPosition;
     private LayoutInflater inflater;
     private Context mContext;
+    private int mAdWidth;
 
 
     /**
@@ -122,6 +126,7 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onPause() {
         mListener.saveListPosition(listPosition);
@@ -154,6 +159,7 @@ public class ArticlesFragment extends Fragment {
             final AdRequest.Builder builder = new AdRequest.Builder();
             builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
             builder.addTestDevice(getString(R.string.test_device_code_nexus9));
+            builder.addTestDevice(getString(R.string.test_device_code_asus));
             builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
             int adPosition;
             if (hasMoreButton) {
@@ -166,10 +172,11 @@ public class ArticlesFragment extends Fragment {
                 @Override
                 public void run() {
                     final float density = mContext.getResources().getDisplayMetrics().density;
-                    AdSize size = new AdSize(
-                            (int) (mRecyclerView.getWidth() / density) - 16 /*margin*/, 120 /*height*/
-                    );
-                    adView.setAdSize(size);
+                    mAdWidth =  (int) (mRecyclerView.getWidth() / density) - 16;
+                    if (mAdWidth < 0) {
+                        mAdWidth = 350;
+                    }
+                    adView.setAdSize(new AdSize(mAdWidth, 120));
                     adView.loadAd(builder.build());
                 }
             });
