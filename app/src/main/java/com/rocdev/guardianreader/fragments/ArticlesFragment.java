@@ -166,6 +166,10 @@ public class ArticlesFragment extends Fragment {
                 adPosition = listItems.size();
             }
             listItems.add(adPosition, adView);
+
+            //add adview above fold
+            listItems.add(3, adView);
+
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
