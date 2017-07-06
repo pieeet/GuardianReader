@@ -152,23 +152,27 @@ public class ArticlesFragment extends Fragment {
 
     private void addNativeExpressAds() {
         if (articles != null && !articles.isEmpty() && isAdded()) {
-            final NativeExpressAdView adView = new NativeExpressAdView(mContext);
-            adView.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
+            final NativeExpressAdView adViewtop = new NativeExpressAdView(mContext);
+            final NativeExpressAdView adViewbottom = new NativeExpressAdView(mContext);
+            adViewtop.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
+            adViewbottom.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             final AdRequest.Builder builder = new AdRequest.Builder();
             builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
             builder.addTestDevice(getString(R.string.test_device_code_nexus9));
             builder.addTestDevice(getString(R.string.test_device_code_asus));
             builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
             int adPosition;
+            //add adview above fold
+            adPosition = 3;
+            listItems.add(adPosition, adViewtop);
             if (hasMoreButton) {
                 adPosition = listItems.size() - 1;
             } else {
                 adPosition = listItems.size();
             }
-            listItems.add(adPosition, adView);
+            // add AdView at bottom (above button)
+            listItems.add(adPosition, adViewbottom);
 
-            //add adview above fold
-            listItems.add(3, adView);
 
             mRecyclerView.post(new Runnable() {
                 @Override
@@ -178,8 +182,10 @@ public class ArticlesFragment extends Fragment {
                     if (mAdWidth < 0) {
                         mAdWidth = 350;
                     }
-                    adView.setAdSize(new AdSize(mAdWidth, 120));
-                    adView.loadAd(builder.build());
+                    adViewtop.setAdSize(new AdSize(mAdWidth, 120));
+                    adViewbottom.setAdSize(new AdSize(mAdWidth, 120));
+                    adViewtop.loadAd(builder.build());
+                    adViewbottom.loadAd(builder.build());
                 }
             });
         }
