@@ -163,8 +163,11 @@ public class ArticlesFragment extends Fragment {
 //            builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
             int adPosition;
             //add adview above fold
-            adPosition = 3;
-            listItems.add(adPosition, adViewtop);
+            if (listItems.size() > 9) {
+                adPosition = 3;
+                listItems.add(adPosition, adViewtop);
+            }
+
             if (hasMoreButton) {
                 adPosition = listItems.size() - 1;
             } else {
