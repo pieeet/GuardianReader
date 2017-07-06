@@ -72,9 +72,6 @@ public class ArticleFragment extends Fragment {
         webSettings.setDisplayZoomControls(false);
         webView.setWebViewClient(new ArticleWebViewClient());
         webView.loadUrl(article.getUrl());
-
-        Log.i("Fragment", "onCreateView executed");
-
         return rootView;
     }
 
