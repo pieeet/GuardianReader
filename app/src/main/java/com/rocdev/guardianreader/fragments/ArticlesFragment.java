@@ -157,10 +157,10 @@ public class ArticlesFragment extends Fragment {
             adViewtop.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             adViewbottom.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             final AdRequest.Builder builder = new AdRequest.Builder();
-            builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
-            builder.addTestDevice(getString(R.string.test_device_code_nexus9));
-            builder.addTestDevice(getString(R.string.test_device_code_asus));
-            builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+//            builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
+//            builder.addTestDevice(getString(R.string.test_device_code_nexus9));
+//            builder.addTestDevice(getString(R.string.test_device_code_asus));
+//            builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
             int adPosition;
             //add adview above fold
             adPosition = 3;

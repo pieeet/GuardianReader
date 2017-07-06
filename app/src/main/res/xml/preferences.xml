@@ -87,6 +87,11 @@
         <SwitchPreference
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_fashion"
+            android:title="@string/pref_title_fashion" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_film"
             android:title="@string/pref_title_film" />
         <SwitchPreference

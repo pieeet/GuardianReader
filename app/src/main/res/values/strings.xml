@@ -17,6 +17,7 @@
         <item>@string/pref_title_culture</item>
         <item>@string/pref_title_education</item>
         <item>@string/pref_title_environment</item>
+        <item>@string/pref_title_fashion</item>
         <item>@string/pref_title_film</item>
         <item>@string/pref_title_football</item>
         <item>@string/pref_title_law</item>
@@ -82,6 +83,7 @@
     <string name="pref_key_culture" translatable="false">pref_section_culture</string>
     <string name="pref_key_education" translatable="false">pref_section_education</string>
     <string name="pref_key_environment" translatable="false">pref_section_environment</string>
+    <string name="pref_key_fashion" translatable="false">pref_section_fashion</string>
     <string name="pref_key_film" translatable="false">pref_section_film</string>
     <string name="pref_key_football" translatable="false">pref_section_football</string>
     <string name="pref_key_law" translatable="false">pref_section_law</string>
@@ -124,6 +126,7 @@
     <string name="pref_title_culture">Culture</string>
     <string name="pref_title_education">Education</string>
     <string name="pref_title_environment">Environment</string>
+    <string name="pref_title_fashion">Fashion</string>
     <string name="pref_title_film">Film</string>
     <string name="pref_title_football">Football</string>
     <string name="pref_title_law">Law</string>

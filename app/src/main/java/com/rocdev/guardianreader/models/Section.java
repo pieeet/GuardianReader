@@ -71,6 +71,13 @@ public enum Section  {
             R.id.nav_environment,
             "pref_section_environment",
             R.drawable.ic_bookmark_border_black_18dp),
+    FASHION(
+            "https://content.guardianapis.com/fashion",
+            R.string.pref_title_fashion,
+            R.id.nav_fashion,
+            "pref_section_fashion",
+            R.drawable.ic_bookmark_border_black_18dp
+    ),
     FILM(
             "https://content.guardianapis.com/film",
             R.string.pref_title_film,
