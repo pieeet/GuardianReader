@@ -46,6 +46,7 @@ public class ArticlesFragment extends Fragment {
     private LayoutInflater inflater;
     private Context mContext;
     private int mAdWidth;
+    RecyclerView.LayoutManager mLayoutManager;
 
 
     /**
@@ -99,7 +100,7 @@ public class ArticlesFragment extends Fragment {
      */
     private void initViews(View view) {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
+        mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         populateListItems();
@@ -143,11 +144,12 @@ public class ArticlesFragment extends Fragment {
                 listItems.add(article);
             }
         }
+        addNativeExpressAds();
         if (hasMoreButton) {
             View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
             listItems.add(buttonView);
         }
-        addNativeExpressAds();
+
     }
 
     private void addNativeExpressAds() {
@@ -157,26 +159,14 @@ public class ArticlesFragment extends Fragment {
             adViewtop.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             adViewbottom.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             final AdRequest.Builder builder = new AdRequest.Builder();
-//            builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
-//            builder.addTestDevice(getString(R.string.test_device_code_nexus9));
-//            builder.addTestDevice(getString(R.string.test_device_code_asus));
-//            builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+            setTestDevices(builder);
             int adPosition;
             //add adview above fold
             if (listItems.size() > 9) {
                 adPosition = 3;
                 listItems.add(adPosition, adViewtop);
             }
-
-            if (hasMoreButton) {
-                adPosition = listItems.size() - 1;
-            } else {
-                adPosition = listItems.size();
-            }
-            // add AdView at bottom (above button)
-            listItems.add(adPosition, adViewbottom);
-
-
+            listItems.add(listItems.size(), adViewbottom);
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
@@ -194,6 +184,14 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
+    private void setTestDevices(AdRequest.Builder builder) {
+        builder.addTestDevice(getString(R.string.test_device_code_nexus5x));
+        builder.addTestDevice(getString(R.string.test_device_code_nexus9));
+        builder.addTestDevice(getString(R.string.test_device_code_nexus9_2));
+        builder.addTestDevice(getString(R.string.test_device_code_asus));
+        builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+    }
+
 
     /**
      * method called from Activity when articles has changed
@@ -209,7 +207,7 @@ public class ArticlesFragment extends Fragment {
         showProgressContainer(false);
         if (isNewList) {
             listPosition = 0;
-            mRecyclerView.smoothScrollToPosition(listPosition);
+            mLayoutManager.scrollToPosition(listPosition);
         }
     }
 
