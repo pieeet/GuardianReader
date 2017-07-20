@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -75,15 +76,25 @@ public class ArticleActivity extends BaseActivity
                 fragment.reload();
                 return true;
             case R.id.menu_item_share:
-                Intent myShareIntent = new Intent();
-                myShareIntent.setAction(Intent.ACTION_SEND);
-                myShareIntent.putExtra(Intent.EXTRA_TEXT, article.getTitle() + "\n--------\n" +
-                        article.getUrl());
-                myShareIntent.setType("text/plain");
-                startActivity(Intent.createChooser(myShareIntent, "Share URL to..."));
+                shareArticle();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void shareArticle() {
+        String mimeType = "text/plain";
+        String title = "Share URL to...";
+        String message = article.getTitle() + "\n--------\n" +
+                article.getUrl();
+        /* ShareCompat.IntentBuilder provides a fluent API for creating Intents - Udacity */
+        ShareCompat.IntentBuilder
+                .from(this)
+                .setType(mimeType)
+                .setChooserTitle(title)
+                .setText(message)
+                .startChooser();
     }
 
 
