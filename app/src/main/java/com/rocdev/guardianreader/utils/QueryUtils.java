@@ -17,11 +17,13 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by piet on 27-12-16.
@@ -49,23 +51,20 @@ public class QueryUtils {
         StringBuilder output = new StringBuilder();
         URL url = makeUrl(urlStr);
         HttpURLConnection connection = null;
-        BufferedReader reader = null;
+
         try {
             connection = (HttpURLConnection) url.openConnection();
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line = reader.readLine();
-            while(line != null) {
-                output.append(line);
-                line = reader.readLine();
+            InputStream in = connection.getInputStream();
+            Scanner scanner = new Scanner(in);
+            scanner.useDelimiter("\\A");
+            if (scanner.hasNext()) {
+                output.append(scanner.next());
+            } else {
+                return null;
             }
         } catch (IOException ignored) {} finally {
             if (connection != null) {
                 connection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {}
             }
         }
         ArrayList<Article> articles = new ArrayList<>();
