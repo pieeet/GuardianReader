@@ -6,6 +6,7 @@ import android.content.Context;
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,8 @@ public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
     private final String mUrl;
     private final boolean mIsEditorsPick;
     private final Context mContext;
+
+    private ArrayList<Article> articles;
 
 
     public ArticleLoader(Context context, String url, boolean isEditorsPick) {
@@ -37,6 +40,16 @@ public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
 
     @Override
     protected void onStartLoading() {
-        forceLoad();
+        if (articles != null ) {
+            deliverResult(articles);
+        } else {
+            forceLoad();
+        }
+    }
+
+    @Override
+    public void deliverResult(List<Article> data) {
+        articles = (ArrayList<Article>) data;
+        super.deliverResult(data);
     }
 }

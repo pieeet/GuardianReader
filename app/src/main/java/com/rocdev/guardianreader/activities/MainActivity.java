@@ -231,6 +231,7 @@ public class MainActivity extends BaseActivity
                 isNewList = true;
                 currentPage = 1;
                 articles.clear();
+                loaderId++;
                 refreshUI();
             }
         } else {
@@ -281,7 +282,7 @@ public class MainActivity extends BaseActivity
         String title = titles[currentSection];
         if (checkConnection()) {
             if (currentSection == Section.SEARCH.ordinal()) title = searchQuery;
-            loaderId++;
+//            loaderId++;
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
             if (currentSection == Section.SAVED.ordinal()) {
@@ -374,6 +375,7 @@ public class MainActivity extends BaseActivity
             case R.id.action_refresh:
                 isNewList = true;
                 currentPage = 1;
+                loaderId++;
                 refreshUI();
                 break;
             case R.id.action_rate:
@@ -416,6 +418,7 @@ public class MainActivity extends BaseActivity
                 for (Section section : Section.values()) {
                     if (section.getIdNav() == id && currentSection != section.ordinal()) {
                         currentSection = section.ordinal();
+                        loaderId++;
                         refreshUI();
                     }
                 }
@@ -517,6 +520,7 @@ public class MainActivity extends BaseActivity
             currentPage = 1;
             articles.clear();
             currentSection = section.ordinal();
+            loaderId++;
             refreshUI();
         }
     }
