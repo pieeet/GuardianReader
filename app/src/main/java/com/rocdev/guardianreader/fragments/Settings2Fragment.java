@@ -3,13 +3,11 @@ package com.rocdev.guardianreader.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import android.preference.PreferenceManager;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
-import android.support.v7.preference.SwitchPreferenceCompat;
 
 import com.rocdev.guardianreader.R;
 
@@ -52,7 +50,7 @@ public class Settings2Fragment extends PreferenceFragmentCompat
     }
 
     /**
-     * Updates the summary for the preference
+     * sets/updates the summary for the preference
      *
      * @param preference The preference to be updated
      * @param value      The value that the preference was updated to
@@ -62,10 +60,10 @@ public class Settings2Fragment extends PreferenceFragmentCompat
         if (preference instanceof ListPreference) {
             // For list preferences, figure out the label of the selected value
             ListPreference listPreference = (ListPreference) preference;
-            int prefIndex = listPreference.findIndexOfValue(value);
-            if (prefIndex >= 0) {
-                // Set the summary to that label
-                listPreference.setSummary(listPreference.getEntries()[prefIndex]);
+            int prefValueIndex = listPreference.findIndexOfValue(value);
+            if (prefValueIndex >= 0) {
+                CharSequence[] entries = listPreference.getEntries();
+                listPreference.setSummary(entries[prefValueIndex]);
             }
         }
     }
