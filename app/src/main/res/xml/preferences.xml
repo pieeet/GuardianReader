@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <ListPreference
         android:defaultValue="3"
         android:dialogTitle="Pick default edition"
@@ -11,7 +9,6 @@
         android:key="@string/pref_key_default_edition"
         android:summary="@string/pref_title_headlines_world"
         android:title="@string/pref_heading_default_edition" />
-
     <ListPreference
         android:defaultValue="0"
         android:dialogTitle="@string/pref_title_default_browser"
@@ -22,179 +19,238 @@
         android:summary="@string/pref_in_app_browser"
         android:title="@string/pref_title_default_browser" />
 
-
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:key="showHeadlines"
         android:title="@string/pref_heading_headlines">
-
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_public_black_18dp"
             android:key="@string/pref_key_aus_headlines"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_headlines_aus" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_public_black_18dp"
             android:key="@string/pref_key_uk_headlines"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_headlines_uk" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_public_black_18dp"
             android:key="@string/pref_key_us_headlines"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_headlines_us" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_public_black_18dp"
             android:key="@string/pref_key_int_headlines"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_headlines_world" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:key="@string/pref_key_change_sections"
         android:title="@string/pref_heading_sections">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_art_design"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_art_design" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_books"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_books" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_business"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_business" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_culture"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_culture" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_education"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_education" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_environment"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_environment" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_fashion"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_fashion" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_film"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_film" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_football"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_football" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_law"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_law" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_life_style"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_life_style" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_media"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_media" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_money"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_money" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_music"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_music" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_news_australia"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_news_australia" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_news_uk"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_news_uk" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_news_us"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_news_us" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_news_world"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_news_world" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_opinion"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_opinion" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_politics"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_politics" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_science"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_science" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_society"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_society" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_sport"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_sport" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_stage"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_stage" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_tech"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_tech" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_travel"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_travel" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_tv_radio"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_tv_radio" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:key="@string/pref_key_weather"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_weather" />
-    </PreferenceCategory>
-
-
-</PreferenceScreen>
+    </android.support.v7.preference.PreferenceCategory>
+</android.support.v7.preference.PreferenceScreen>

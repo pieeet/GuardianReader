@@ -251,6 +251,12 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         // invoke search intent
@@ -370,7 +376,7 @@ public class MainActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(this, Settings2Activity.class));
                 break;
             case R.id.action_refresh:
                 isNewList = true;
@@ -410,7 +416,7 @@ public class MainActivity extends BaseActivity
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        startActivity(new Intent(MainActivity.this, Settings2Activity.class));
                     }
                 }, CLOSE_DRAWER_DELAY);
                 break;

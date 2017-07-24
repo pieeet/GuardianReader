@@ -2,20 +2,19 @@ package com.rocdev.guardianreader.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.PreferenceFragment;
+
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.rocdev.guardianreader.R;
 
-
 /**
- * Created by piet on 19-05-17.
+ * Created by piet on 23-07-17.
  *
  */
 
-public class SettingsFragment extends PreferenceFragment
+public class Settings2Fragment extends PreferenceFragmentCompat
         implements SharedPreferences.OnSharedPreferenceChangeListener {
-
 
     private static final String PREF_KEY_DEFAULT_EDITION = "pref_default_edition";
     private static final String PREF_KEY_DEFAULT_BROWSER = "pref_default_browser";
@@ -25,49 +24,52 @@ public class SettingsFragment extends PreferenceFragment
     private ListPreference defaultBrowserListPreference;
     private SharedPreferences mSharedPreferences;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        // Load the preferences from an XML resource
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.preferences);
         defaultEditionListPreference = (ListPreference) findPreference(
                 getString(R.string.pref_key_default_edition));
         defaultBrowserListPreference = (ListPreference) findPreference(getString(R.string.pref_key_default_browser));
         mSharedPreferences = getPreferenceManager().getSharedPreferences();
-        setSummaries();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
+        setDefaultBrowserSummary();
+        setDefaultEditionSummary();
     }
 
     @Override
-    public void onPause() {
+    public void onDestroy() {
+        super.onDestroy();
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
-        super.onPause();
+
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
-        if (key.equals(PREF_KEY_DEFAULT_EDITION) || key.equals(PREF_KEY_DEFAULT_BROWSER)) {
-            setSummaries();
+        switch (key) {
+            case PREF_KEY_DEFAULT_EDITION:
+                setDefaultEditionSummary();
+                break;
+            case PREF_KEY_DEFAULT_BROWSER:
+                setDefaultBrowserSummary();
+                break;
+            default:
+                // do nothing
         }
-
     }
 
-    private void setSummaries() {
+    private void setDefaultEditionSummary() {
         int editionValue = Integer.parseInt(mSharedPreferences.getString(getString(
                 R.string.pref_key_default_edition), "3"));
         String[] editionEntries = getResources().getStringArray(R.array.default_entries);
         defaultEditionListPreference.setSummary(editionEntries[editionValue]);
+    }
+
+    private void setDefaultBrowserSummary() {
         int browserValue = Integer.parseInt(mSharedPreferences.getString(getString(
                 R.string.pref_key_default_browser),"0"));
         String[] browserEntries = getResources().getStringArray(R.array.default_browser_entries);
         defaultBrowserListPreference.setSummary(browserEntries[browserValue]);
-
     }
 }

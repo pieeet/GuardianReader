@@ -42,7 +42,7 @@
         <provider
             android:name=".database.ReaderContentProvider"
             android:authorities="com.rocdev.guardianreader"
-            android:exported="false"/>
+            android:exported="false" />
 
         <activity
             android:name=".activities.ArticleActivity"
@@ -53,6 +53,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.rocdev.guardianreader.activities.MainActivity" />
+        </activity>
+        <activity android:name=".activities.Settings2Activity"
+            android:label="@string/action_personalise"
+            android:parentActivityName=".activities.MainActivity"
+            tools:targetApi="jelly_bean">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />>
         </activity>
     </application>
 
