@@ -6,67 +6,6 @@
 
     <string name="action_personalise">Personalise</string>
 
-    <string-array name="titles">
-        <item>@string/pref_title_headlines_aus</item>
-        <item>@string/pref_title_headlines_uk</item>
-        <item>@string/pref_title_headlines_us</item>
-        <item>@string/pref_title_headlines_world</item>
-        <item>@string/pref_title_art_design</item>
-        <item>@string/pref_title_books</item>
-        <item>@string/pref_title_business</item>
-        <item>@string/pref_title_culture</item>
-        <item>@string/pref_title_education</item>
-        <item>@string/pref_title_environment</item>
-        <item>@string/pref_title_fashion</item>
-        <item>@string/pref_title_film</item>
-        <item>@string/pref_title_football</item>
-        <item>@string/pref_title_law</item>
-        <item>@string/pref_title_life_style</item>
-        <item>@string/pref_title_media</item>
-        <item>@string/pref_title_money</item>
-        <item>@string/pref_title_music</item>
-        <item>Australia News</item>
-        <item>UK News</item>
-        <item>US News</item>
-        <item>World News</item>
-        <item>@string/pref_title_opinion</item>
-        <item>@string/pref_title_politics</item>
-        <item>@string/pref_title_science</item>
-        <item>@string/pref_title_society</item>
-        <item>@string/pref_title_sport</item>
-        <item>@string/pref_title_stage</item>
-        <item>@string/pref_title_tech</item>
-        <item>@string/pref_title_travel</item>
-        <item>@string/pref_title_tv_radio</item>
-        <item>@string/pref_title_weather</item>
-        <item>@string/pref_title_saved</item>
-        <item>@string/pref_title_search</item>
-    </string-array>
-
-    <!--List preference default edition-->
-    <string-array name="default_entries">
-        <item>@string/pref_title_headlines_aus</item>
-        <item>@string/pref_title_headlines_uk</item>
-        <item>@string/pref_title_headlines_us</item>
-        <item>@string/pref_title_headlines_world</item>
-    </string-array>
-    <string-array name="default_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <!--List Preference default browser-->
-    <string-array name="default_browser_entries">
-        <item>@string/pref_in_app_browser</item>
-        <item>@string/pref_system_browser</item>
-    </string-array>
-    <string-array name="default_browser_values">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-
     <string name="pref_title_default_browser">Read articles in…</string>
     <string name="pref_in_app_browser">In-app browser</string>
     <string name="pref_system_browser">System browser</string>

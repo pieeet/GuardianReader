@@ -62,7 +62,7 @@ public class Settings2Fragment extends PreferenceFragmentCompat
     private void setDefaultEditionSummary() {
         int editionValue = Integer.parseInt(mSharedPreferences.getString(getString(
                 R.string.pref_key_default_edition), "3"));
-        String[] editionEntries = getResources().getStringArray(R.array.default_entries);
+        String[] editionEntries = getResources().getStringArray(R.array.default_edition_entries);
         defaultEditionListPreference.setSummary(editionEntries[editionValue]);
     }
 
