@@ -13,6 +13,7 @@ import com.google.android.gms.ads.NativeExpressAdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

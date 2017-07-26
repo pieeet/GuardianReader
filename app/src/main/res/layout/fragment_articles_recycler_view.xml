@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rocdev.guardianreader.fragments.ArticlesFragment">
+    tools:context="com.rocdev.guardianreader.fragments.ArticlesFragment"
+    android:paddingRight="4dp"
+    android:paddingLeft="4dp">
 
     <FrameLayout
         android:id="@+id/listContainer"
