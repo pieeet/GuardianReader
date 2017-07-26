@@ -72,7 +72,7 @@ public class Settings2Fragment extends PreferenceFragmentCompat
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference preference = findPreference(key);
         if (preference != null) {
-            if (!(preference instanceof SwitchPreference)) {
+            if ((preference instanceof ListPreference)) {
                 String value = sharedPreferences.getString(preference.getKey(), "");
                 setPreferenceSummary(preference, value);
             }
