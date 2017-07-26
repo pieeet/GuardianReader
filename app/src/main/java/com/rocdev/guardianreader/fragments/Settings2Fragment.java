@@ -42,7 +42,7 @@ public class Settings2Fragment extends PreferenceFragmentCompat
         int prefCount = preferenceScreen.getPreferenceCount();
         for (int i = 0; i < prefCount; i++) {
             Preference p = preferenceScreen.getPreference(i);
-            if (!(p instanceof SwitchPreference)) {
+            if ((p instanceof ListPreference)) {
                 String value = sharedPreferences.getString(p.getKey(), "");
                 setPreferenceSummary(p, value);
             }
