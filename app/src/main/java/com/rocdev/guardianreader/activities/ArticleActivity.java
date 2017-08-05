@@ -101,7 +101,6 @@ public class ArticleActivity extends BaseActivity
     @Override
     public void startDownloadAnimation() {
         startRefreshButtonAnimation(mMenu);
-        Log.i("Activity", "startDownloadAnimation triggered");
     }
 
     @Override

@@ -532,7 +532,7 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    private void removeSavedArticle(Article article) {
+    public void removeSavedArticle(Article article) {
         if (currentSection == Section.SAVED.ordinal()) {
             for (Article a : articles) {
                 if (a.equals(article)) {

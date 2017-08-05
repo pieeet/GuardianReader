@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class ArticleFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param article  article
+     * @param article article
      * @return A new instance of fragment ArticleFragment.
      */
     public static ArticleFragment newInstance(Article article) {
@@ -99,10 +98,23 @@ public class ArticleFragment extends Fragment {
         return false;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        webView.stopLoading();
+        webView.clearFormData();
+        webView.clearAnimation();
+        webView.clearDisappearingChildren();
+        webView.clearHistory();
+        webView.clearCache(true);
+        webView.destroyDrawingCache();
+        webView.destroy();
+
+    }
+
     public void reload() {
         webView.reload();
     }
-
 
 
     private class ArticleWebViewClient extends WebViewClient {
@@ -115,7 +127,6 @@ public class ArticleFragment extends Fragment {
             }
             return true;
         }
-
 
 
         @TargetApi(Build.VERSION_CODES.N)
@@ -134,14 +145,22 @@ public class ArticleFragment extends Fragment {
             if (mListener != null) {
                 mListener.stopDownLoadAnimation();
             }
+            webViewLoadComplete();
         }
+
+        private void webViewLoadComplete() {
+            webView.clearAnimation();
+            webView.clearDisappearingChildren();
+            webView.destroyDrawingCache();
+        }
+
+
     }
 
     public interface ArticleFragmentListener {
         void startDownloadAnimation();
         void stopDownLoadAnimation();
     }
-
 
 
 }

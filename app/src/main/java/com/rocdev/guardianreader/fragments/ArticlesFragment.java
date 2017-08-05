@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rocdev.guardianreader.R.id.recyclerView;
 
 
 /**
@@ -32,7 +34,6 @@ import java.util.List;
  * to handle interaction events.
  */
 public class ArticlesFragment extends Fragment {
-
     private RecyclerView mRecyclerView;
     private View progressContainer;
     private View noSavedArticlesContainer;
@@ -46,8 +47,8 @@ public class ArticlesFragment extends Fragment {
     private LayoutInflater inflater;
     private Context mContext;
     private int mAdWidth;
-    RecyclerView.LayoutManager mLayoutManager;
-
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ItemTouchHelper mItemTouchHelper;
 
     /**
      * required (Framework) empty constructor
@@ -99,7 +100,7 @@ public class ArticlesFragment extends Fragment {
      * @param view the root view
      */
     private void initViews(View view) {
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) view.findViewById(recyclerView);
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -113,7 +114,7 @@ public class ArticlesFragment extends Fragment {
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    mRecyclerView.smoothScrollToPosition(listPosition);
+                    mLayoutManager.scrollToPosition(listPosition);
 
                 }
             });
@@ -122,6 +123,50 @@ public class ArticlesFragment extends Fragment {
         noSavedArticlesContainer = view.findViewById(R.id.noSavedArticlesContainer);
         if (!articles.isEmpty()) {
             showProgressContainer(false);
+            setItemTouchHelper();
+        }
+    }
+
+    private ItemTouchHelper makeItemTouchHelper() {
+        return new ItemTouchHelper(new ItemTouchHelper
+                .SimpleCallback(0, ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView1, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            /*
+            see https://stackoverflow.com/questions/30713121/disable-swipe-for-position-in-
+            recyclerview-using-itemtouchhelper-simplecallback
+             */
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView1, RecyclerView.ViewHolder viewHolder) {
+                if (!(viewHolder instanceof ArticleAdMobRecyclerAdapter.ItemViewHolder)){
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView1, viewHolder);
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                Article article = (Article) listItems.get(viewHolder.getAdapterPosition());
+                //check if article is saved
+                if (article.get_ID() != -1) {
+                    mListener.onItemLongClicked(article);
+                }
+            }
+        });
+    }
+
+    private void setItemTouchHelper() {
+        if (mItemTouchHelper != null) {
+            mItemTouchHelper.attachToRecyclerView(null);
+        }
+        if (articles.size() > 0 && articles.get(0).get_ID() != -1) {
+            mItemTouchHelper = makeItemTouchHelper();
+            mItemTouchHelper.attachToRecyclerView(mRecyclerView);
         }
     }
 
@@ -202,14 +247,16 @@ public class ArticlesFragment extends Fragment {
     public void notifyArticlesChanged(boolean isNewList, boolean isEditorPicks) {
         hasMoreButton = !isEditorPicks;
         populateListItems();
-
         adapter.notifyAdapterDataSetChanged(listItems);
         showProgressContainer(false);
         if (isNewList) {
             listPosition = 0;
             mLayoutManager.scrollToPosition(listPosition);
         }
+        setItemTouchHelper();
     }
+
+
 
     public void showListContainer(boolean show) {
         try {
@@ -272,5 +319,8 @@ public class ArticlesFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void saveListPosition(int position);
+        void removeSavedArticle(Article article);
+        // swipe does same as item long clicked in saved articles
+        boolean onItemLongClicked(Article article);
     }
 }

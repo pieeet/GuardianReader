@@ -186,7 +186,7 @@ public class ArticleAdMobRecyclerAdapter extends
         return listItems.size();
     }
 
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         final View container;
         final ImageView imgView;
         final TextView title;

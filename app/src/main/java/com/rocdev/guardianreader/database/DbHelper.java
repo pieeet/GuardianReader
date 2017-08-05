@@ -27,7 +27,7 @@ class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        String SQL_CREATE_ARTICLES_TABLE = "CREATE TABLE " + Contract.ArticleEntry.TABLE_NAME + " ("
+        final String SQL_CREATE_ARTICLES_TABLE = "CREATE TABLE " + Contract.ArticleEntry.TABLE_NAME + " ("
                 + Contract.ArticleEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + Contract.ArticleEntry.COLUMN_ARTICLE_TITLE + " TEXT NOT NULL, "
                 + Contract.ArticleEntry.COLUMN_ARTICLE_DATE + " TEXT NOT NULL, "
