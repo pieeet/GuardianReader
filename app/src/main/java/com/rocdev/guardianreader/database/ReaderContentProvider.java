@@ -120,11 +120,17 @@ public class ReaderContentProvider extends ContentProvider {
         }
     }
 
+
     private int deleteArticle(Uri uri) {
         String selection = Contract.ArticleEntry._ID + " = ?";
         String[] selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        return db.delete(Contract.ArticleEntry.TABLE_NAME, selection, selectionArgs);
+        int rowsDeleted = db.delete(Contract.ArticleEntry.TABLE_NAME, selection, selectionArgs);
+        if (rowsDeleted > 0) {
+            //noinspection ConstantConditions
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
 
     }
 
