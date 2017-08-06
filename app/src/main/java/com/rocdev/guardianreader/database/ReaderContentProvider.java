@@ -74,7 +74,7 @@ public class ReaderContentProvider extends ContentProvider {
                         sortOrder);
                 break;
             default:
-                throw new IllegalArgumentException("Cannot query unknown URI: " + uri);
+                throw new UnsupportedOperationException("Cannot query unknown URI: " + uri);
         }
         if (getContext() != null) {
             cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -96,7 +96,7 @@ public class ReaderContentProvider extends ContentProvider {
             case ARTICLES:
                 return insertArticle(uri, contentValues);
             default:
-                throw new IllegalArgumentException("Cannot insert unknown URI: " + uri);
+                throw new UnsupportedOperationException("Cannot insert unknown URI: " + uri);
         }
     }
 
@@ -116,7 +116,7 @@ public class ReaderContentProvider extends ContentProvider {
             case (ARTICLE_ID):
                 return deleteArticle(uri);
             default:
-                throw new IllegalArgumentException("Cannot delete unknown URI: " + uri);
+                throw new UnsupportedOperationException("Cannot delete unknown URI: " + uri);
         }
     }
 
