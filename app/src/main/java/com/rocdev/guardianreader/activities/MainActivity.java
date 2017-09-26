@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 import com.rocdev.guardianreader.utils.ArticleLoader;
@@ -57,7 +58,10 @@ public class MainActivity extends BaseActivity
      * STATIC
      *******************************/
     private static final int CONTENT_CONTAINER = R.id.content_container;
-    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
+    //TODO uncomment before building release-apk
+//    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
+    //TODO comment out before building release-apk
+    private static final String PARAM_VALUE_API_KEY = "test";
     private static final String KEY_ARTICLES = "articles";
     private static final String KEY_CURRENT_SECTION = "currentSection";
     private static final String KEY_CURRENT_PAGE = "currentPage";
@@ -100,12 +104,15 @@ public class MainActivity extends BaseActivity
     private Menu mMenu;
     private boolean isTwoPane;
     private boolean onPaused;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MobileAds.initialize(this, getString(R.string.app_id));
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         onPaused = false;
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
@@ -289,7 +296,7 @@ public class MainActivity extends BaseActivity
         String title = titles[currentSection];
         if (checkConnection()) {
             if (currentSection == Section.SEARCH.ordinal()) title = searchQuery;
-//            loaderId++;
+            logFirebaseLoadingEvent();
             getLoaderManager().initLoader(loaderId, null, this);
         } else {
             if (currentSection == Section.SAVED.ordinal()) {
@@ -311,6 +318,15 @@ public class MainActivity extends BaseActivity
         }
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
+        }
+    }
+
+    private void logFirebaseLoadingEvent() {
+        if (currentSection != Section.SAVED.ordinal()) {
+//            Bundle bundle = new Bundle();
+//            bundle.putString("section", titles[currentSection]);
+            //TODO comment out for test device
+            mFirebaseAnalytics.logEvent("api_call", null);
         }
     }
 
@@ -394,8 +410,6 @@ public class MainActivity extends BaseActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
     private void showProgressAnimations() {
         articlesFragment.showProgressContainer(true);
@@ -495,6 +509,7 @@ public class MainActivity extends BaseActivity
         isNewList = false;
         showProgressAnimations();
         if (checkConnection()) {
+            logFirebaseLoadingEvent();
             currentPage++;
             loaderId++;
             getLoaderManager().initLoader(loaderId, null, this);
