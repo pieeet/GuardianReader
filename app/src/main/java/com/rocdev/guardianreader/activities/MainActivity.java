@@ -59,9 +59,9 @@ public class MainActivity extends BaseActivity
      *******************************/
     private static final int CONTENT_CONTAINER = R.id.content_container;
     //TODO uncomment before building release-apk
-//    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
+    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
     //TODO comment out before building release-apk
-    private static final String PARAM_VALUE_API_KEY = "test";
+//    private static final String PARAM_VALUE_API_KEY = "test";
     private static final String KEY_ARTICLES = "articles";
     private static final String KEY_CURRENT_SECTION = "currentSection";
     private static final String KEY_CURRENT_PAGE = "currentPage";
