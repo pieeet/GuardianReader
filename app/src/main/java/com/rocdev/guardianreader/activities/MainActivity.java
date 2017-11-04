@@ -205,16 +205,18 @@ public class MainActivity extends BaseActivity
     }
 
     private void initFragments() {
-        articlesFragment = ArticlesFragment.newInstance(articles, !isEditorsPicks);
+        articlesFragment = ArticlesFragment.newInstance(articles, currentSection);
         FragmentManager fm = getSupportFragmentManager();
         if (isTwoPane) {
-            sectionsFragment = SectionsFragment.newInstance(sections);
+            sectionsFragment = SectionsFragment.newInstance(sections, defaultEdition);
             fm.beginTransaction()
                     .replace(R.id.content_pane_left, sectionsFragment)
                     .commit();
             fm.beginTransaction()
                     .replace(R.id.content_pane_right, articlesFragment)
                     .commit();
+
+
 
         } else {
             fm.beginTransaction()
@@ -228,6 +230,8 @@ public class MainActivity extends BaseActivity
         super.onResume();
         if (!isTwoPane) {
             navigationView.getMenu().getItem(currentSection).setChecked(true);
+        } else {
+            setSelectedEdition();
         }
         if (onPaused) {
             long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
@@ -337,7 +341,7 @@ public class MainActivity extends BaseActivity
             getSupportActionBar().setTitle(R.string.title_no_network);
         }
         articles.clear();
-        articlesFragment.notifyArticlesChanged(true, false);
+        articlesFragment.notifyArticlesChanged(true, currentSection);
         stopRefreshButtonAnimation(mMenu);
     }
 
@@ -485,7 +489,7 @@ public class MainActivity extends BaseActivity
             articles.add(article);
         }
 
-        articlesFragment.notifyArticlesChanged(isNewList, isEditorsPicks);
+        articlesFragment.notifyArticlesChanged(isNewList, currentSection);
         articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                 && articles.isEmpty());
         articlesFragment.showProgressContainer(false);
@@ -497,11 +501,6 @@ public class MainActivity extends BaseActivity
     @Override
     public void onLoaderReset(Loader<List<Article>> loader) {
         getLoaderManager().destroyLoader(loaderId);
-    }
-
-    @Override
-    public void saveListPosition(int position) {
-        listPosition = position;
     }
 
     @Override
@@ -518,6 +517,50 @@ public class MainActivity extends BaseActivity
         }
     }
 
+    //More button on headlines
+    @Override
+    public void onMoreNews(int section) {
+        isNewList = true;
+        switch (section) {
+            case 0:
+                currentSection = Section.NEWS_AUS.ordinal();
+                break;
+            case 1:
+                currentSection = Section.NEWS_UK.ordinal();
+                break;
+            case 2:
+                currentSection = Section.NEWS_US.ordinal();
+                break;
+            case 3:
+                currentSection = Section.NEWS_WORLD.ordinal();
+                break;
+        }
+        if (isTwoPane) {
+            setSelectedEdition();
+        } else {
+            navigationView.getMenu().getItem(currentSection).setChecked(true);
+        }
+        showProgressAnimations();
+        if (checkConnection()) {
+            currentPage = 1;
+            loaderId++;
+            refreshUI();
+
+        }
+    }
+
+    private void setSelectedEdition() {
+        int position = -1;
+        for (int i = 0; i < sections.size(); i++) {
+            Section section = sections.get(i);
+            if (currentSection == section.ordinal()) {
+                position = i;
+                break;
+            }
+        }
+        sectionsFragment.setSelectedEdition(position);
+    }
+
     private boolean checkConnection() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -530,6 +573,7 @@ public class MainActivity extends BaseActivity
         if (isTwoPane) {
             setUpOrRefreshSelectedSections();
             sectionsFragment.refreshListView(sections);
+            setSelectedEdition();
         } else {
             setUpNavBarSections();
         }
@@ -558,7 +602,7 @@ public class MainActivity extends BaseActivity
             if (articles.isEmpty()) {
                 articlesFragment.showNoSavedArticlesContainer(true);
             }
-            articlesFragment.notifyArticlesChanged(true, true);
+            articlesFragment.notifyArticlesChanged(true, currentSection);
         }
     }
 

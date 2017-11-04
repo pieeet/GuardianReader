@@ -24,10 +24,12 @@ import java.util.ArrayList;
 public class SectionsFragment extends Fragment {
 
     private ArrayList<Section> sectionsList;
+    private int defaultEdition;
     private SectionsAdapter adapter;
     private SectionsFragmentListener mListener;
 
     private static final String KEY_SECTIONS_LIST = "sectionsList";
+    private static final String KEY_DEFAULT_EDITION = "defaultEdition";
 //    private static final String LOG_TAG = SectionsFragment.class.getSimpleName();
 
     public SectionsFragment() {
@@ -39,6 +41,7 @@ public class SectionsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             sectionsList = (ArrayList<Section>) getArguments().getSerializable(KEY_SECTIONS_LIST);
+            this.defaultEdition = getArguments().getInt(KEY_DEFAULT_EDITION);
         }
     }
 
@@ -48,22 +51,29 @@ public class SectionsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_sections, null);
         ListView listView = (ListView) rootView.findViewById(R.id.sectionsListView);
         adapter = new SectionsAdapter(getContext(), sectionsList);
+        adapter.setSelectedEdition(defaultEdition);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mListener.onSectionClicked(sectionsList.get(i));
+                adapter.setSelectedEdition(i);
             }
         });
         return rootView;
     }
 
-    public static SectionsFragment newInstance(ArrayList<Section> sections) {
+    public static SectionsFragment newInstance(ArrayList<Section> sections, int defaultPosition) {
         Bundle args = new Bundle();
         args.putSerializable(KEY_SECTIONS_LIST, sections);
+        args.putInt(KEY_DEFAULT_EDITION, defaultPosition);
         SectionsFragment fragment = new SectionsFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void setSelectedEdition(int position) {
+        adapter.setSelectedEdition(position);
     }
 
     public void refreshListView(ArrayList<Section> sectionsList) {

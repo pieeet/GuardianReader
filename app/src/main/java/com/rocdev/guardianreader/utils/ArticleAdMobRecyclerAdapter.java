@@ -1,6 +1,7 @@
 package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
+import com.rocdev.guardianreader.models.Section;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -42,16 +44,24 @@ public class ArticleAdMobRecyclerAdapter extends
     private static final int VIEW_TYPE_AD = 1;
     private static final int VIEW_TYPE_BUTTON = 2;
 
+    private static final int HEADLINES_AUS = 0;
+    private static final int HEADLINES_UK = 1;
+    private static final int HEADLINES_US = 2;
+    private static final int HEADLINES_INT = 3;
+
+
     private final List<Object> listItems;
+    private int currentSection;
 
     private final Context context;
     private ArticleAdMobRecyclerAdapterListener mListener;
     private ButtonViewHolder buttonViewHolder;
 
 
-    public ArticleAdMobRecyclerAdapter(Context context, List<Object> listItems) {
+    public ArticleAdMobRecyclerAdapter(Context context, List<Object> listItems, int section) {
         this.listItems = listItems;
         this.context = context;
+        this.currentSection = section;
 
         if (context instanceof ArticleAdMobRecyclerAdapterListener) {
             mListener = (ArticleAdMobRecyclerAdapterListener) context;
@@ -61,7 +71,8 @@ public class ArticleAdMobRecyclerAdapter extends
         }
     }
 
-    public void notifyAdapterDataSetChanged(List<Object> items) {
+    public void notifyAdapterDataSetChanged(List<Object> items, int section) {
+        currentSection = section;
         if (buttonViewHolder != null) {
             buttonViewHolder.button.setEnabled(true);
             buttonViewHolder.button.setText(R.string.more_button_text);
@@ -158,14 +169,39 @@ public class ArticleAdMobRecyclerAdapter extends
 
     private void setButtonItemHolder(ButtonViewHolder holder) {
         this.buttonViewHolder = holder;
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buttonViewHolder.button.setEnabled(false);
-                buttonViewHolder.button.setText(R.string.more_button_disabled);
-                mListener.onMoreArticles();
+        if (currentSection <= Section.HEADLINES_INT.ordinal()) {
+            switch (currentSection) {
+                case HEADLINES_AUS:
+                    buttonViewHolder.button.setText("More Australian News");
+                    break;
+                case HEADLINES_UK:
+                    buttonViewHolder.button.setText("More UK News");
+                    break;
+                case HEADLINES_US:
+                    buttonViewHolder.button.setText("More US News");
+                    break;
+                case HEADLINES_INT:
+                    buttonViewHolder.button.setText("More World News");
+                    break;
             }
-        });
+            holder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onMoreNews(currentSection);
+                }
+            });
+
+        } else {
+            holder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    buttonViewHolder.button.setEnabled(false);
+                    buttonViewHolder.button.setText(R.string.more_button_disabled);
+                    mListener.onMoreArticles();
+                }
+            });
+        }
+
     }
 
     private String formatDateTime(String input) {
@@ -221,6 +257,7 @@ public class ArticleAdMobRecyclerAdapter extends
 
     public interface ArticleAdMobRecyclerAdapterListener {
         void onMoreArticles();
+        void onMoreNews(int section);
         void onItemClicked(Article article);
         boolean onItemLongClicked(Article article);
     }

@@ -3,6 +3,7 @@ package com.rocdev.guardianreader.utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,13 @@ import java.util.List;
 public class SectionsAdapter extends ArrayAdapter<Section> {
 
     private final Context context;
+    List<Section> sections;
+    private int selectedPosition;
 
     public SectionsAdapter(@NonNull Context context, List<Section> sections) {
         super(context, 0, sections);
         this.context = context;
+        this.sections = sections;
     }
 
     @NonNull
@@ -51,6 +55,13 @@ public class SectionsAdapter extends ArrayAdapter<Section> {
         if (section != null) {
             holder.icon.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), section.getIcon(), null));
             holder.title.setText(context.getResources().getString(section.getTitle()));
+            if (position == selectedPosition) {
+                holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorHoloRed));
+                holder.icon.setColorFilter(ContextCompat.getColor(context, R.color.colorHoloRed));
+            } else {
+                holder.title.setTextColor(ContextCompat.getColor(context, R.color.colorTextListitemTitle));
+                holder.icon.setColorFilter(ContextCompat.getColor(context, R.color.colorTextListitemTitle));
+            }
         }
         return sectionView;
     }
@@ -58,5 +69,10 @@ public class SectionsAdapter extends ArrayAdapter<Section> {
     private static class ViewHolder {
         ImageView icon;
         TextView title;
+    }
+
+    public void setSelectedEdition(int position) {
+        selectedPosition = position;
+        notifyDataSetChanged();
     }
 }

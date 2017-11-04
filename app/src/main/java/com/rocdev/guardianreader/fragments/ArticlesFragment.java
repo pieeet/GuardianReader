@@ -19,6 +19,7 @@ import com.google.android.gms.ads.NativeExpressAdView;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
+import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class ArticlesFragment extends Fragment {
     private List<Object> listItems;
     private ArticleAdMobRecyclerAdapter adapter;
     private OnFragmentInteractionListener mListener;
-    private boolean hasMoreButton;
+    private int currentSection;
     private LayoutInflater inflater;
     private Context mContext;
     private int mAdWidth;
@@ -64,11 +65,11 @@ public class ArticlesFragment extends Fragment {
      * @return A new instance of fragment.
      */
     public static ArticlesFragment newInstance(@NonNull ArrayList<Article> articles,
-                                               boolean hasMoreButton) {
+                                               int section) {
         ArticlesFragment fragment = new ArticlesFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList("articles", articles);
-        args.putBoolean("hasMoreButton", hasMoreButton);
+        args.putInt("section", section);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,7 +79,7 @@ public class ArticlesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             articles = getArguments().getParcelableArrayList("articles");
-            hasMoreButton = getArguments().getBoolean("hasMoreButton");
+            currentSection = getArguments().getInt("section");
         }
     }
 
@@ -102,7 +103,7 @@ public class ArticlesFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         populateListItems();
-        adapter = new ArticleAdMobRecyclerAdapter(mContext, listItems);
+        adapter = new ArticleAdMobRecyclerAdapter(mContext, listItems, currentSection);
         mRecyclerView.setAdapter(adapter);
         listContainer = view.findViewById(R.id.listContainer);
         progressContainer = view.findViewById(R.id.progressContainer);
@@ -129,7 +130,7 @@ public class ArticlesFragment extends Fragment {
              */
             @Override
             public int getSwipeDirs(RecyclerView recyclerView1, RecyclerView.ViewHolder viewHolder) {
-                if (!(viewHolder instanceof ArticleAdMobRecyclerAdapter.ItemViewHolder)){
+                if (!(viewHolder instanceof ArticleAdMobRecyclerAdapter.ItemViewHolder)) {
                     return 0;
                 }
                 return super.getSwipeDirs(recyclerView1, viewHolder);
@@ -170,7 +171,7 @@ public class ArticlesFragment extends Fragment {
             }
         }
         addNativeExpressAds();
-        if (hasMoreButton) {
+        if (currentSection != Section.SAVED.ordinal()) {
             View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
             listItems.add(buttonView);
         }
@@ -197,7 +198,7 @@ public class ArticlesFragment extends Fragment {
                 @Override
                 public void run() {
                     final float density = mContext.getResources().getDisplayMetrics().density;
-                    mAdWidth =  (int) (mRecyclerView.getWidth() / density) - 16;
+                    mAdWidth = (int) (mRecyclerView.getWidth() / density) - 16;
                     if (mAdWidth < 0) {
                         mAdWidth = 350;
                     }
@@ -223,16 +224,18 @@ public class ArticlesFragment extends Fragment {
      * method called from Activity when articles has changed
      *
      * @param isNewList     if true scroll to top of list
-     * @param isEditorPicks if true hide moreButton
+     * @param section current section
      */
-    public void notifyArticlesChanged(boolean isNewList, boolean isEditorPicks) {
-        hasMoreButton = !isEditorPicks;
+    public void notifyArticlesChanged(boolean isNewList, int section) {
+        currentSection = section;
         populateListItems();
-        adapter.notifyAdapterDataSetChanged(listItems);
+        adapter.notifyAdapterDataSetChanged(listItems, currentSection);
+        if (isNewList) {
+            mLayoutManager.scrollToPosition(0);
+        }
         showProgressContainer(false);
         setItemTouchHelper();
     }
-
 
 
     public void showListContainer(boolean show) {
@@ -295,8 +298,10 @@ public class ArticlesFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void saveListPosition(int position);
+//        void saveListPosition(int position);
+
         void removeSavedArticle(Article article);
+
         // swipe does same as item long clicked in saved articles
         boolean onItemLongClicked(Article article);
     }
