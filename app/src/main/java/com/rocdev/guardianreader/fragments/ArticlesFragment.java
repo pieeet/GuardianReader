@@ -43,7 +43,6 @@ public class ArticlesFragment extends Fragment {
     private ArticleAdMobRecyclerAdapter adapter;
     private OnFragmentInteractionListener mListener;
     private boolean hasMoreButton;
-    private int listPosition;
     private LayoutInflater inflater;
     private Context mContext;
     private int mAdWidth;
@@ -65,11 +64,10 @@ public class ArticlesFragment extends Fragment {
      * @return A new instance of fragment.
      */
     public static ArticlesFragment newInstance(@NonNull ArrayList<Article> articles,
-                                               int listPosition, boolean hasMoreButton) {
+                                               boolean hasMoreButton) {
         ArticlesFragment fragment = new ArticlesFragment();
         Bundle args = new Bundle();
         args.putParcelableArrayList("articles", articles);
-        args.putInt("listPosition", listPosition);
         args.putBoolean("hasMoreButton", hasMoreButton);
         fragment.setArguments(args);
         return fragment;
@@ -80,7 +78,6 @@ public class ArticlesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             articles = getArguments().getParcelableArrayList("articles");
-            listPosition = getArguments().getInt("listPosition");
             hasMoreButton = getArguments().getBoolean("hasMoreButton");
         }
     }
@@ -108,17 +105,6 @@ public class ArticlesFragment extends Fragment {
         adapter = new ArticleAdMobRecyclerAdapter(mContext, listItems);
         mRecyclerView.setAdapter(adapter);
         listContainer = view.findViewById(R.id.listContainer);
-
-        //scroll to correct listposition on screen rotation
-        if (listPosition > 0) {
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    mLayoutManager.scrollToPosition(listPosition);
-
-                }
-            });
-        }
         progressContainer = view.findViewById(R.id.progressContainer);
         noSavedArticlesContainer = view.findViewById(R.id.noSavedArticlesContainer);
         if (!articles.isEmpty()) {
@@ -170,12 +156,6 @@ public class ArticlesFragment extends Fragment {
         }
     }
 
-
-    @Override
-    public void onPause() {
-        mListener.saveListPosition(listPosition);
-        super.onPause();
-    }
 
     /*
     check
@@ -250,10 +230,6 @@ public class ArticlesFragment extends Fragment {
         populateListItems();
         adapter.notifyAdapterDataSetChanged(listItems);
         showProgressContainer(false);
-        if (isNewList) {
-            listPosition = 0;
-            mLayoutManager.scrollToPosition(listPosition);
-        }
         setItemTouchHelper();
     }
 

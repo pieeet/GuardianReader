@@ -205,7 +205,7 @@ public class MainActivity extends BaseActivity
     }
 
     private void initFragments() {
-        articlesFragment = ArticlesFragment.newInstance(articles, listPosition, !isEditorsPicks);
+        articlesFragment = ArticlesFragment.newInstance(articles, !isEditorsPicks);
         FragmentManager fm = getSupportFragmentManager();
         if (isTwoPane) {
             sectionsFragment = SectionsFragment.newInstance(sections);
