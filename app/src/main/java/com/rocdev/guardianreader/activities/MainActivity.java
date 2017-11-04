@@ -325,7 +325,7 @@ public class MainActivity extends BaseActivity
         if (currentSection != Section.SAVED.ordinal()) {
 //            Bundle bundle = new Bundle();
 //            bundle.putString("section", titles[currentSection]);
-            //TODO comment out for test device
+            //TODO comment in for production
 //            mFirebaseAnalytics.logEvent("api_call", null);
         }
     }
