@@ -388,8 +388,10 @@ public class MainActivity extends BaseActivity
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
                 (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+        if (searchManager != null) {
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+        }
         return true;
     }
 
@@ -485,10 +487,7 @@ public class MainActivity extends BaseActivity
         mLoader = loader;
         stopRefreshButtonAnimation(mMenu);
         if (isNewList) articles.clear();
-        for (Article article : data) {
-            articles.add(article);
-        }
-
+        articles.addAll(data);
         articlesFragment.notifyArticlesChanged(isNewList, currentSection);
         articlesFragment.showNoSavedArticlesContainer(currentSection == Section.SAVED.ordinal()
                 && articles.isEmpty());
@@ -563,7 +562,10 @@ public class MainActivity extends BaseActivity
 
     private boolean checkConnection() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        NetworkInfo networkInfo = null;
+        if (connMgr != null) {
+            networkInfo = connMgr.getActiveNetworkInfo();
+        }
         return networkInfo != null && networkInfo.isConnected();
     }
 

@@ -1,7 +1,6 @@
 package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,9 +76,7 @@ public class ArticleAdMobRecyclerAdapter extends
             buttonViewHolder.button.setText(R.string.more_button_text);
         }
         listItems.clear();
-        for (Object object : items) {
-            listItems.add(object);
-        }
+        listItems.addAll(items);
         super.notifyDataSetChanged();
     }
 
@@ -172,16 +168,16 @@ public class ArticleAdMobRecyclerAdapter extends
         if (currentSection <= Section.HEADLINES_INT.ordinal()) {
             switch (currentSection) {
                 case HEADLINES_AUS:
-                    buttonViewHolder.button.setText("More Australian News");
+                    buttonViewHolder.button.setText(R.string.more_button_aus);
                     break;
                 case HEADLINES_UK:
-                    buttonViewHolder.button.setText("More UK News");
+                    buttonViewHolder.button.setText(R.string.more_button_uk);
                     break;
                 case HEADLINES_US:
-                    buttonViewHolder.button.setText("More US News");
+                    buttonViewHolder.button.setText(R.string.more_button_us);
                     break;
                 case HEADLINES_INT:
-                    buttonViewHolder.button.setText("More World News");
+                    buttonViewHolder.button.setText(R.string.more_button_world);
                     break;
             }
             holder.button.setOnClickListener(new View.OnClickListener() {
