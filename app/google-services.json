@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "724796025689",
+    "firebase_url": "https://guardianreader-a1658.firebaseio.com",
+    "project_id": "guardianreader-a1658",
+    "storage_bucket": "guardianreader-a1658.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724796025689:android:1ffe7d29a91b6589",
+        "android_client_info": {
+          "package_name": "com.rocdev.guardianreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724796025689-ca6g7lbncavd6hq3gkpl9p8o6kh59h92.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rocdev.guardianreader",
+            "certificate_hash": "5d3c23c42e55df46c54e59a5f793e0e3e9a3d0af"
+          }
+        },
+        {
+          "client_id": "724796025689-u31ec7drfdkqo21v69gfnte9h2oa1nau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQqkRS1E4ifURa3RV0Jsx8pVTCC2T7x2g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724796025689-u31ec7drfdkqo21v69gfnte9h2oa1nau.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
