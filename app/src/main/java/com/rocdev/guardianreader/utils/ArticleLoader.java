@@ -18,14 +18,12 @@ public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
 
     private final String mUrl;
     private final boolean mIsEditorsPick;
-    private final Context mContext;
 
     private ArrayList<Article> articles;
 
 
     public ArticleLoader(Context context, String url, boolean isEditorsPick) {
         super(context);
-        mContext = context;
         mUrl = url;
         mIsEditorsPick = isEditorsPick;
     }
@@ -33,7 +31,7 @@ public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
     @Override
     public List<Article> loadInBackground() {
         if (mUrl.equals(Contract.ArticleEntry.CONTENT_URI.toString())) {
-            return QueryUtils.extractSavedArticles(mContext);
+            return QueryUtils.extractSavedArticles(getContext());
         }
         return QueryUtils.extractArticles(mUrl, mIsEditorsPick);
     }
@@ -51,5 +49,6 @@ public class ArticleLoader extends AsyncTaskLoader<List<Article>> {
     public void deliverResult(List<Article> data) {
         articles = (ArrayList<Article>) data;
         super.deliverResult(data);
+
     }
 }
