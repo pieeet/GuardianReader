@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -45,7 +46,7 @@ public class QueryUtils {
     /**
      * @return a list of {@link Article} objects that has been built up from parsing a JSON response.
      */
-    static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
+    public static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
         StringBuilder output = new StringBuilder();
         URL url = makeUrl(urlStr);
         HttpURLConnection connection = null;
@@ -138,6 +139,36 @@ public class QueryUtils {
 
         return ContentUris.parseId(uri);
     }
+
+
+    public static void insertWidgetArticles(Context context, List<Article> articles, int widgetId) {
+
+        ContentValues[] contentValuesArray = new ContentValues[articles.size()];
+        int index = 0;
+        for (Article article: articles) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_TITLE, article.getTitle());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_URL, article.getUrl());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_THUMB_URL, article.getThumbUrl());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_WIDGET_ID, widgetId);
+            contentValuesArray[index] = contentValues;
+            index++;
+        }
+        context.getContentResolver().bulkInsert(Contract.WidgetArticleEntry.CONTENT_URI,
+                contentValuesArray);
+    }
+
+
+    public static void deleteWidgetArticles(Context context, int widgetId) {
+        Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI,
+                String.valueOf(widgetId));
+        context.getContentResolver().delete(uri, null,
+                null);
+    }
+
+
 
     public static int deleteArticle(Article article, Context context) {
         Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,

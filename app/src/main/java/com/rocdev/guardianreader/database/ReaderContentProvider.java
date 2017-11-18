@@ -31,6 +31,11 @@ public class ReaderContentProvider extends ContentProvider {
      */
     private static final int ARTICLE_ID = 101;
 
+    private static final int WIDGET_ARTICLES = 200;
+
+
+
+
     /**
      * UriMatcher object to match a content URI to a corresponding code.
      * The input passed into the constructor represents the code to return for the root URI.
@@ -51,6 +56,10 @@ public class ReaderContentProvider extends ContentProvider {
         //Article
         sUriMatcher.addURI(Contract.CONTENT_AUTHORITY,
                 Contract.PATH_ARTICLES + "/#", ARTICLE_ID);
+
+        //Wiget articles
+        sUriMatcher.addURI(Contract.CONTENT_AUTHORITY,
+                Contract.PATH_WIDGET_ARTICLES + "/#", WIDGET_ARTICLES);
     }
 
     @Override
@@ -73,6 +82,12 @@ public class ReaderContentProvider extends ContentProvider {
                         selectionArgs, null, null,
                         sortOrder);
                 break;
+            case WIDGET_ARTICLES:
+                cursor = db.query(Contract.WidgetArticleEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs, null, null,
+                        sortOrder);
             default:
                 throw new UnsupportedOperationException("Cannot query unknown URI: " + uri);
         }
@@ -95,6 +110,8 @@ public class ReaderContentProvider extends ContentProvider {
         switch (match) {
             case ARTICLES:
                 return insertArticle(uri, contentValues);
+            case WIDGET_ARTICLES:
+                return insertWidgetArticle(uri, contentValues);
             default:
                 throw new UnsupportedOperationException("Cannot insert unknown URI: " + uri);
         }
@@ -109,15 +126,38 @@ public class ReaderContentProvider extends ContentProvider {
         return ContentUris.withAppendedId(uri, rowId);
     }
 
+    private Uri insertWidgetArticle(Uri uri, ContentValues contentValues) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        long rowId = db.insert(Contract.WidgetArticleEntry.TABLE_NAME, null, contentValues);
+        if (getContext() != null) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return ContentUris.withAppendedId(uri, rowId);
+    }
+
+
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int match = sUriMatcher.match(uri);
         switch (match) {
-            case (ARTICLE_ID):
+            case ARTICLE_ID:
                 return deleteArticle(uri);
+            case WIDGET_ARTICLES:
+                return deleteWidgetArticles(uri);
             default:
                 throw new UnsupportedOperationException("Cannot delete unknown URI: " + uri);
         }
+    }
+
+    private int deleteWidgetArticles(Uri uri) {
+        String selection = Contract.WidgetArticleEntry.COLUMN_WIDGET_ID + " = ?";
+        String[] whereArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int rowsDeleted = db.delete(Contract.WidgetArticleEntry.TABLE_NAME, selection, whereArgs);
+        if (rowsDeleted > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
     }
 
 
@@ -137,7 +177,8 @@ public class ReaderContentProvider extends ContentProvider {
 
     // Not used
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues,
+                      @Nullable String s, @Nullable String[] strings) {
         return 0;
     }
 }
