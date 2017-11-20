@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -19,6 +20,7 @@ import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
+import com.rocdev.guardianreader.utils.ArticleDateUtils;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
@@ -90,12 +92,16 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int i) {
         RemoteViews rv = null;
+        Article article = mArticles.get(i);
         if (mArticles != null) {
-            rv = new RemoteViews(mContext.getPackageName(), R.layout.articles_widget_listitem);
-            rv.setTextViewText(R.id.tv_widget_item_name, mArticles.get(i).getTitle());
+            rv = new RemoteViews(mContext.getPackageName(), R.layout.article_list_item_content);
+            rv.setTextViewText(R.id.titleTextView, article.getTitle());
+            rv.setTextViewText(R.id.dateTextView, ArticleDateUtils
+                    .formatDateTime(article.getDate()));
+            rv.setTextViewText(R.id.sectionTextView, article.getSection());
             try {
                 Bitmap b = Picasso.with(mContext).load(mArticles.get(i).getThumbUrl()).get();
-                rv.setImageViewBitmap(R.id.iv_widget_item_thumb, b);
+                rv.setImageViewBitmap(R.id.thumbnail, b);
             } catch (IOException e) {
                 e.printStackTrace();
             }

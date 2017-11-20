@@ -124,14 +124,7 @@ public class WidgetIntentService extends IntentService {
      * parameters.
      */
     private void handleActionUpdateArticles(int sectionIndex, int appWidgetId) {
-//        Section section = Section.values()[sectionIndex];
-//        boolean isEditorPicks = sectionIndex <= Section.HEADLINES_INT.ordinal();
-//        mArticles = QueryUtils.extractArticles(section.getUrl(), isEditorPicks);
-//        Log.d(TAG, "handleActionUpdateArticles triggered");
-//
-//        startActionSaveArticles(this, mAppWidgetId);
         new DownloaderTask().execute(sectionIndex, appWidgetId);
-
     }
 
     private void handleActionSaveArticles(int appWidgetId, List<Article> articles) {
