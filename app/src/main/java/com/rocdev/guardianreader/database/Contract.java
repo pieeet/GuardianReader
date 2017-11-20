@@ -115,7 +115,7 @@ public class Contract {
 
     public static final class WidgetArticleEntry implements BaseColumns {
 
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_ARTICLES);
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_WIDGET_ARTICLES);
 
 
 

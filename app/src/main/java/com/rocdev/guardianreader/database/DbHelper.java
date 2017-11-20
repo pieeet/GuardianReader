@@ -35,7 +35,7 @@ class DbHelper extends SQLiteOpenHelper {
             + Contract.WidgetArticleEntry.COLUMN_ARTICLE_DATE + " TEXT NOT NULL, "
             + Contract.WidgetArticleEntry.COLUMN_ARTICLE_URL + " TEXT NOT NULL, "
             + Contract.WidgetArticleEntry.COLUMN_ARTICLE_SECTION + " TEXT NOT NULL, "
-            + Contract.WidgetArticleEntry.COLUMN_THUMB_URL + " TEXT"
+            + Contract.WidgetArticleEntry.COLUMN_THUMB_URL + " TEXT,"
             + Contract.WidgetArticleEntry.COLUMN_WIDGET_ID + " INTEGER NOT NULL);";
 
 

@@ -6,18 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.rocdev.guardianreader.R;
+import com.rocdev.guardianreader.utils.QueryUtils;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class ArticlesWidgetProvider extends AppWidgetProvider {
 
+    private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
+        Log.d(TAG, "updateAppWidget triggered");
         // Construct the RemoteViews object
         Intent intent = new Intent(context, ListWidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -25,29 +30,34 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.articles_widget);
         views.setRemoteAdapter(R.id.lv_widget_articles, intent);
         views.setEmptyView(R.id.lv_widget_articles, R.id.tv_widget_articles_empty_view);
-
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views); /* ???unnecessary???*/
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.lv_widget_articles);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(WidgetConfigActivity
-                .PREFS_NAME, Context.MODE_PRIVATE);
+        Log.d(TAG, "onUpdate triggered");
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            int sectionIndex = sharedPreferences.getInt(String.valueOf(appWidgetId), 0);
-            WidgetIntentService.startActionUpdateArticles(context, sectionIndex, appWidgetId);
+            startService(context, appWidgetId);
         }
     }
 
+    static void startService(Context context, int widgetId) {
+        Log.d(TAG, "startService triggered");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(WidgetConfigActivity
+                .PREFS_NAME, Context.MODE_PRIVATE);
+        int sectionIndex = sharedPreferences.getInt(String.valueOf(widgetId), 0);
+        Log.d(TAG, "section index: " + sectionIndex);
+        WidgetIntentService.startActionUpdateArticles(context, sectionIndex, widgetId);
+    }
+
     public static void updateArticleWidgets(Context context, AppWidgetManager appWidgetManager,
-                                            int[] appWidgetIds) {
+                                     int[] appWidgetIds) {
         for (int appWidgetId: appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
+
 
     @Override
     public void onEnabled(Context context) {
@@ -62,5 +72,11 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
+        SharedPreferences prefs = context.getSharedPreferences(WidgetConfigActivity.PREFS_NAME,
+                Context.MODE_PRIVATE);
+        for (int appWidgetId: appWidgetIds) {
+            prefs.edit().remove(String.valueOf(appWidgetId)).apply();
+            QueryUtils.deleteWidgetArticles(context, appWidgetId);
+        }
     }
 }

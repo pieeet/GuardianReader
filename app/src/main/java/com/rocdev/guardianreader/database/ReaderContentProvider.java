@@ -88,6 +88,7 @@ public class ReaderContentProvider extends ContentProvider {
                         selection,
                         selectionArgs, null, null,
                         sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Cannot query unknown URI: " + uri);
         }

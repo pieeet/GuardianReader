@@ -32,7 +32,7 @@
         <provider
             android:name=".database.ReaderContentProvider"
             android:authorities="com.rocdev.guardianreader"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".activities.ArticleActivity"
@@ -69,6 +69,12 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+
+        <service android:name=".widget.ListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service android:name=".widget.WidgetIntentService" />
+
     </application>
 
 </manifest>

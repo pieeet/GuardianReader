@@ -41,6 +41,7 @@ import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.Secret;
 import com.rocdev.guardianreader.utils.QueryUtils;
+import com.rocdev.guardianreader.utils.UriBuilder;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -215,9 +216,6 @@ public class MainActivity extends BaseActivity
             fm.beginTransaction()
                     .replace(R.id.content_pane_right, articlesFragment)
                     .commit();
-
-
-
         } else {
             fm.beginTransaction()
                     .replace(CONTENT_CONTAINER, articlesFragment)
@@ -464,6 +462,11 @@ public class MainActivity extends BaseActivity
         String uriString = baseUri.toString();
         if (currentSection != Section.SAVED.ordinal())
             uriString = buildUriWithParams(baseUri).toString();
+
+
+        isEditorsPicks = currentSection <= Section.HEADLINES_INT.ordinal()  ||
+                currentSection == Section.SAVED.ordinal();
+//        Uri uri = UriBuilder.buildUriWithParams(currentPage, currentSection, searchQuery);
         return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 

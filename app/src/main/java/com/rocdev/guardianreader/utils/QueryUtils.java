@@ -61,7 +61,11 @@ public class QueryUtils {
             } else {
                 return null;
             }
-        } catch (IOException ignored) {} finally {
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        finally {
             if (connection != null) {
                 connection.disconnect();
             }
@@ -156,7 +160,8 @@ public class QueryUtils {
             contentValuesArray[index] = contentValues;
             index++;
         }
-        context.getContentResolver().bulkInsert(Contract.WidgetArticleEntry.CONTENT_URI,
+        Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI, String.valueOf(widgetId));
+        context.getContentResolver().bulkInsert(uri,
                 contentValuesArray);
     }
 
@@ -166,6 +171,16 @@ public class QueryUtils {
                 String.valueOf(widgetId));
         context.getContentResolver().delete(uri, null,
                 null);
+    }
+
+    public static List<Article> getWidgetArticlesFromDatabase(Context context, int widgetId) {
+        Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI,
+                String.valueOf(widgetId));
+        Cursor cursor = context.getContentResolver().query(uri, null,
+                Contract.WidgetArticleEntry.COLUMN_WIDGET_ID + " = ?",
+                new String[] {String.valueOf(widgetId)}, null);
+        return makeListFromCursor(cursor);
+
     }
 
 

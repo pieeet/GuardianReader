@@ -2,30 +2,19 @@ package com.rocdev.guardianreader.widget;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.res.ResourcesCompat;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RemoteViews;
-import android.widget.TextView;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.SectionsAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class WidgetConfigActivity extends Activity {
@@ -75,13 +64,13 @@ public class WidgetConfigActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                        WidgetConfigActivity.this);
+                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
                 prefs.edit().putInt(String.valueOf(mAppWidgetId), position).apply();
                 AppWidgetManager appWidgetManager = AppWidgetManager
                         .getInstance(WidgetConfigActivity.this);
                 ArticlesWidgetProvider.updateAppWidget(WidgetConfigActivity.this,
                         appWidgetManager, mAppWidgetId);
+                ArticlesWidgetProvider.startService(WidgetConfigActivity.this, mAppWidgetId);
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
