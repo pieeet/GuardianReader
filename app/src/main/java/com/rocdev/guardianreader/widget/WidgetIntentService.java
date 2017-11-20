@@ -2,7 +2,6 @@ package com.rocdev.guardianreader.widget;
 
 import android.app.IntentService;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
 import android.net.Uri;
@@ -10,11 +9,12 @@ import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
+import com.rocdev.guardianreader.utils.ArticlesUriBuilder;
 import com.rocdev.guardianreader.utils.QueryUtils;
-import com.rocdev.guardianreader.utils.UriBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class WidgetIntentService extends IntentService {
     private static final String ACTION_SAVE_ARTICLES =
             "com.rocdev.guardianreader.widget.action.SAVE_ARTICLES";
 
-    private static final String ACTION_UPDATE_WIDGETS =
+    private static final String ACTION_UPDATE_WIDGET =
             "com.rocdev.guardianreader.widget.action.UPDATE_WIDGETS";
 
 
@@ -52,9 +52,6 @@ public class WidgetIntentService extends IntentService {
 
     private static final String EXTRA_WIDGET_ARTICLES =
             "com.rocdev.guardianreader.widget.extra.ARTICLES";
-
-
-
 
 
     public WidgetIntentService() {
@@ -86,7 +83,7 @@ public class WidgetIntentService extends IntentService {
 
     public static void startActionUpdateWidget(Context context, int widgetId) {
         Intent intent = new Intent(context, WidgetIntentService.class);
-        intent.setAction(ACTION_UPDATE_WIDGETS);
+        intent.setAction(ACTION_UPDATE_WIDGET);
         intent.putExtra(EXTRA_WIDGET_ID, widgetId);
         context.startService(intent);
     }
@@ -109,8 +106,8 @@ public class WidgetIntentService extends IntentService {
                         List<Article> articles = intent.getParcelableArrayListExtra(EXTRA_WIDGET_ARTICLES);
                         handleActionSaveArticles(appWidgetId, articles);
                         break;
-                    case ACTION_UPDATE_WIDGETS:
-                        handleActionUpdateWidgets(widgetId);
+                    case ACTION_UPDATE_WIDGET:
+                        handleActionUpdateWidget(widgetId);
                         break;
                     default:
                         throw new RuntimeException(action + "is not a valid action");
@@ -124,51 +121,30 @@ public class WidgetIntentService extends IntentService {
      * parameters.
      */
     private void handleActionUpdateArticles(int sectionIndex, int appWidgetId) {
-        new DownloaderTask().execute(sectionIndex, appWidgetId);
+//        new DownloaderTask().execute(sectionIndex, appWidgetId);
+        boolean isEditorPicks = sectionIndex <= Section.HEADLINES_INT.ordinal();
+        int currentPage = 1;
+        Uri uri = ArticlesUriBuilder.buildUriWithParams(currentPage, sectionIndex, null);
+        List<Article> articles = QueryUtils.extractArticles(uri.toString(), isEditorPicks);
+        startActionSaveArticles(this, appWidgetId, articles);
     }
 
     private void handleActionSaveArticles(int appWidgetId, List<Article> articles) {
-        QueryUtils.deleteWidgetArticles(this, appWidgetId);
-        QueryUtils.insertWidgetArticles(this, articles, appWidgetId);
-        Log.d(TAG, "handleActionSaveeArticles triggered");
-        Log.d(TAG, "no of mArticles: " + articles.size());
-        startActionUpdateWidget(this, appWidgetId);
+        if (articles != null && !articles.isEmpty()) {
+            QueryUtils.deleteWidgetArticles(this, appWidgetId);
+            QueryUtils.insertWidgetArticles(this, articles, appWidgetId);
+            Log.d(TAG, "handleActionSaveeArticles triggered");
+            Log.d(TAG, "no of mArticles: " + articles.size());
+            startActionUpdateWidget(this, appWidgetId);
+        }
     }
 
-    private void handleActionUpdateWidgets(int widgetId) {
+    private void handleActionUpdateWidget(int widgetId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.lv_widget_articles);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this,
-                ArticlesWidgetProvider.class));
-        ArticlesWidgetProvider.updateArticleWidgets(this, appWidgetManager, appWidgetIds);
-        Log.d(TAG, "handleActionUpdateWidgets triggered");
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
+        mFirebaseAnalytics.logEvent("api_call_widget", null);
+        ArticlesWidgetProvider.updateAppWidget(this, appWidgetManager, widgetId);
+        Log.d(TAG, "handleActionUpdateWidget triggered");
     }
-
-
-
-    class DownloaderTask extends AsyncTask<Integer, Void, List<Article>> {
-
-        int mAppWidgetId;
-
-
-        @Override
-        protected List<Article> doInBackground(Integer... integers) {
-            int sectionIndex = integers[0];
-            mAppWidgetId = integers[1];
-            boolean isEditorPicks = sectionIndex <= Section.HEADLINES_INT.ordinal();
-            int currentPage = 1;
-            Uri uri = UriBuilder.buildUriWithParams( currentPage, sectionIndex,null);
-            return QueryUtils.extractArticles(uri.toString(), isEditorPicks);
-        }
-
-        @Override
-        protected void onPostExecute(List<Article> articles) {
-            startActionSaveArticles(WidgetIntentService.this, mAppWidgetId, articles);
-        }
-    }
-
-
-
-
-
 }

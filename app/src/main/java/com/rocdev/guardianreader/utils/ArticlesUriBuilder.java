@@ -10,7 +10,7 @@ import com.rocdev.guardianreader.models.Section;
  *
  */
 
-public class UriBuilder {
+public class ArticlesUriBuilder {
 
     //TODO uncomment before building release-apk
 //    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
