@@ -17,6 +17,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.rocdev.guardianreader.R;
+import com.rocdev.guardianreader.activities.MainActivity;
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
@@ -45,7 +46,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
     private List<Article> mArticles;
     private int mAppWidgetId;
-    private Section section;
+    private int mSectionIndex;
 
 
     private static final String TAG = ListWidgetService.class.getSimpleName();
@@ -62,19 +63,12 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         SharedPreferences prefs = mContext.getSharedPreferences(WidgetConfigActivity.PREFS_NAME,
                 Context.MODE_PRIVATE);
-        int sectionIndex = prefs.getInt(String.valueOf(mAppWidgetId), 0);
-        section = Section.values()[sectionIndex];
+        mSectionIndex = prefs.getInt(String.valueOf(mAppWidgetId), 0);
     }
 
     @Override
     public void onDataSetChanged() {
-        Log.d(TAG, "onDataSetChanged triggered");
         mArticles = QueryUtils.getWidgetArticlesFromDatabase(mContext, mAppWidgetId);
-        if (mArticles == null) Log.d(TAG, "mArticles = null");
-        else if(mArticles.isEmpty()) Log.d(TAG, "mArticles is empty");
-        for (Article article: mArticles) {
-            Log.d(TAG, article.getTitle());
-        }
     }
 
     @Override
@@ -105,6 +99,13 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            //pass extras to intent
+            Bundle extras = new Bundle();
+            extras.putInt(MainActivity.EXTRA_SECTION_INDEX, mSectionIndex);
+
+            Intent fillInIntent = new Intent();
+            fillInIntent.putExtras(extras);
+            rv.setOnClickFillInIntent(R.id.article_item_container, fillInIntent);
         }
         return rv;
     }

@@ -25,6 +25,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -79,6 +80,12 @@ public class MainActivity extends BaseActivity
     private static final int TIME_REFRESH_INTERVAL = 1000 * 60 * 15;
     private static final int TIME_POST_DELAYED = 2000;
     private static final int CLOSE_DRAWER_DELAY = 300;
+    public static final String EXTRA_KEY_SECTION_FROM_WIDGET =
+            "com.rocdev-guardian_reader_extra_section_from_widget";
+
+    public static final String EXTRA_SECTION_INDEX = "com.rocdev.guardianreader.extra.SECTION_INDEX";
+    public static final String TAG = MainActivity.class.getSimpleName();
+
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
@@ -198,8 +205,7 @@ public class MainActivity extends BaseActivity
         currentPage = 1;
         loaderId = 1;
         listPosition = 0;
-        // the section that is shown on app start
-        currentSection = defaultEdition;
+        // check if started from widget
         isNewList = true;
     }
 
@@ -229,6 +235,7 @@ public class MainActivity extends BaseActivity
         } else {
             setSelectedEdition();
         }
+
         if (onPaused) {
             long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
             long currentTime = new GregorianCalendar().getTimeInMillis();
@@ -248,6 +255,7 @@ public class MainActivity extends BaseActivity
                 refreshUI();
             }
         }
+
     }
 
     @Override
@@ -462,7 +470,7 @@ public class MainActivity extends BaseActivity
             uriString = buildUriWithParams(baseUri).toString();
 
 
-        isEditorsPicks = currentSection <= Section.HEADLINES_INT.ordinal()  ||
+        isEditorsPicks = currentSection <= Section.HEADLINES_INT.ordinal() ||
                 currentSection == Section.SAVED.ordinal();
 //        Uri uri = ArticlesUriBuilder.buildUriWithParams(currentPage, currentSection, searchQuery);
         return new ArticleLoader(this, uriString, isEditorsPicks);

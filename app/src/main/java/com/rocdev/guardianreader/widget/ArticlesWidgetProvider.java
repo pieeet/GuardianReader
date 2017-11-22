@@ -1,5 +1,6 @@
 package com.rocdev.guardianreader.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.rocdev.guardianreader.R;
+import com.rocdev.guardianreader.activities.MainActivity;
 import com.rocdev.guardianreader.utils.QueryUtils;
 
 /**
@@ -22,20 +24,25 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        Log.d(TAG, "updateAppWidget triggered");
         // Construct the RemoteViews object
         Intent intent = new Intent(context, ListWidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))); /* ??? */
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.articles_widget);
         views.setRemoteAdapter(R.id.lv_widget_articles, intent);
+        // Set the MainActivity intent to launch when clicked
+        Intent appIntent = new Intent(context, MainActivity.class);
+        appIntent.setAction(MainActivity.EXTRA_KEY_SECTION_FROM_WIDGET);
+        PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0,
+                appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setPendingIntentTemplate(R.id.lv_widget_articles, appPendingIntent);
+
         views.setEmptyView(R.id.lv_widget_articles, R.id.tv_widget_articles_empty_view);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d(TAG, "onUpdate triggered");
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             startService(context, appWidgetId);
@@ -43,11 +50,9 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
     }
 
     static void startService(Context context, int widgetId) {
-        Log.d(TAG, "startService triggered");
         SharedPreferences sharedPreferences = context.getSharedPreferences(WidgetConfigActivity
                 .PREFS_NAME, Context.MODE_PRIVATE);
         int sectionIndex = sharedPreferences.getInt(String.valueOf(widgetId), 0);
-        Log.d(TAG, "section index: " + sectionIndex);
         WidgetIntentService.startActionUpdateArticles(context, sectionIndex, widgetId);
     }
 
