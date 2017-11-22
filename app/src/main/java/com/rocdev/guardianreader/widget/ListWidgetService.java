@@ -73,8 +73,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-
-        mArticles.clear();
+        if (mArticles != null) mArticles.clear();
     }
 
     @Override

@@ -121,7 +121,6 @@ public class WidgetIntentService extends IntentService {
      * parameters.
      */
     private void handleActionUpdateArticles(int sectionIndex, int appWidgetId) {
-//        new DownloaderTask().execute(sectionIndex, appWidgetId);
         boolean isEditorPicks = sectionIndex <= Section.HEADLINES_INT.ordinal();
         int currentPage = 1;
         Uri uri = ArticlesUriBuilder.buildUriWithParams(currentPage, sectionIndex, null);
@@ -133,8 +132,6 @@ public class WidgetIntentService extends IntentService {
         if (articles != null && !articles.isEmpty()) {
             QueryUtils.deleteWidgetArticles(this, appWidgetId);
             QueryUtils.insertWidgetArticles(this, articles, appWidgetId);
-            Log.d(TAG, "handleActionSaveeArticles triggered");
-            Log.d(TAG, "no of mArticles: " + articles.size());
             startActionUpdateWidget(this, appWidgetId);
         }
     }

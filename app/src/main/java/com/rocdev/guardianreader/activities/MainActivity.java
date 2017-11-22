@@ -39,6 +39,7 @@ import com.rocdev.guardianreader.fragments.ArticlesFragment;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
+import com.rocdev.guardianreader.utils.ArticlesUriBuilder;
 import com.rocdev.guardianreader.utils.Secret;
 import com.rocdev.guardianreader.utils.QueryUtils;
 
@@ -61,20 +62,12 @@ public class MainActivity extends BaseActivity
     //TODO uncomment before building release-apk
 //    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
     //TODO comment out before building release-apk
-    private static final String PARAM_VALUE_API_KEY = "test";
     private static final String KEY_ARTICLES = "articles";
     private static final String KEY_CURRENT_SECTION = "currentSection";
     private static final String KEY_CURRENT_PAGE = "currentPage";
     private static final String KEY_LOADER_ID = "loaderId";
     private static final String KEY_IS_EDITOR_PICKS = "isEditorPicks";
     private static final String KEY_LIST_POSITION = "listPosition";
-    private static final String PARAM_NAME_API_KEY = "api-key";
-    private static final String PARAM_NAME_SHOW_FIELDS = "show-fields";
-    private static final String PARAM_VALUE_SHOW_FIELDS = "thumbnail";
-    private static final String PARAM_NAME_EDITOR_PICKS = "show-editors-picks";
-    private static final String PARAM_VALUE_EDITOR_PICKS = "true";
-    private static final String PARAM_NAME_PAGE = "page";
-    private static final String PARAM_NAME_QUERY = "q";
     private static final String PREF_DEFAULT_EDITION_IF_UNSET = "3";
     private static final String KEY_PAUSE_TIME = "pauseTime";
     private static final int TIME_REFRESH_INTERVAL = 1000 * 60 * 15;
@@ -107,8 +100,7 @@ public class MainActivity extends BaseActivity
     private boolean isTwoPane;
     private boolean onPaused;
     private FirebaseAnalytics mFirebaseAnalytics;
-    private Intent mWidgetIntent;
-    private boolean fromWidget;
+
 
 
 
@@ -204,7 +196,7 @@ public class MainActivity extends BaseActivity
         listPosition = 0;
         // the section that is shown on app start
         currentSection = Integer.parseInt(mSharedPreferences.getString(
-                getString(R.string.pref_key_default_edition), PREF_DEFAULT_EDITION_IF_UNSET));;
+                getString(R.string.pref_key_default_edition), PREF_DEFAULT_EDITION_IF_UNSET));
         isNewList = true;
     }
 
@@ -229,7 +221,18 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (onPaused && !fromWidget) {
+        Intent intent = getIntent();
+        if (ACTION_INTENT_FROM_WIDGET.equals(intent.getAction())) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                currentSection = extras.getInt(EXTRA_SECTION_INDEX);
+            }
+            isNewList = true;
+            currentPage = 1;
+            articles.clear();
+            refreshUI();
+            intent.setAction(null);
+        } else if (onPaused) {
             long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
             long currentTime = new GregorianCalendar().getTimeInMillis();
             long timePassed = currentTime - pauseTime;
@@ -242,18 +245,9 @@ public class MainActivity extends BaseActivity
                 refreshUI();
             }
         } else {
-            if (articles.isEmpty() && !fromWidget) {
+            if (articles.isEmpty()) {
                 isNewList = true;
                 refreshUI();
-            }
-            if (fromWidget) {
-                Bundle extras = mWidgetIntent.getExtras();
-                currentSection = extras.getInt(EXTRA_SECTION_INDEX);
-                isNewList = true;
-                currentPage = 1;
-                articles.clear();
-                refreshUI();
-                fromWidget = false;
             }
         }
         setSelectedEdition();
@@ -281,10 +275,11 @@ public class MainActivity extends BaseActivity
             currentSection = Section.SEARCH.ordinal();
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
             refreshUI();
+            currentSection = -1;
+            searchQuery = null;
         }
-        else if (intent.getAction().equals(ACTION_INTENT_FROM_WIDGET)) {
-            mWidgetIntent = intent;
-            fromWidget = true;
+        else if (ACTION_INTENT_FROM_WIDGET.equals(intent.getAction())) {
+            setIntent(intent);
         }
     }
 
@@ -470,23 +465,9 @@ public class MainActivity extends BaseActivity
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         String uriString = baseUri.toString();
         if (currentSection != Section.SAVED.ordinal())
-            uriString = buildUriWithParams(baseUri).toString();
+            uriString = ArticlesUriBuilder.buildUriWithParams(currentPage,
+                    currentSection, searchQuery).toString();
         return new ArticleLoader(this, uriString, isEditorsPicks);
-    }
-
-    private Uri buildUriWithParams(Uri baseUri) {
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter(PARAM_NAME_API_KEY, PARAM_VALUE_API_KEY);
-        uriBuilder.appendQueryParameter(PARAM_NAME_SHOW_FIELDS, PARAM_VALUE_SHOW_FIELDS);
-        if (isEditorsPicks) {
-            uriBuilder.appendQueryParameter(PARAM_NAME_EDITOR_PICKS, PARAM_VALUE_EDITOR_PICKS);
-        } else {
-            uriBuilder.appendQueryParameter(PARAM_NAME_PAGE, String.valueOf(currentPage));
-            if (currentSection == Section.SEARCH.ordinal()) {
-                uriBuilder.appendQueryParameter(PARAM_NAME_QUERY, searchQuery);
-            }
-        }
-        return uriBuilder.build();
     }
 
     @Override
@@ -562,9 +543,15 @@ public class MainActivity extends BaseActivity
             }
             sectionsFragment.setSelectedEdition(position);
         } else {
-            navigationView.getMenu().getItem(currentSection).setChecked(true);
+            if (currentSection >= 0) navigationView.getMenu()
+                    .getItem(currentSection).setChecked(true);
+            else {
+                Menu menu = navigationView.getMenu();
+                for (int i = 0; i < menu.size(); i++) {
+                    menu.getItem(i).setChecked(false);
+                }
+            }
         }
-
     }
 
     private boolean checkConnection() {
