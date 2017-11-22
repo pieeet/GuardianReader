@@ -102,7 +102,6 @@ public class MainActivity extends BaseActivity
     private int listPosition;
     private String searchQuery;
     private SharedPreferences mSharedPreferences;
-    private int defaultEdition;
     private NavigationView navigationView;
     private Menu mMenu;
     private boolean isTwoPane;
@@ -139,8 +138,6 @@ public class MainActivity extends BaseActivity
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        defaultEdition = Integer.parseInt(mSharedPreferences.getString(
-                getString(R.string.pref_key_default_edition), PREF_DEFAULT_EDITION_IF_UNSET));
     }
 
     private void initNavigation() {
@@ -206,7 +203,8 @@ public class MainActivity extends BaseActivity
         loaderId = 1;
         listPosition = 0;
         // the section that is shown on app start
-        currentSection = defaultEdition;
+        currentSection = Integer.parseInt(mSharedPreferences.getString(
+                getString(R.string.pref_key_default_edition), PREF_DEFAULT_EDITION_IF_UNSET));;
         isNewList = true;
     }
 
@@ -214,16 +212,13 @@ public class MainActivity extends BaseActivity
         articlesFragment = ArticlesFragment.newInstance(articles, currentSection);
         FragmentManager fm = getSupportFragmentManager();
         if (isTwoPane) {
-            sectionsFragment = SectionsFragment.newInstance(sections, defaultEdition);
+            sectionsFragment = SectionsFragment.newInstance(sections, currentSection);
             fm.beginTransaction()
                     .replace(R.id.content_pane_left, sectionsFragment)
                     .commit();
             fm.beginTransaction()
                     .replace(R.id.content_pane_right, articlesFragment)
                     .commit();
-
-
-
         } else {
             fm.beginTransaction()
                     .replace(CONTENT_CONTAINER, articlesFragment)
@@ -234,12 +229,6 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isTwoPane) {
-            navigationView.getMenu().getItem(currentSection).setChecked(true);
-        } else {
-            setSelectedEdition();
-        }
-
         if (onPaused && !fromWidget) {
             long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
             long currentTime = new GregorianCalendar().getTimeInMillis();
@@ -269,6 +258,7 @@ public class MainActivity extends BaseActivity
                 fromWidget = false;
             }
         }
+        setSelectedEdition();
     }
 
     @Override
@@ -556,11 +546,7 @@ public class MainActivity extends BaseActivity
                 currentSection = Section.NEWS_WORLD.ordinal();
                 break;
         }
-        if (isTwoPane) {
-            setSelectedEdition();
-        } else {
-            navigationView.getMenu().getItem(currentSection).setChecked(true);
-        }
+        setSelectedEdition();
         showProgressAnimations();
         if (checkConnection()) {
             currentPage = 1;
@@ -571,15 +557,20 @@ public class MainActivity extends BaseActivity
     }
 
     private void setSelectedEdition() {
-        int position = -1;
-        for (int i = 0; i < sections.size(); i++) {
-            Section section = sections.get(i);
-            if (currentSection == section.ordinal()) {
-                position = i;
-                break;
+        if (isTwoPane) {
+            int position = -1;
+            for (int i = 0; i < sections.size(); i++) {
+                Section section = sections.get(i);
+                if (currentSection == section.ordinal()) {
+                    position = i;
+                    break;
+                }
             }
+            sectionsFragment.setSelectedEdition(position);
+        } else {
+            navigationView.getMenu().getItem(currentSection).setChecked(true);
         }
-        sectionsFragment.setSelectedEdition(position);
+
     }
 
     private boolean checkConnection() {
