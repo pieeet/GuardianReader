@@ -239,7 +239,6 @@ public class MainActivity extends BaseActivity
                 isNewList = true;
                 currentPage = 1;
                 articles.clear();
-                loaderId++;
                 refreshUI();
             }
         } else {
@@ -253,7 +252,6 @@ public class MainActivity extends BaseActivity
                 isNewList = true;
                 currentPage = 1;
                 articles.clear();
-                loaderId++;
                 refreshUI();
                 fromWidget = false;
             }
@@ -312,10 +310,10 @@ public class MainActivity extends BaseActivity
         if (checkConnection()) {
             if (currentSection == Section.SEARCH.ordinal()) title = searchQuery;
             logFirebaseLoadingEvent();
-            getLoaderManager().initLoader(loaderId, null, this);
+            getLoaderManager().restartLoader(loaderId, null, this);
         } else {
             if (currentSection == Section.SAVED.ordinal()) {
-                getLoaderManager().initLoader(loaderId, null, this);
+                getLoaderManager().restartLoader(loaderId, null, this);
             } else {
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -415,7 +413,6 @@ public class MainActivity extends BaseActivity
             case R.id.action_refresh:
                 isNewList = true;
                 currentPage = 1;
-                loaderId++;
                 refreshUI();
                 break;
             case R.id.action_rate:
@@ -456,7 +453,6 @@ public class MainActivity extends BaseActivity
                 for (Section section : Section.values()) {
                     if (section.getIdNav() == id && currentSection != section.ordinal()) {
                         currentSection = section.ordinal();
-                        loaderId++;
                         refreshUI();
                     }
                 }
@@ -520,9 +516,8 @@ public class MainActivity extends BaseActivity
         if (checkConnection()) {
             logFirebaseLoadingEvent();
             currentPage++;
-            loaderId++;
             //TODO change
-            getLoaderManager().initLoader(loaderId, null, this);
+            getLoaderManager().restartLoader(loaderId, null, this);
         } else {
             refreshUI();
         }
@@ -550,7 +545,6 @@ public class MainActivity extends BaseActivity
         showProgressAnimations();
         if (checkConnection()) {
             currentPage = 1;
-            loaderId++;
             refreshUI();
 
         }
@@ -601,7 +595,6 @@ public class MainActivity extends BaseActivity
             currentPage = 1;
             articles.clear();
             currentSection = section.ordinal();
-            loaderId++;
             refreshUI();
         }
     }
