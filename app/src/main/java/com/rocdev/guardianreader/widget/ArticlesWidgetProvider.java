@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.rocdev.guardianreader.R;
@@ -32,7 +31,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         views.setRemoteAdapter(R.id.lv_widget_articles, intent);
         // Set the MainActivity intent to launch when clicked
         Intent appIntent = new Intent(context, MainActivity.class);
-        appIntent.setAction(MainActivity.EXTRA_KEY_SECTION_FROM_WIDGET);
+        appIntent.setAction(MainActivity.ACTION_INTENT_FROM_WIDGET);
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0,
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.lv_widget_articles, appPendingIntent);
