@@ -35,7 +35,6 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0,
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.lv_widget_articles, appPendingIntent);
-
         views.setEmptyView(R.id.lv_widget_articles, R.id.tv_widget_articles_empty_view);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -54,14 +53,6 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         int sectionIndex = sharedPreferences.getInt(String.valueOf(widgetId), 0);
         WidgetIntentService.startActionUpdateArticles(context, sectionIndex, widgetId);
     }
-
-    public static void updateArticleWidgets(Context context, AppWidgetManager appWidgetManager,
-                                     int[] appWidgetIds) {
-        for (int appWidgetId: appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
-    }
-
 
     @Override
     public void onEnabled(Context context) {

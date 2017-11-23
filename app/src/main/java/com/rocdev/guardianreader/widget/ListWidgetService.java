@@ -8,6 +8,8 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +33,6 @@ import java.util.List;
 
 /**
  * Created by piet on 12-11-17.
- *
  */
 
 public class ListWidgetService extends RemoteViewsService {
@@ -79,37 +80,46 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public int getCount() {
         if (mArticles == null) return 0;
+        Log.d(TAG, "articles size:" + mArticles.size());
         return mArticles.size();
     }
 
     @Override
     public RemoteViews getViewAt(int i) {
         RemoteViews rv = null;
-        Article article = mArticles.get(i);
         if (mArticles != null) {
-            rv = new RemoteViews(mContext.getPackageName(), R.layout.article_list_item_content);
-            rv.setTextViewText(R.id.titleTextView, article.getTitle());
-            rv.setTextViewText(R.id.dateTextView, ArticleDateUtils
-                    .formatDateTime(article.getDate()));
-            rv.setTextViewText(R.id.sectionTextView, article.getSection());
             try {
-                Bitmap b = Picasso.with(mContext).load(mArticles.get(i).getThumbUrl()).get();
-                rv.setImageViewBitmap(R.id.thumbnail, b);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //pass extras to intent
-            Bundle extras = new Bundle();
-            extras.putInt(MainActivity.EXTRA_SECTION_INDEX, mSectionIndex);
-
-            Intent fillInIntent = new Intent();
-            fillInIntent.putExtras(extras);
-            rv.setOnClickFillInIntent(R.id.article_item_container, fillInIntent);
+                Article article = mArticles.get(i);
+                rv = new RemoteViews(mContext.getPackageName(), R.layout.article_list_item_content);
+                rv.setTextViewText(R.id.titleTextView, article.getTitle());
+                rv.setTextViewText(R.id.dateTextView, ArticleDateUtils
+                        .formatDateTime(article.getDate()));
+                rv.setTextViewText(R.id.sectionTextView, article.getSection());
+                try {
+                    Bitmap b = Picasso.with(mContext).load(mArticles.get(i).getThumbUrl()).get();
+                    rv.setImageViewBitmap(R.id.thumbnail, b);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //pass extras to intent
+                Bundle extras = new Bundle();
+                extras.putInt(MainActivity.EXTRA_SECTION_INDEX, mSectionIndex);
+                Intent fillInIntent = new Intent();
+                fillInIntent.putExtras(extras);
+                rv.setOnClickFillInIntent(R.id.article_item_container, fillInIntent);
+            } catch (Exception ignored) {}
         }
         return rv;
     }
 
-
+    private boolean checkConnection() {
+        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = null;
+        if (connMgr != null) {
+            networkInfo = connMgr.getActiveNetworkInfo();
+        }
+        return networkInfo != null && networkInfo.isConnected();
+    }
 
 
     @Override
@@ -131,7 +141,6 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public boolean hasStableIds() {
         return false;
     }
-
 
 
 }
