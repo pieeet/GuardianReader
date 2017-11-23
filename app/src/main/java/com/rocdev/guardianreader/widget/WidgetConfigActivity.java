@@ -60,7 +60,7 @@ public class WidgetConfigActivity extends Activity {
             }
         }
         SectionsAdapter adapter = new SectionsAdapter(this, sections);
-        adapter.setSelectedEdition(-1);
+        adapter.setSelectedEdition(SectionsAdapter.NO_SELECTION);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

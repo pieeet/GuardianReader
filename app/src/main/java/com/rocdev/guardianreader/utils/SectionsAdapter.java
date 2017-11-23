@@ -27,13 +27,13 @@ import java.util.List;
 public class SectionsAdapter extends ArrayAdapter<Section> {
 
     private final Context context;
-    List<Section> sections;
     private int selectedPosition;
+
+    public static final int NO_SELECTION = -1;
 
     public SectionsAdapter(@NonNull Context context, List<Section> sections) {
         super(context, 0, sections);
         this.context = context;
-        this.sections = sections;
     }
 
     @NonNull
