@@ -464,9 +464,11 @@ public class MainActivity extends BaseActivity
                 currentSection == Section.SAVED.ordinal();
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         String uriString = baseUri.toString();
-        if (currentSection != Section.SAVED.ordinal())
+        if (currentSection != Section.SAVED.ordinal()) {
             uriString = ArticlesUriBuilder.buildUriWithParams(currentPage,
                     currentSection, searchQuery).toString();
+        }
+
         return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 

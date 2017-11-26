@@ -33,6 +33,7 @@ import java.util.List;
 
 /**
  * Created by piet on 12-11-17.
+ *
  */
 
 public class ListWidgetService extends RemoteViewsService {
@@ -56,19 +57,21 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         mContext = context;
         mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
+        SharedPreferences prefs = mContext.getSharedPreferences(WidgetConfigActivity.PREFS_NAME,
+                Context.MODE_PRIVATE);
+        mSectionIndex = prefs.getInt(String.valueOf(mAppWidgetId), 0);
     }
 
 
     @Override
     public void onCreate() {
 
-        SharedPreferences prefs = mContext.getSharedPreferences(WidgetConfigActivity.PREFS_NAME,
-                Context.MODE_PRIVATE);
-        mSectionIndex = prefs.getInt(String.valueOf(mAppWidgetId), 0);
     }
 
+    //called on start and when notifyAppWidgetViewDataChanged is called
     @Override
     public void onDataSetChanged() {
+        Log.d(TAG, "onDataSetChanged triggered");
         mArticles = QueryUtils.getWidgetArticlesFromDatabase(mContext, mAppWidgetId);
     }
 

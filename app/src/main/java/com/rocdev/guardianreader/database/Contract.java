@@ -40,6 +40,8 @@ public class Contract {
     static final String PATH_ARTICLES = "articles";
     static final String PATH_WIDGET_ARTICLES = "widget_articles";
 
+    public static final int INVALID_SECTION_INDEX = -1;
+
 
     public static final class ArticleEntry implements BaseColumns {
 

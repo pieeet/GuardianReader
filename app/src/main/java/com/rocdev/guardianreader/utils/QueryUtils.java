@@ -145,7 +145,7 @@ public class QueryUtils {
     }
 
 
-    public static void insertWidgetArticles(Context context, List<Article> articles, int widgetId) {
+    public static int insertWidgetArticles(Context context, List<Article> articles, int widgetId) {
 
         ContentValues[] contentValuesArray = new ContentValues[articles.size()];
         int index = 0;
@@ -161,16 +161,17 @@ public class QueryUtils {
             index++;
         }
         Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI, String.valueOf(widgetId));
-        context.getContentResolver().bulkInsert(uri,
+        return context.getContentResolver().bulkInsert(uri,
                 contentValuesArray);
     }
 
 
-    public static void deleteWidgetArticles(Context context, int widgetId) {
+    public static int deleteWidgetArticles(Context context, int widgetId) {
         Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI,
                 String.valueOf(widgetId));
-        context.getContentResolver().delete(uri, null,
+        int rowsDeleted = context.getContentResolver().delete(uri, null,
                 null);
+        return rowsDeleted;
     }
 
     public static List<Article> getWidgetArticlesFromDatabase(Context context, int widgetId) {

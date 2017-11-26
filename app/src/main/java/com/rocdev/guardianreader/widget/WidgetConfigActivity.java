@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RemoteViews;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Section;
@@ -20,6 +22,7 @@ import java.util.List;
 public class WidgetConfigActivity extends Activity {
 
     public static final String PREFS_NAME = "com.rocdev.guardianreader.widgetprefsname";
+    private static final String TAG = WidgetConfigActivity.class.getSimpleName();
 
     private int mAppWidgetId;
 
@@ -52,6 +55,7 @@ public class WidgetConfigActivity extends Activity {
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
         }
+
         List<Section> sections = new ArrayList<>();
         for (Section section: Section.values()) {
             // exclude saved and search sections
@@ -66,11 +70,9 @@ public class WidgetConfigActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
+                Log.d(TAG, "widgetId: " + mAppWidgetId);
+                Log.d(TAG, "Section Position: " + position);
                 prefs.edit().putInt(String.valueOf(mAppWidgetId), position).apply();
-                AppWidgetManager appWidgetManager = AppWidgetManager
-                        .getInstance(WidgetConfigActivity.this);
-                ArticlesWidgetProvider.updateAppWidget(WidgetConfigActivity.this,
-                        appWidgetManager, mAppWidgetId);
                 ArticlesWidgetProvider.startService(WidgetConfigActivity.this, mAppWidgetId);
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -78,6 +80,9 @@ public class WidgetConfigActivity extends Activity {
                 finish();
             }
         });
+        RemoteViews rv = new RemoteViews(getPackageName(), R.layout.articles_widget);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        appWidgetManager.updateAppWidget(mAppWidgetId, rv);
 
     }
 
