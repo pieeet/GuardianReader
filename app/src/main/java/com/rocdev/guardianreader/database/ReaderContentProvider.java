@@ -155,7 +155,7 @@ public class ReaderContentProvider extends ContentProvider {
         String[] whereArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         int rowsDeleted = db.delete(Contract.WidgetArticleEntry.TABLE_NAME, selection, whereArgs);
-        if (rowsDeleted > 0) {
+        if (rowsDeleted > 0 && getContext() != null) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;

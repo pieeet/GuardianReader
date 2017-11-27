@@ -70,8 +70,6 @@ public class WidgetConfigActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 SharedPreferences prefs = getSharedPreferences(PREFS_NAME, 0);
-                Log.d(TAG, "widgetId: " + mAppWidgetId);
-                Log.d(TAG, "Section Position: " + position);
                 prefs.edit().putInt(String.valueOf(mAppWidgetId), position).apply();
                 ArticlesWidgetProvider.startService(WidgetConfigActivity.this, mAppWidgetId);
                 Intent resultValue = new Intent();

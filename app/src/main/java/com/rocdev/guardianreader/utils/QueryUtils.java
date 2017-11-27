@@ -141,7 +141,7 @@ public class QueryUtils {
             article.set_ID(id);
         }
 
-        return ContentUris.parseId(uri);
+        return id;
     }
 
 
@@ -169,9 +169,8 @@ public class QueryUtils {
     public static int deleteWidgetArticles(Context context, int widgetId) {
         Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI,
                 String.valueOf(widgetId));
-        int rowsDeleted = context.getContentResolver().delete(uri, null,
+        return context.getContentResolver().delete(uri, null,
                 null);
-        return rowsDeleted;
     }
 
     public static List<Article> getWidgetArticlesFromDatabase(Context context, int widgetId) {

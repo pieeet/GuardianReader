@@ -87,6 +87,7 @@ public class WidgetIntentService extends IntentService {
         if (intent == null) return;
         final String action = intent.getAction();
         if (action == null) return;
+
         //see https://goo.gl/hhkFL2
         if (action.startsWith(ACTION_REFRESH_WIDGET)) {
             int appWidgetId = -1;
@@ -139,12 +140,9 @@ public class WidgetIntentService extends IntentService {
     private void handleActionSaveArticles(int appWidgetId, List<Article> articles) {
         if (articles == null || articles.isEmpty()) return;
         for (Article article : articles) {
-            Log.d(TAG, "Article title: " + article.getTitle());
         }
-        int rowsDeleted = QueryUtils.deleteWidgetArticles(this, appWidgetId);
-        Log.d(TAG, "rows deleted: : " + rowsDeleted);
-        int rowsAdded = QueryUtils.insertWidgetArticles(this, articles, appWidgetId);
-        Log.d(TAG, "rows added: : " + rowsAdded);
+        QueryUtils.deleteWidgetArticles(this, appWidgetId);
+        QueryUtils.insertWidgetArticles(this, articles, appWidgetId);
         startActionUpdateWidget(this, appWidgetId);
     }
 
@@ -152,9 +150,6 @@ public class WidgetIntentService extends IntentService {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
         mFirebaseAnalytics.logEvent("api_call_widget", null);
-        int[] ids = appWidgetManager.getAppWidgetIds(new ComponentName(this,
-                ArticlesWidgetProvider.class));
-        appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.lv_widget_articles);
         ArticlesWidgetProvider.updateAppWidget(this, appWidgetManager, widgetId);
     }
 }

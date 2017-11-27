@@ -22,21 +22,16 @@ import com.rocdev.guardianreader.utils.QueryUtils;
 public class ArticlesWidgetProvider extends AppWidgetProvider {
 
     private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
-    private static final String ACTION_SYNC_CLICKED = "com.rocdev.guardianreader.widget.sync_button_clicked";
-    public static final String KEY_WIDGET_ID = "com.rocdev.guardianreader.widget.app_widget_id";
     private static final int WIDGET_ID_INVALID = -1;
 
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-        Log.d(TAG, "updateAppWidget triggered. appWidgetId: " + appWidgetId);
-
         //construct RemoteViews
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.articles_widget);
         int sectionIndex = context.getSharedPreferences(WidgetConfigActivity.PREFS_NAME, 0)
                 .getInt(String.valueOf(appWidgetId), 0);
 
-        Log.d(TAG, "updateAppWidget triggered. sectionIndex: " + sectionIndex);
         //set title
         Section section = Section.values()[sectionIndex];
         String sectionTitle = context.getResources().getString(section.getTitle());
@@ -54,6 +49,8 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0,
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.lv_widget_articles, appPendingIntent);
+
+        //If list is empty
         views.setEmptyView(R.id.lv_widget_articles, R.id.tv_widget_articles_empty_view);
 
         // set PendingIntent on refresh button to start service
@@ -70,22 +67,9 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-    }
-
-    public static void updateWidgets(Context context, AppWidgetManager appWidgetManager,
-                                     int[] appWidgetIds) {
-        for (int appWidgetId: appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
-    }
-
     // onUpdate is called despite WidgetConfigActivity (not according to docs)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d(TAG, "onUpdate triggered");
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             SharedPreferences prefs = context.getSharedPreferences(WidgetConfigActivity.PREFS_NAME,
@@ -100,7 +84,6 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
     }
 
     static void startService(Context context, int widgetId) {
-        Log.d(TAG, "startService triggered");
         SharedPreferences sharedPreferences = context.getSharedPreferences(WidgetConfigActivity
                 .PREFS_NAME, Context.MODE_PRIVATE);
         int sectionIndex = sharedPreferences.getInt(String.valueOf(widgetId), 0);

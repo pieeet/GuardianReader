@@ -71,7 +71,6 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     //called on start and when notifyAppWidgetViewDataChanged is called
     @Override
     public void onDataSetChanged() {
-        Log.d(TAG, "onDataSetChanged triggered");
         mArticles = QueryUtils.getWidgetArticlesFromDatabase(mContext, mAppWidgetId);
     }
 
@@ -83,7 +82,6 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public int getCount() {
         if (mArticles == null) return 0;
-        Log.d(TAG, "articles size:" + mArticles.size());
         return mArticles.size();
     }
 

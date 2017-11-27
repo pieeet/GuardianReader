@@ -499,7 +499,6 @@ public class MainActivity extends BaseActivity
         if (checkConnection()) {
             logFirebaseLoadingEvent();
             currentPage++;
-            //TODO change
             getLoaderManager().restartLoader(loaderId, null, this);
         } else {
             refreshUI();
