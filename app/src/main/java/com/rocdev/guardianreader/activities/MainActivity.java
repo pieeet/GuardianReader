@@ -1,6 +1,8 @@
 package com.rocdev.guardianreader.activities;
 
 import android.app.SearchManager;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,6 +44,7 @@ import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.ArticlesUriBuilder;
 import com.rocdev.guardianreader.utils.Secret;
 import com.rocdev.guardianreader.utils.QueryUtils;
+import com.rocdev.guardianreader.widget.ArticlesWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -76,7 +79,7 @@ public class MainActivity extends BaseActivity
     public static final String EXTRA_SECTION_INDEX = "com.rocdev.guardianreader.extra.SECTION_INDEX";
     public static final String ACTION_INTENT_FROM_WIDGET =
             "com.rocdev-guardian_reader_extra_section_from_widget";
-//    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
      * INSTANCE VARIABLES
@@ -100,8 +103,6 @@ public class MainActivity extends BaseActivity
     private boolean isTwoPane;
     private boolean onPaused;
     private FirebaseAnalytics mFirebaseAnalytics;
-
-
 
 
     @Override
@@ -277,8 +278,7 @@ public class MainActivity extends BaseActivity
             refreshUI();
             currentSection = -1;
             searchQuery = null;
-        }
-        else if (ACTION_INTENT_FROM_WIDGET.equals(intent.getAction())) {
+        } else if (ACTION_INTENT_FROM_WIDGET.equals(intent.getAction())) {
             setIntent(intent);
         }
     }
@@ -567,6 +567,19 @@ public class MainActivity extends BaseActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
+
+        if (key.equals(getString(R.string.pref_key_default_edition)) ||
+                key.equals(getString(R.string.pref_key_default_browser)))
+            // do nothing
+            return;
+        // send widget refresh rate broadcast to widget provider
+        if (key.equals(getString(R.string.pref_key_widget_refresh_rate))) {
+            Intent intent = new Intent(this, ArticlesWidgetProvider.class);
+            intent.setAction(ArticlesWidgetProvider.ACTION_SET_REFRESH_RATE_TIMER);
+            sendBroadcast(intent);
+            return;
+        }
+        // all is left is show sections has changed
         if (isTwoPane) {
             setUpOrRefreshSelectedSections();
             sectionsFragment.refreshListView(sections);
@@ -628,7 +641,7 @@ public class MainActivity extends BaseActivity
         String message = getString(R.string.empty_string);
         Drawable icon = null;
         if (article != null) {
-            if (article.get_ID() == -1) {
+            if (article.get_ID() == Article.NO_ID) {
                 articleIsSaved = false;
                 title = getString(R.string.dialog_save_article_title);
                 message = getString(R.string.dialog_save_article_message);

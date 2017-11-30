@@ -21,6 +21,8 @@ public class Article implements Parcelable {
     private static final String FIELDS = "fields";
     private static final String THUMBNAIL = "thumbnail";
 
+    public static final int NO_ID = -1;
+
     private long _ID;
     private String title;
     private String date;
@@ -35,7 +37,7 @@ public class Article implements Parcelable {
      * @throws JSONException JSONException thrown
      */
     public Article(JSONObject jsonObject) throws JSONException {
-        this._ID = -1;
+        this._ID = NO_ID;
         title = jsonObject.getString(WEB_TITLE);
         date = jsonObject.getString(WEB_PUBLICATION_DATE);
         url = jsonObject.getString(WEB_URL);

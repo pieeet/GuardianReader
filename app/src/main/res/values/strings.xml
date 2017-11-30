@@ -10,6 +10,15 @@
     <string name="pref_in_app_browser">In-app browser</string>
     <string name="pref_system_browser">System browser</string>
 
+    <string name="pref_title_widget_refresh_rate">Widget refresh rate</string>
+    <string name="pref_one_hour">1 Hour</string>
+    <string name="pref_two_hour">2 Hours</string>
+    <string name="pref_four_hour">4 Hours</string>
+    <string name="pref_eight_hour">8 Hours</string>
+    <string name="pref_twentyfour_hour">24 Hours</string>
+    <string name="pref_no_refresh">Refresh manually</string>
+
+
     <!--navbar pref keys -->
     <string name="pref_key_aus_headlines" translatable="false">pref_section_headlines_aus</string>
     <string name="pref_key_uk_headlines" translatable="false">pref_section_headlines_uk</string>
@@ -46,6 +55,7 @@
     <string name="pref_key_weather" translatable="false">pref_section_weather</string>
 
     <string name="pref_key_change_sections" translatable="false">changeSections</string>
+    <string name="pref_key_widget_refresh_rate" translatable="false">widgetRedreshRate</string>
 
     <!--navbar titles -->
     <string name="nav_heading_headlines">Headlines</string>
@@ -94,6 +104,8 @@
     <string name="pref_heading_default_edition">Default Edition</string>
     <string name="pref_key_default_edition">pref_default_edition</string>
     <string name="pref_key_default_browser">pref_default_browser</string>
+    <string name="pref_key_default_widget_refresh_rate">pref_widget_refresh_rate</string>
+
     <string name="title_no_network">No network…</string>
 
     <string name="banner_ad_unit_id_test_ad" translatable="false">ca-app-pub-3940256099942544~3347511713.</string>
