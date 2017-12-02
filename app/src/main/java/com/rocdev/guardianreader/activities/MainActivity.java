@@ -528,7 +528,6 @@ public class MainActivity extends BaseActivity
         if (checkConnection()) {
             currentPage = 1;
             refreshUI();
-
         }
     }
 

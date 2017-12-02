@@ -127,7 +127,8 @@ public class ArticleAdMobRecyclerAdapter extends
             Picasso.with(context).load(article.getThumbUrl()).into(holder.imgView);
         }
         holder.title.setText(article != null ? article.getTitle() : EMPTY_STRING);
-        holder.date.setText(ArticleDateUtils.formatDateTime(article != null ? article.getDate() : EMPTY_STRING));
+        holder.date.setText(ArticleDateUtils.formatDateTime(article != null ? article.getDate() :
+                EMPTY_STRING));
         holder.section.setText(article != null ? article.getSection() : EMPTY_STRING);
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
