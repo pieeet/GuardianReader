@@ -124,7 +124,7 @@ public class QueryUtils {
         return articles;
     }
 
-    public static long insertArticle(Article article, Context context) {
+    public static void insertArticle(Article article, Context context) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
@@ -141,11 +141,10 @@ public class QueryUtils {
             article.set_ID(id);
         }
 
-        return id;
     }
 
 
-    public static int insertWidgetArticles(Context context, List<Article> articles, int widgetId) {
+    public static void insertWidgetArticles(Context context, List<Article> articles, int widgetId) {
 
         ContentValues[] contentValuesArray = new ContentValues[articles.size()];
         int index = 0;
@@ -161,15 +160,14 @@ public class QueryUtils {
             index++;
         }
         Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI, String.valueOf(widgetId));
-        return context.getContentResolver().bulkInsert(uri,
+        context.getContentResolver().bulkInsert(uri,
                 contentValuesArray);
     }
 
-
-    public static int deleteWidgetArticles(Context context, int widgetId) {
+    public static void deleteWidgetArticles(Context context, int widgetId) {
         Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI,
                 String.valueOf(widgetId));
-        return context.getContentResolver().delete(uri, null,
+        context.getContentResolver().delete(uri, null,
                 null);
     }
 
@@ -184,8 +182,7 @@ public class QueryUtils {
     }
 
 
-
-    public static int deleteArticle(Article article, Context context) {
+    public static void deleteArticle(Article article, Context context) {
         Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
                 String.valueOf(article.get_ID()));
 
@@ -196,7 +193,6 @@ public class QueryUtils {
         } else {
             Toast.makeText(context, R.string.delete_article_success, Toast.LENGTH_SHORT).show();
         }
-        return deletedRows;
     }
 
 

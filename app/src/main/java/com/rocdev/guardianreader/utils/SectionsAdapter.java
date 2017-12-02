@@ -72,7 +72,8 @@ public class SectionsAdapter extends ArrayAdapter<Section> {
     }
 
     public void setSelectedEdition(int position) {
-        selectedPosition = position;
+        if (position == Section.SEARCH.ordinal()) selectedPosition = NO_SELECTION;
+        else selectedPosition = position;
         notifyDataSetChanged();
     }
 }

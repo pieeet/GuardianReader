@@ -1,8 +1,6 @@
 package com.rocdev.guardianreader.activities;
 
 import android.app.SearchManager;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -276,7 +274,6 @@ public class MainActivity extends BaseActivity
             currentSection = Section.SEARCH.ordinal();
             searchQuery = intent.getStringExtra(SearchManager.QUERY);
             refreshUI();
-            currentSection = -1;
             searchQuery = null;
         } else if (ACTION_INTENT_FROM_WIDGET.equals(intent.getAction())) {
             setIntent(intent);

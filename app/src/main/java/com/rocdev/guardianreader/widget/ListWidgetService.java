@@ -1,30 +1,18 @@
 package com.rocdev.guardianreader.widget;
 
-import android.app.LoaderManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.activities.MainActivity;
-import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
-import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.ArticleDateUtils;
-import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.utils.QueryUtils;
 import com.squareup.picasso.Picasso;
 
@@ -51,7 +39,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private int mSectionIndex;
 
 
-    private static final String TAG = ListWidgetService.class.getSimpleName();
+//    private static final String TAG = ListWidgetService.class.getSimpleName();
 
     ListRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
@@ -112,16 +100,6 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         }
         return rv;
     }
-
-    private boolean checkConnection() {
-        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = null;
-        if (connMgr != null) {
-            networkInfo = connMgr.getActiveNetworkInfo();
-        }
-        return networkInfo != null && networkInfo.isConnected();
-    }
-
 
     @Override
     public RemoteViews getLoadingView() {
