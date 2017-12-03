@@ -346,7 +346,7 @@ public class MainActivity extends BaseActivity
 //            Bundle bundle = new Bundle();
 //            bundle.putString("section", titles[currentSection]);
             //TODO uncomment for production
-            mFirebaseAnalytics.logEvent("api_call", null);
+//            mFirebaseAnalytics.logEvent("api_call", null);
         }
     }
 
