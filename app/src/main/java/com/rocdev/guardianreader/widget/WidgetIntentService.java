@@ -2,7 +2,6 @@ package com.rocdev.guardianreader.widget;
 
 import android.app.IntentService;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,7 +10,6 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.database.Contract;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
@@ -148,8 +146,10 @@ public class WidgetIntentService extends IntentService {
 
     private void handleActionUpdateWidget(int widgetId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        //TODO comment out for test device
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
         mFirebaseAnalytics.logEvent("api_call_widget", null);
+
         ArticlesWidgetProvider.updateAppWidget(this, appWidgetManager, widgetId);
     }
 }
