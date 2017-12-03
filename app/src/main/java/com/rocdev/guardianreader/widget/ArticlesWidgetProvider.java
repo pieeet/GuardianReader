@@ -8,13 +8,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.activities.MainActivity;
@@ -26,7 +23,7 @@ import com.rocdev.guardianreader.utils.QueryUtils;
  */
 public class ArticlesWidgetProvider extends AppWidgetProvider {
 
-    private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
+//    private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
 
     private static final String ACTION_TIMER_TRIGGERED =
             "com.rocdev.guardianreader.set_widget_refresh_timer";
@@ -58,7 +55,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
 
         // Set the MainActivity intent to launch when clicked
         Intent appIntent = new Intent(context, MainActivity.class);
-        appIntent.setAction(MainActivity.ACTION_INTENT_FROM_WIDGET);
+        appIntent.setAction(MainActivity.ACTION_OPEN_ARTICLE_FROM_WIDGET);
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0,
                 appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.lv_widget_articles, appPendingIntent);
@@ -73,6 +70,13 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         PendingIntent syncPendingIntent = PendingIntent.getService(context, 0,
                 syncIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.ib_refresh_button, syncPendingIntent);
+
+        // set pending intent on section textview to start section
+        Intent sectionIntent = new Intent(context, MainActivity.class);
+        sectionIntent.setAction(MainActivity.ACTION_OPEN_SECTION_FROM_WIDGET + section.ordinal());
+        PendingIntent sectionPendingIntent = PendingIntent.getActivity(context, 0,
+                sectionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.tv_widget_section_title, sectionPendingIntent);
 
         int[] ids = appWidgetManager.getAppWidgetIds(new ComponentName(context,
                 ArticlesWidgetProvider.class));

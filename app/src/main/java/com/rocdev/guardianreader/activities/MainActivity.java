@@ -40,7 +40,6 @@ import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.ArticlesUriBuilder;
-import com.rocdev.guardianreader.utils.Secret;
 import com.rocdev.guardianreader.utils.QueryUtils;
 import com.rocdev.guardianreader.widget.ArticlesWidgetProvider;
 
@@ -75,9 +74,13 @@ public class MainActivity extends BaseActivity
     private static final int TIME_POST_DELAYED = 2000;
     private static final int CLOSE_DRAWER_DELAY = 300;
     public static final String EXTRA_SECTION_INDEX = "com.rocdev.guardianreader.extra.SECTION_INDEX";
-    public static final String ACTION_INTENT_FROM_WIDGET =
-            "com.rocdev-guardian_reader_extra_section_from_widget";
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    public static final String EXTRA_ARTICLE_URL = "com.rocdev.guardianreader.extra.ARTICLE_URL";
+
+    public static final String ACTION_OPEN_ARTICLE_FROM_WIDGET =
+            "com.rocdev-guardian_reader_action_open_article_from_widget";
+    public static final String ACTION_OPEN_SECTION_FROM_WIDGET =
+            "com.rocdev-guardian_reader.action_open_section_from_widget";
+//    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
      * INSTANCE VARIABLES
@@ -101,6 +104,7 @@ public class MainActivity extends BaseActivity
     private boolean isTwoPane;
     private boolean onPaused;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private String mArticleUrl;
 
 
     @Override
@@ -221,10 +225,18 @@ public class MainActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         Intent intent = getIntent();
-        if (ACTION_INTENT_FROM_WIDGET.equals(intent.getAction())) {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                currentSection = extras.getInt(EXTRA_SECTION_INDEX);
+        String action = intent.getAction();
+        if (action != null && (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(action) ||
+                action.startsWith(ACTION_OPEN_SECTION_FROM_WIDGET))) {
+            if (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(action)) {
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    currentSection = extras.getInt(EXTRA_SECTION_INDEX);
+                    mArticleUrl = extras.getString(EXTRA_ARTICLE_URL);
+                }
+            } else if (action.startsWith(ACTION_OPEN_SECTION_FROM_WIDGET)) {
+                currentSection = Integer.parseInt(action
+                        .substring(ACTION_OPEN_SECTION_FROM_WIDGET.length()));
             }
             isNewList = true;
             currentPage = 1;
@@ -266,18 +278,23 @@ public class MainActivity extends BaseActivity
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         // invoke search intent
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            currentSection = Section.SEARCH.ordinal();
-            searchQuery = intent.getStringExtra(SearchManager.QUERY);
-            refreshUI();
-            searchQuery = null;
-        } else if (ACTION_INTENT_FROM_WIDGET.equals(intent.getAction())) {
-            setIntent(intent);
+        if (intent != null && intent.getAction() != null) {
+            if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                currentSection = Section.SEARCH.ordinal();
+                searchQuery = intent.getStringExtra(SearchManager.QUERY);
+                refreshUI();
+                searchQuery = null;
+            } else if (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(intent.getAction()) ||
+                    intent.getAction().startsWith(ACTION_OPEN_SECTION_FROM_WIDGET)) {
+                setIntent(intent);
+            }
         }
+
     }
 
     @Override
@@ -480,7 +497,31 @@ public class MainActivity extends BaseActivity
                 && articles.isEmpty());
         articlesFragment.showProgressContainer(false);
         articlesFragment.showListContainer(true);
-        onLoaderReset(mLoader);
+        if (mArticleUrl != null) {
+            openArticleFromWidget();
+        }
+    }
+
+    private void openArticleFromWidget() {
+        boolean articleIsFound = false;
+        for (final Article article : articles) {
+            if (article.getUrl().equals(mArticleUrl)) {
+                articleIsFound = true;
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onItemClicked(article);
+                    }
+                }, 1000);
+                break;
+            }
+        }
+        if (!articleIsFound) {
+            Toast.makeText(this, "Article not found. Refresh your widget.",
+                    Toast.LENGTH_SHORT).show();
+        }
+        mArticleUrl = null;
     }
 
 
