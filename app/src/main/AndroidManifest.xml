@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="false"
@@ -15,11 +16,12 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.SEARCH" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -27,10 +29,11 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <provider
             android:name=".database.ReaderContentProvider"
             android:authorities="com.rocdev.guardianreader"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".activities.ArticleActivity"
@@ -42,7 +45,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.rocdev.guardianreader.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.Settings2Activity"
+        <activity
+            android:name=".activities.Settings2Activity"
             android:label="@string/action_personalise"
             android:parentActivityName=".activities.MainActivity"
             tools:targetApi="jelly_bean">
@@ -50,6 +54,33 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
+
+        <receiver android:name=".widget.ArticlesWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_DISABLED" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_DELETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/articles_widget_info" />
+        </receiver>
+
+        <activity android:name=".widget.WidgetConfigActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name=".widget.ListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service android:name=".widget.WidgetIntentService" />
+
     </application>
 
 </manifest>
+

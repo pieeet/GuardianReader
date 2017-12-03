@@ -7,6 +7,7 @@
     <color name="colorTextListitemTitle">#07334c</color>
     <color name="colorHoloRed">#d60a0a</color>
     <color name="sidebar_text">#FFFFFF</color>
+    <color name="listitem_background">#FFFFFF</color>
     <color name="grey_background">#d7e1f2</color>
 
 

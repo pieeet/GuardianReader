@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -45,7 +46,7 @@ public class QueryUtils {
     /**
      * @return a list of {@link Article} objects that has been built up from parsing a JSON response.
      */
-    static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
+    public static ArrayList<Article> extractArticles(String urlStr, boolean isEditorsPick) {
         StringBuilder output = new StringBuilder();
         URL url = makeUrl(urlStr);
         HttpURLConnection connection = null;
@@ -60,7 +61,11 @@ public class QueryUtils {
             } else {
                 return null;
             }
-        } catch (IOException ignored) {} finally {
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+        finally {
             if (connection != null) {
                 connection.disconnect();
             }
@@ -119,7 +124,7 @@ public class QueryUtils {
         return articles;
     }
 
-    public static long insertArticle(Article article, Context context) {
+    public static void insertArticle(Article article, Context context) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
         contentValues.put(Contract.ArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
@@ -136,10 +141,48 @@ public class QueryUtils {
             article.set_ID(id);
         }
 
-        return ContentUris.parseId(uri);
     }
 
-    public static int deleteArticle(Article article, Context context) {
+
+    public static void insertWidgetArticles(Context context, List<Article> articles, int widgetId) {
+
+        ContentValues[] contentValuesArray = new ContentValues[articles.size()];
+        int index = 0;
+        for (Article article: articles) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_DATE, article.getDate());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_SECTION, article.getSection());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_TITLE, article.getTitle());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_ARTICLE_URL, article.getUrl());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_THUMB_URL, article.getThumbUrl());
+            contentValues.put(Contract.WidgetArticleEntry.COLUMN_WIDGET_ID, widgetId);
+            contentValuesArray[index] = contentValues;
+            index++;
+        }
+        Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI, String.valueOf(widgetId));
+        context.getContentResolver().bulkInsert(uri,
+                contentValuesArray);
+    }
+
+    public static void deleteWidgetArticles(Context context, int widgetId) {
+        Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI,
+                String.valueOf(widgetId));
+        context.getContentResolver().delete(uri, null,
+                null);
+    }
+
+    public static List<Article> getWidgetArticlesFromDatabase(Context context, int widgetId) {
+        Uri uri = Uri.withAppendedPath(Contract.WidgetArticleEntry.CONTENT_URI,
+                String.valueOf(widgetId));
+        Cursor cursor = context.getContentResolver().query(uri, null,
+                Contract.WidgetArticleEntry.COLUMN_WIDGET_ID + " = ?",
+                new String[] {String.valueOf(widgetId)}, null);
+        return makeListFromCursor(cursor);
+
+    }
+
+
+    public static void deleteArticle(Article article, Context context) {
         Uri uri = Uri.withAppendedPath(Contract.ArticleEntry.CONTENT_URI,
                 String.valueOf(article.get_ID()));
 
@@ -150,7 +193,6 @@ public class QueryUtils {
         } else {
             Toast.makeText(context, R.string.delete_article_success, Toast.LENGTH_SHORT).show();
         }
-        return deletedRows;
     }
 
 

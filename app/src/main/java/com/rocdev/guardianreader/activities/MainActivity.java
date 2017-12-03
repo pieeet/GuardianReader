@@ -39,8 +39,9 @@ import com.rocdev.guardianreader.fragments.ArticlesFragment;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
-import com.rocdev.guardianreader.utils.Secret;
+import com.rocdev.guardianreader.utils.ArticlesUriBuilder;
 import com.rocdev.guardianreader.utils.QueryUtils;
+import com.rocdev.guardianreader.widget.ArticlesWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -61,25 +62,24 @@ public class MainActivity extends BaseActivity
     //TODO uncomment before building release-apk
 //    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
     //TODO comment out before building release-apk
-    private static final String PARAM_VALUE_API_KEY = "test";
     private static final String KEY_ARTICLES = "articles";
     private static final String KEY_CURRENT_SECTION = "currentSection";
     private static final String KEY_CURRENT_PAGE = "currentPage";
     private static final String KEY_LOADER_ID = "loaderId";
     private static final String KEY_IS_EDITOR_PICKS = "isEditorPicks";
     private static final String KEY_LIST_POSITION = "listPosition";
-    private static final String PARAM_NAME_API_KEY = "api-key";
-    private static final String PARAM_NAME_SHOW_FIELDS = "show-fields";
-    private static final String PARAM_VALUE_SHOW_FIELDS = "thumbnail";
-    private static final String PARAM_NAME_EDITOR_PICKS = "show-editors-picks";
-    private static final String PARAM_VALUE_EDITOR_PICKS = "true";
-    private static final String PARAM_NAME_PAGE = "page";
-    private static final String PARAM_NAME_QUERY = "q";
     private static final String PREF_DEFAULT_EDITION_IF_UNSET = "3";
     private static final String KEY_PAUSE_TIME = "pauseTime";
     private static final int TIME_REFRESH_INTERVAL = 1000 * 60 * 15;
     private static final int TIME_POST_DELAYED = 2000;
     private static final int CLOSE_DRAWER_DELAY = 300;
+    public static final String EXTRA_SECTION_INDEX = "com.rocdev.guardianreader.extra.SECTION_INDEX";
+    public static final String EXTRA_ARTICLE_URL = "com.rocdev.guardianreader.extra.ARTICLE_URL";
+
+    public static final String ACTION_OPEN_ARTICLE_FROM_WIDGET =
+            "com.rocdev-guardian_reader_action_open_article_from_widget";
+    public static final String ACTION_OPEN_SECTION_FROM_WIDGET =
+            "com.rocdev-guardian_reader.action_open_section_from_widget";
 //    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /*******************************
@@ -99,12 +99,12 @@ public class MainActivity extends BaseActivity
     private int listPosition;
     private String searchQuery;
     private SharedPreferences mSharedPreferences;
-    private int defaultEdition;
     private NavigationView navigationView;
     private Menu mMenu;
     private boolean isTwoPane;
     private boolean onPaused;
     private FirebaseAnalytics mFirebaseAnalytics;
+    private String mArticleUrl;
 
 
     @Override
@@ -133,8 +133,6 @@ public class MainActivity extends BaseActivity
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        defaultEdition = Integer.parseInt(mSharedPreferences.getString(
-                getString(R.string.pref_key_default_edition), PREF_DEFAULT_EDITION_IF_UNSET));
     }
 
     private void initNavigation() {
@@ -200,7 +198,8 @@ public class MainActivity extends BaseActivity
         loaderId = 1;
         listPosition = 0;
         // the section that is shown on app start
-        currentSection = defaultEdition;
+        currentSection = Integer.parseInt(mSharedPreferences.getString(
+                getString(R.string.pref_key_default_edition), PREF_DEFAULT_EDITION_IF_UNSET));
         isNewList = true;
     }
 
@@ -208,16 +207,13 @@ public class MainActivity extends BaseActivity
         articlesFragment = ArticlesFragment.newInstance(articles, currentSection);
         FragmentManager fm = getSupportFragmentManager();
         if (isTwoPane) {
-            sectionsFragment = SectionsFragment.newInstance(sections, defaultEdition);
+            sectionsFragment = SectionsFragment.newInstance(sections, currentSection);
             fm.beginTransaction()
                     .replace(R.id.content_pane_left, sectionsFragment)
                     .commit();
             fm.beginTransaction()
                     .replace(R.id.content_pane_right, articlesFragment)
                     .commit();
-
-
-
         } else {
             fm.beginTransaction()
                     .replace(CONTENT_CONTAINER, articlesFragment)
@@ -228,12 +224,26 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isTwoPane) {
-            navigationView.getMenu().getItem(currentSection).setChecked(true);
-        } else {
-            setSelectedEdition();
-        }
-        if (onPaused) {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (action != null && (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(action) ||
+                action.startsWith(ACTION_OPEN_SECTION_FROM_WIDGET))) {
+            if (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(action)) {
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    currentSection = extras.getInt(EXTRA_SECTION_INDEX);
+                    mArticleUrl = extras.getString(EXTRA_ARTICLE_URL);
+                }
+            } else if (action.startsWith(ACTION_OPEN_SECTION_FROM_WIDGET)) {
+                currentSection = Integer.parseInt(action
+                        .substring(ACTION_OPEN_SECTION_FROM_WIDGET.length()));
+            }
+            isNewList = true;
+            currentPage = 1;
+            articles.clear();
+            refreshUI();
+            intent.setAction(null);
+        } else if (onPaused) {
             long pauseTime = mSharedPreferences.getLong(KEY_PAUSE_TIME, -1);
             long currentTime = new GregorianCalendar().getTimeInMillis();
             long timePassed = currentTime - pauseTime;
@@ -243,7 +253,6 @@ public class MainActivity extends BaseActivity
                 isNewList = true;
                 currentPage = 1;
                 articles.clear();
-                loaderId++;
                 refreshUI();
             }
         } else {
@@ -252,6 +261,7 @@ public class MainActivity extends BaseActivity
                 refreshUI();
             }
         }
+        setSelectedEdition();
     }
 
     @Override
@@ -268,15 +278,23 @@ public class MainActivity extends BaseActivity
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         // invoke search intent
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            currentSection = Section.SEARCH.ordinal();
-            searchQuery = intent.getStringExtra(SearchManager.QUERY);
-            refreshUI();
+        if (intent != null && intent.getAction() != null) {
+            if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+                currentSection = Section.SEARCH.ordinal();
+                searchQuery = intent.getStringExtra(SearchManager.QUERY);
+                refreshUI();
+                searchQuery = null;
+            } else if (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(intent.getAction()) ||
+                    intent.getAction().startsWith(ACTION_OPEN_SECTION_FROM_WIDGET)) {
+                setIntent(intent);
+            }
         }
+
     }
 
     @Override
@@ -301,10 +319,10 @@ public class MainActivity extends BaseActivity
         if (checkConnection()) {
             if (currentSection == Section.SEARCH.ordinal()) title = searchQuery;
             logFirebaseLoadingEvent();
-            getLoaderManager().initLoader(loaderId, null, this);
+            getLoaderManager().restartLoader(loaderId, null, this);
         } else {
             if (currentSection == Section.SAVED.ordinal()) {
-                getLoaderManager().initLoader(loaderId, null, this);
+                getLoaderManager().restartLoader(loaderId, null, this);
             } else {
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -404,7 +422,6 @@ public class MainActivity extends BaseActivity
             case R.id.action_refresh:
                 isNewList = true;
                 currentPage = 1;
-                loaderId++;
                 refreshUI();
                 break;
             case R.id.action_rate:
@@ -445,7 +462,6 @@ public class MainActivity extends BaseActivity
                 for (Section section : Section.values()) {
                     if (section.getIdNav() == id && currentSection != section.ordinal()) {
                         currentSection = section.ordinal();
-                        loaderId++;
                         refreshUI();
                     }
                 }
@@ -462,24 +478,12 @@ public class MainActivity extends BaseActivity
                 currentSection == Section.SAVED.ordinal();
         Uri baseUri = Uri.parse(Section.values()[currentSection].getUrl());
         String uriString = baseUri.toString();
-        if (currentSection != Section.SAVED.ordinal())
-            uriString = buildUriWithParams(baseUri).toString();
-        return new ArticleLoader(this, uriString, isEditorsPicks);
-    }
-
-    private Uri buildUriWithParams(Uri baseUri) {
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter(PARAM_NAME_API_KEY, PARAM_VALUE_API_KEY);
-        uriBuilder.appendQueryParameter(PARAM_NAME_SHOW_FIELDS, PARAM_VALUE_SHOW_FIELDS);
-        if (isEditorsPicks) {
-            uriBuilder.appendQueryParameter(PARAM_NAME_EDITOR_PICKS, PARAM_VALUE_EDITOR_PICKS);
-        } else {
-            uriBuilder.appendQueryParameter(PARAM_NAME_PAGE, String.valueOf(currentPage));
-            if (currentSection == Section.SEARCH.ordinal()) {
-                uriBuilder.appendQueryParameter(PARAM_NAME_QUERY, searchQuery);
-            }
+        if (currentSection != Section.SAVED.ordinal()) {
+            uriString = ArticlesUriBuilder.buildUriWithParams(currentPage,
+                    currentSection, searchQuery).toString();
         }
-        return uriBuilder.build();
+
+        return new ArticleLoader(this, uriString, isEditorsPicks);
     }
 
     @Override
@@ -493,7 +497,31 @@ public class MainActivity extends BaseActivity
                 && articles.isEmpty());
         articlesFragment.showProgressContainer(false);
         articlesFragment.showListContainer(true);
-        onLoaderReset(mLoader);
+        if (mArticleUrl != null) {
+            openArticleFromWidget();
+        }
+    }
+
+    private void openArticleFromWidget() {
+        boolean articleIsFound = false;
+        for (final Article article : articles) {
+            if (article.getUrl().equals(mArticleUrl)) {
+                articleIsFound = true;
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onItemClicked(article);
+                    }
+                }, 1000);
+                break;
+            }
+        }
+        if (!articleIsFound) {
+            Toast.makeText(this, "Article not found. Refresh your widget.",
+                    Toast.LENGTH_SHORT).show();
+        }
+        mArticleUrl = null;
     }
 
 
@@ -509,8 +537,7 @@ public class MainActivity extends BaseActivity
         if (checkConnection()) {
             logFirebaseLoadingEvent();
             currentPage++;
-            loaderId++;
-            getLoaderManager().initLoader(loaderId, null, this);
+            getLoaderManager().restartLoader(loaderId, null, this);
         } else {
             refreshUI();
         }
@@ -534,30 +561,35 @@ public class MainActivity extends BaseActivity
                 currentSection = Section.NEWS_WORLD.ordinal();
                 break;
         }
-        if (isTwoPane) {
-            setSelectedEdition();
-        } else {
-            navigationView.getMenu().getItem(currentSection).setChecked(true);
-        }
+        setSelectedEdition();
         showProgressAnimations();
         if (checkConnection()) {
             currentPage = 1;
-            loaderId++;
             refreshUI();
-
         }
     }
 
     private void setSelectedEdition() {
-        int position = -1;
-        for (int i = 0; i < sections.size(); i++) {
-            Section section = sections.get(i);
-            if (currentSection == section.ordinal()) {
-                position = i;
-                break;
+        if (isTwoPane) {
+            int position = -1;
+            for (int i = 0; i < sections.size(); i++) {
+                Section section = sections.get(i);
+                if (currentSection == section.ordinal()) {
+                    position = i;
+                    break;
+                }
+            }
+            sectionsFragment.setSelectedEdition(position);
+        } else {
+            if (currentSection >= 0) navigationView.getMenu()
+                    .getItem(currentSection).setChecked(true);
+            else {
+                Menu menu = navigationView.getMenu();
+                for (int i = 0; i < menu.size(); i++) {
+                    menu.getItem(i).setChecked(false);
+                }
             }
         }
-        sectionsFragment.setSelectedEdition(position);
     }
 
     private boolean checkConnection() {
@@ -572,6 +604,19 @@ public class MainActivity extends BaseActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         mSharedPreferences = sharedPreferences;
+
+        if (key.equals(getString(R.string.pref_key_default_edition)) ||
+                key.equals(getString(R.string.pref_key_default_browser)))
+            // do nothing
+            return;
+        // send widget refresh rate broadcast to widget provider
+        if (key.equals(getString(R.string.pref_key_widget_refresh_rate))) {
+            Intent intent = new Intent(this, ArticlesWidgetProvider.class);
+            intent.setAction(ArticlesWidgetProvider.ACTION_SET_REFRESH_RATE_TIMER);
+            sendBroadcast(intent);
+            return;
+        }
+        // all is left is show sections has changed
         if (isTwoPane) {
             setUpOrRefreshSelectedSections();
             sectionsFragment.refreshListView(sections);
@@ -588,7 +633,6 @@ public class MainActivity extends BaseActivity
             currentPage = 1;
             articles.clear();
             currentSection = section.ordinal();
-            loaderId++;
             refreshUI();
         }
     }
@@ -634,7 +678,7 @@ public class MainActivity extends BaseActivity
         String message = getString(R.string.empty_string);
         Drawable icon = null;
         if (article != null) {
-            if (article.get_ID() == -1) {
+            if (article.get_ID() == Article.NO_ID) {
                 articleIsSaved = false;
                 title = getString(R.string.dialog_save_article_title);
                 message = getString(R.string.dialog_save_article_message);

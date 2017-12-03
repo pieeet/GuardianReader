@@ -18,6 +18,16 @@
         android:key="@string/pref_key_default_browser"
         android:summary="@string/pref_in_app_browser"
         android:title="@string/pref_title_default_browser" />
+    <ListPreference
+        android:defaultValue="14400000"
+        android:dialogTitle="@string/pref_title_widget_refresh_rate"
+        android:entries="@array/widget_refresh_rate_entries"
+        android:entryValues="@array/widget_refresh_rate_values"
+        android:icon="@drawable/ic_refresh_black_18dp"
+        android:key="@string/pref_key_widget_refresh_rate"
+        android:summary="@string/pref_four_hour"
+        android:title="@string/pref_title_widget_refresh_rate" />
+
 
     <android.support.v7.preference.PreferenceCategory
         android:key="showHeadlines"

@@ -166,9 +166,7 @@ public class ArticlesFragment extends Fragment {
     private void populateListItems() {
         listItems = new ArrayList<>();
         if (articles != null) {
-            for (Article article : articles) {
-                listItems.add(article);
-            }
+            listItems.addAll(articles);
         }
         addNativeExpressAds();
         if (currentSection != Section.SAVED.ordinal()) {

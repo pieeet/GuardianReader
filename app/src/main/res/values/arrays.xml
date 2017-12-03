@@ -50,6 +50,22 @@
         <item>3</item>
     </string-array>
 
+    <array name="widget_refresh_rate_entries">
+        <item>@string/pref_one_hour</item>
+        <item>@string/pref_two_hour</item>
+        <item>@string/pref_four_hour</item>
+        <item>@string/pref_eight_hour</item>
+        <item>@string/pref_no_refresh</item>
+    </array>
+
+    <string-array name="widget_refresh_rate_values">
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>14400000</item>
+        <item>2880000</item>
+        <item>-1</item>
+    </string-array>
+
     <!--List Preference default browser-->
     <array name="default_browser_entries">
         <item>@string/pref_in_app_browser</item>

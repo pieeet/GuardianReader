@@ -15,12 +15,7 @@ import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import static com.rocdev.guardianreader.R.id.moreButton;
 
@@ -34,10 +29,6 @@ public class ArticleAdMobRecyclerAdapter extends
 
 
     private static final String EMPTY_STRING = "";
-    private static final String DATE_FORMAT_IN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-    private static final String DATE_FORMAT_OUT = "d MMMM yyyy HH:mm";
-    private static final String TIME_ZONE_IN = "UTC";
-
     private static final int VIEW_TYPE_ARTICLE = 0;
     private static final int VIEW_TYPE_AD = 1;
     private static final int VIEW_TYPE_BUTTON = 2;
@@ -136,7 +127,8 @@ public class ArticleAdMobRecyclerAdapter extends
             Picasso.with(context).load(article.getThumbUrl()).into(holder.imgView);
         }
         holder.title.setText(article != null ? article.getTitle() : EMPTY_STRING);
-        holder.date.setText(formatDateTime(article != null ? article.getDate() : EMPTY_STRING));
+        holder.date.setText(ArticleDateUtils.formatDateTime(article != null ? article.getDate() :
+                EMPTY_STRING));
         holder.section.setText(article != null ? article.getSection() : EMPTY_STRING);
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,19 +190,6 @@ public class ArticleAdMobRecyclerAdapter extends
             });
         }
 
-    }
-
-    private String formatDateTime(String input) {
-        SimpleDateFormat sdfIn = new SimpleDateFormat(DATE_FORMAT_IN);
-        sdfIn.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_IN));
-        Date dateIn = new Date();
-        try {
-            dateIn = sdfIn.parse(input);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        SimpleDateFormat sdfOut = new SimpleDateFormat(DATE_FORMAT_OUT, Locale.getDefault());
-        return sdfOut.format(dateIn);
     }
 
     @Override
