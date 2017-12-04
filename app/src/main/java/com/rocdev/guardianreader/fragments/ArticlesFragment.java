@@ -184,7 +184,7 @@ public class ArticlesFragment extends Fragment {
             adViewbottom.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             final AdRequest.Builder builder = new AdRequest.Builder();
             //TODO comment out for production
-            setTestDevices(builder);
+//            setTestDevices(builder);
             int adPosition;
             //add adview above fold
             if (listItems.size() > 9) {
