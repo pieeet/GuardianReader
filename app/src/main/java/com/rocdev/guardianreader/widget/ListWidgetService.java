@@ -93,7 +93,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                 //pass extras to intent
                 Bundle extras = new Bundle();
                 extras.putInt(MainActivity.EXTRA_SECTION_INDEX, mSectionIndex);
-                extras.putString(MainActivity.EXTRA_ARTICLE_URL, article.getUrl());
+                extras.putParcelable(MainActivity.EXTRA_ARTICLE, article);
                 Intent fillInIntent = new Intent();
                 fillInIntent.putExtras(extras);
                 rv.setOnClickFillInIntent(R.id.article_item_container, fillInIntent);

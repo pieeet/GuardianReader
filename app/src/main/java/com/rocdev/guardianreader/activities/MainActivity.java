@@ -41,7 +41,6 @@ import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.ArticlesUriBuilder;
 import com.rocdev.guardianreader.utils.QueryUtils;
-import com.rocdev.guardianreader.utils.Secret;
 import com.rocdev.guardianreader.widget.ArticlesWidgetProvider;
 
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class MainActivity extends BaseActivity
     private static final int TIME_POST_DELAYED = 2000;
     private static final int CLOSE_DRAWER_DELAY = 300;
     public static final String EXTRA_SECTION_INDEX = "com.rocdev.guardianreader.extra.SECTION_INDEX";
-    public static final String EXTRA_ARTICLE_URL = "com.rocdev.guardianreader.extra.ARTICLE_URL";
+    public static final String EXTRA_ARTICLE = "com.rocdev.guardianreader.extra.ARTICLE";
 
     public static final String ACTION_OPEN_ARTICLE_FROM_WIDGET =
             "com.rocdev-guardian_reader_action_open_article_from_widget";
@@ -102,7 +101,7 @@ public class MainActivity extends BaseActivity
     private boolean isTwoPane;
     private boolean onPaused;
     private FirebaseAnalytics mFirebaseAnalytics;
-    private String mArticleUrl;
+    private Article mArticleFromWidget;
 
 
     @Override
@@ -230,7 +229,7 @@ public class MainActivity extends BaseActivity
                 Bundle extras = intent.getExtras();
                 if (extras != null) {
                     currentSection = extras.getInt(EXTRA_SECTION_INDEX);
-                    mArticleUrl = extras.getString(EXTRA_ARTICLE_URL);
+                    mArticleFromWidget = extras.getParcelable(EXTRA_ARTICLE);
                 }
             } else if (action.startsWith(ACTION_OPEN_SECTION_FROM_WIDGET)) {
                 currentSection = Integer.parseInt(action
@@ -346,7 +345,7 @@ public class MainActivity extends BaseActivity
 //            Bundle bundle = new Bundle();
 //            bundle.putString("section", titles[currentSection]);
             //TODO uncomment for production
-//            mFirebaseAnalytics.logEvent("api_call", null);
+            mFirebaseAnalytics.logEvent("api_call", null);
         }
     }
 
@@ -495,33 +494,21 @@ public class MainActivity extends BaseActivity
                 && articles.isEmpty());
         articlesFragment.showProgressContainer(false);
         articlesFragment.showListContainer(true);
-        if (mArticleUrl != null) {
+        if (mArticleFromWidget != null) {
             openArticleFromWidget();
         }
     }
 
     private void openArticleFromWidget() {
-        boolean articleIsFound = false;
-        for (final Article article : articles) {
-            if (article.getUrl().equals(mArticleUrl)) {
-                articleIsFound = true;
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onItemClicked(article);
-                    }
-                }, 1000);
-                break;
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onItemClicked(mArticleFromWidget);
+                mArticleFromWidget = null;
             }
-        }
-        if (!articleIsFound) {
-            Toast.makeText(this, "Article not found. Refresh your widget.",
-                    Toast.LENGTH_SHORT).show();
-        }
-        mArticleUrl = null;
+        }, 1000);
     }
-
 
     @Override
     public void onLoaderReset(Loader<List<Article>> loader) {
