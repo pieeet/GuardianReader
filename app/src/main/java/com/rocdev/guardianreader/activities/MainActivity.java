@@ -72,6 +72,8 @@ public class MainActivity extends BaseActivity
     private static final int CLOSE_DRAWER_DELAY = 300;
     public static final String EXTRA_SECTION_INDEX = "com.rocdev.guardianreader.extra.SECTION_INDEX";
     public static final String EXTRA_ARTICLE = "com.rocdev.guardianreader.extra.ARTICLE";
+    private static final int IN_APP_BROWSER = 0;
+    private static final int SYSTEM_BROWSER = 1;
 
     public static final String ACTION_OPEN_ARTICLE_FROM_WIDGET =
             "com.rocdev-guardian_reader_action_open_article_from_widget";
@@ -643,11 +645,11 @@ public class MainActivity extends BaseActivity
         if (article != null) {
             int browserValue = Integer.parseInt(mSharedPreferences.getString(getString(
                     R.string.pref_key_default_browser), "0"));
-            if (browserValue == 0) {
+            if (browserValue == IN_APP_BROWSER) {
                 Intent intent = new Intent(this, ArticleActivity.class);
                 intent.putExtra("article", article);
                 startActivity(intent);
-            } else if (browserValue == 1) {
+            } else if (browserValue == SYSTEM_BROWSER) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
             }
         }

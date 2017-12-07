@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
@@ -95,7 +97,7 @@ public class ArticleAdMobRecyclerAdapter extends
         Object item = listItems.get(position);
         if (item instanceof Article) {
             type = VIEW_TYPE_ARTICLE;
-        } else if (item instanceof NativeExpressAdView) {
+        } else if (item instanceof AdView) {
             type = VIEW_TYPE_AD;
         } else {
             type = VIEW_TYPE_BUTTON;
@@ -146,13 +148,14 @@ public class ArticleAdMobRecyclerAdapter extends
 
     private void setAdItemHolder(RecyclerView.ViewHolder holder, int position) {
         AdViewHolder adViewHolder = (AdViewHolder) holder;
-        NativeExpressAdView adView = (NativeExpressAdView) listItems.get(position);
+        AdView adView = (AdView) listItems.get(position);
         ViewGroup adContainer = (ViewGroup) adViewHolder.itemView;
         adContainer.removeAllViews();
         if (adView.getParent() != null) {
             ((ViewGroup)adView.getParent()).removeView(adView);
         }
         adContainer.addView(adView);
+
     }
 
     private void setButtonItemHolder(ButtonViewHolder holder) {

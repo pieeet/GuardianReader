@@ -172,6 +172,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
                 Context.MODE_PRIVATE);
         for (int appWidgetId : appWidgetIds) {
             prefs.edit().remove(String.valueOf(appWidgetId)).apply();
+            prefs.edit().remove(WidgetIntentService.PREF_KEY_LAST_SYNCED + appWidgetId).apply();
             QueryUtils.deleteWidgetArticles(context, appWidgetId);
         }
     }

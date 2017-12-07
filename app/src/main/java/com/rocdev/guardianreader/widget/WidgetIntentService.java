@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -38,6 +40,8 @@ public class WidgetIntentService extends IntentService {
             "com.rocdev.guardianreader.widget.action.UPDATE_WIDGETS";
     public static final String ACTION_REFRESH_WIDGET =
             "com.rocdev.guardianreader.widget.action.SYNC_PRESSED";
+    public static String PREF_KEY_LAST_SYNCED =
+            "com.rocdev.guardianreader.widget.action.LAST_SYNCED";
 
     // EXTRA_KEYS
     public static final String EXTRA_SECTION_INDEX =
@@ -88,19 +92,8 @@ public class WidgetIntentService extends IntentService {
 
         //see https://goo.gl/hhkFL2
         if (action.startsWith(ACTION_REFRESH_WIDGET)) {
-            int appWidgetId = -1;
-            try {
-                appWidgetId = Integer.parseInt(action
-                        .substring(ACTION_REFRESH_WIDGET.length()));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                return;
-            }
-            SharedPreferences prefs = getSharedPreferences(WidgetConfigActivity.
-                    PREFS_NAME, MODE_PRIVATE);
-            int sectionIndex = prefs.getInt(String.valueOf(appWidgetId),
-                    Contract.INVALID_SECTION_INDEX);
-            handleActionUpdateArticles(sectionIndex, appWidgetId);
+            refreshWidgetFromButton(action);
+
         } else {
             final int widgetId = intent.getIntExtra(EXTRA_WIDGET_ID, 0);
             switch (action) {
@@ -122,6 +115,30 @@ public class WidgetIntentService extends IntentService {
         }
     }
 
+    private void refreshWidgetFromButton(String action) {
+        int appWidgetId = -1;
+        try {
+            appWidgetId = Integer.parseInt(action
+                    .substring(ACTION_REFRESH_WIDGET.length()));
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return;
+        }
+        SharedPreferences prefs = getSharedPreferences(WidgetConfigActivity.
+                PREFS_NAME, MODE_PRIVATE);
+
+        // restrict use of sync button to 1 call per minute
+        long lastSync = prefs.getLong(PREF_KEY_LAST_SYNCED + appWidgetId, -1);
+        long now = System.currentTimeMillis();
+        if (lastSync == -1 || now - lastSync > 1000*60) {
+            prefs.edit().putLong(PREF_KEY_LAST_SYNCED + appWidgetId, now).apply();
+            int sectionIndex = prefs.getInt(String.valueOf(appWidgetId),
+                    Contract.INVALID_SECTION_INDEX);
+            handleActionUpdateArticles(sectionIndex, appWidgetId);
+        }
+    }
+
     /**
      * Handle action Fetch mArticles in the provided background thread with the provided
      * parameters.
@@ -137,8 +154,6 @@ public class WidgetIntentService extends IntentService {
 
     private void handleActionSaveArticles(int appWidgetId, List<Article> articles) {
         if (articles == null || articles.isEmpty()) return;
-        for (Article article : articles) {
-        }
         QueryUtils.deleteWidgetArticles(this, appWidgetId);
         QueryUtils.insertWidgetArticles(this, articles, appWidgetId);
         startActionUpdateWidget(this, appWidgetId);
@@ -147,8 +162,8 @@ public class WidgetIntentService extends IntentService {
     private void handleActionUpdateWidget(int widgetId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         //TODO uncomment for production
-//        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
-//        mFirebaseAnalytics.logEvent("api_call_widget", null);
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
+        mFirebaseAnalytics.logEvent("api_call_widget", null);
 
         ArticlesWidgetProvider.updateAppWidget(this, appWidgetManager, widgetId);
     }

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.NativeExpressAdView;
 
 import com.rocdev.guardianreader.R;
@@ -49,6 +50,7 @@ public class ArticlesFragment extends Fragment {
     private int mAdWidth;
     private RecyclerView.LayoutManager mLayoutManager;
     private ItemTouchHelper mItemTouchHelper;
+
 
     /**
      * required (Framework) empty constructor
@@ -168,13 +170,42 @@ public class ArticlesFragment extends Fragment {
         if (articles != null) {
             listItems.addAll(articles);
         }
-        addNativeExpressAds();
+        addBannerAds();
         if (currentSection != Section.SAVED.ordinal()) {
             View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
             listItems.add(buttonView);
         }
 
     }
+
+
+    private void addBannerAds() {
+
+        String adUnitId = "ca-app-pub-5360801122277083/1900074450";
+
+        if (articles != null && !articles.isEmpty() && isAdded()) {
+
+            AdView adViewTop = new AdView(getContext());
+            adViewTop.setAdSize(AdSize.LARGE_BANNER);
+            adViewTop.setAdUnitId(adUnitId);
+            AdView adViewBottom = new AdView(getContext());
+            adViewBottom.setAdSize(AdSize.LARGE_BANNER);
+            adViewBottom.setAdUnitId(adUnitId);
+            int adPosition;
+            //add adview above fold
+            if (listItems.size() > 9) {
+                adPosition = 3;
+                listItems.add(adPosition, adViewTop);
+            }
+            listItems.add(listItems.size(), adViewBottom);
+            final AdRequest.Builder builder = new AdRequest.Builder();
+            setTestDevices(builder);
+            adViewTop.loadAd(builder.build());
+            adViewBottom.loadAd(builder.build());
+
+        }
+    }
+
 
     private void addNativeExpressAds() {
         if (articles != null && !articles.isEmpty() && isAdded()) {
@@ -183,7 +214,7 @@ public class ArticlesFragment extends Fragment {
             adViewtop.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             adViewbottom.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
             final AdRequest.Builder builder = new AdRequest.Builder();
-            //TODO Comment out for production
+            //TODO comment for production
             setTestDevices(builder);
             int adPosition;
             //add adview above fold
