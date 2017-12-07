@@ -162,8 +162,8 @@ public class WidgetIntentService extends IntentService {
     private void handleActionUpdateWidget(int widgetId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         //TODO uncomment for production
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
-        mFirebaseAnalytics.logEvent("api_call_widget", null);
+//        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
+//        mFirebaseAnalytics.logEvent("api_call_widget", null);
 
         ArticlesWidgetProvider.updateAppWidget(this, appWidgetManager, widgetId);
     }
