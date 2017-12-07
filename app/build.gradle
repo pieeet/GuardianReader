@@ -9,9 +9,9 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
 //        versionCode 32
-        versionCode 0
-//        versionName "3.1.2"
-        versionName "test"
+//        versionCode 0
+        versionName "3.1.2"
+//        versionName "test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

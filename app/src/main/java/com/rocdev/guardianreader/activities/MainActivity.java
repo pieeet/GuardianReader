@@ -344,10 +344,8 @@ public class MainActivity extends BaseActivity
 
     private void logFirebaseLoadingEvent() {
         if (currentSection != Section.SAVED.ordinal()) {
-//            Bundle bundle = new Bundle();
-//            bundle.putString("section", titles[currentSection]);
             //TODO uncomment for production
-//            mFirebaseAnalytics.logEvent("api_call", null);
+            mFirebaseAnalytics.logEvent("api_call", null);
         }
     }
 

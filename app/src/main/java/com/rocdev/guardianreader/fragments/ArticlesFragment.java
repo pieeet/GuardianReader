@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.NativeExpressAdView;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
@@ -47,7 +46,6 @@ public class ArticlesFragment extends Fragment {
     private int currentSection;
     private LayoutInflater inflater;
     private Context mContext;
-    private int mAdWidth;
     private RecyclerView.LayoutManager mLayoutManager;
     private ItemTouchHelper mItemTouchHelper;
 
@@ -199,44 +197,11 @@ public class ArticlesFragment extends Fragment {
             }
             listItems.add(listItems.size(), adViewBottom);
             final AdRequest.Builder builder = new AdRequest.Builder();
-            setTestDevices(builder);
+            //TODO comment out for production
+//            setTestDevices(builder);
             adViewTop.loadAd(builder.build());
             adViewBottom.loadAd(builder.build());
 
-        }
-    }
-
-
-    private void addNativeExpressAds() {
-        if (articles != null && !articles.isEmpty() && isAdded()) {
-            final NativeExpressAdView adViewtop = new NativeExpressAdView(mContext);
-            final NativeExpressAdView adViewbottom = new NativeExpressAdView(mContext);
-            adViewtop.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
-            adViewbottom.setAdUnitId(getString(R.string.custom_small_ad_unit_id));
-            final AdRequest.Builder builder = new AdRequest.Builder();
-            //TODO comment for production
-            setTestDevices(builder);
-            int adPosition;
-            //add adview above fold
-            if (listItems.size() > 9) {
-                adPosition = 3;
-                listItems.add(adPosition, adViewtop);
-            }
-            listItems.add(listItems.size(), adViewbottom);
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    final float density = mContext.getResources().getDisplayMetrics().density;
-                    mAdWidth = (int) (mRecyclerView.getWidth() / density) - 16;
-                    if (mAdWidth < 0) {
-                        mAdWidth = 350;
-                    }
-                    adViewtop.setAdSize(new AdSize(mAdWidth, 120));
-                    adViewbottom.setAdSize(new AdSize(mAdWidth, 120));
-                    adViewtop.loadAd(builder.build());
-                    adViewbottom.loadAd(builder.build());
-                }
-            });
         }
     }
 
