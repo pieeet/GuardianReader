@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.rocdev.guardianreader.R;
@@ -23,7 +24,7 @@ import com.rocdev.guardianreader.utils.QueryUtils;
  */
 public class ArticlesWidgetProvider extends AppWidgetProvider {
 
-//    private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
+    private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
 
     private static final String ACTION_TIMER_TRIGGERED =
             "com.rocdev.guardianreader.set_widget_refresh_timer";
@@ -91,13 +92,20 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
                 Context.MODE_PRIVATE);
         if (prefs == null) return;
         // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
+
+        for (int i = 0; i < appWidgetIds.length; i++) {
+            int appWidgetId = appWidgetIds[i];
             int id = prefs.getInt(String.valueOf(appWidgetId), WIDGET_ID_INVALID);
             if (id != WIDGET_ID_INVALID) {
-                startService(context, appWidgetId);
+                // restrict onUpdate on 5 widgets due to api restrictions
+                if (i < 5) {
+                    startService(context, appWidgetId);
+                }
             }
         }
     }
+
+
 
     static void startService(Context context, int widgetId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(WidgetConfigActivity
@@ -115,6 +123,8 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         int interval = Integer.parseInt(prefs.getString(
                 context.getString(R.string.pref_key_widget_refresh_rate),
                 PREF_DEFAULT_WIDGET_REFRESH_RATE));
+
+
         // if user chose No Refresh do nothing.
         if (interval == NO_REFRESH) return;
 
