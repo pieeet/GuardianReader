@@ -74,7 +74,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
 
         // set pending intent on section textview to start section
         Intent sectionIntent = new Intent(context, MainActivity.class);
-        sectionIntent.setAction(MainActivity.ACTION_OPEN_SECTION_FROM_WIDGET + section.ordinal());
+        sectionIntent.setAction(MainActivity.ACTION_OPEN_SECTION_FROM_WIDGET + appWidgetId);
         PendingIntent sectionPendingIntent = PendingIntent.getActivity(context, 0,
                 sectionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.tv_widget_section_title, sectionPendingIntent);
@@ -104,8 +104,6 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
             }
         }
     }
-
-
 
     static void startService(Context context, int widgetId) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(WidgetConfigActivity

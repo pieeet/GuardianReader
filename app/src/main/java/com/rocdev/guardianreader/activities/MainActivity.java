@@ -42,6 +42,8 @@ import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.ArticlesUriBuilder;
 import com.rocdev.guardianreader.utils.QueryUtils;
 import com.rocdev.guardianreader.widget.ArticlesWidgetProvider;
+import com.rocdev.guardianreader.widget.WidgetConfigActivity;
+import com.rocdev.guardianreader.widget.WidgetIntentService;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -71,6 +73,7 @@ public class MainActivity extends BaseActivity
     private static final int TIME_POST_DELAYED = 2000;
     private static final int CLOSE_DRAWER_DELAY = 300;
     public static final String EXTRA_SECTION_INDEX = "com.rocdev.guardianreader.extra.SECTION_INDEX";
+    public static final String EXTRA_APP_WIDGET_ID = "com.rocdev.guardianreader.extra.APPWIDGETID";
     public static final String EXTRA_ARTICLE = "com.rocdev.guardianreader.extra.ARTICLE";
     private static final int IN_APP_BROWSER = 0;
     private static final int SYSTEM_BROWSER = 1;
@@ -102,8 +105,10 @@ public class MainActivity extends BaseActivity
     private Menu mMenu;
     private boolean isTwoPane;
     private boolean onPaused;
+    private boolean isFromWidget;
     private FirebaseAnalytics mFirebaseAnalytics;
     private Article mArticleFromWidget;
+    private int mWidgetId;
 
 
     @Override
@@ -116,6 +121,7 @@ public class MainActivity extends BaseActivity
         titles = getResources().getStringArray(R.array.titles);
         setContentView(R.layout.activity_main);
         isTwoPane = findViewById(R.id.fragment_container) != null;
+        isFromWidget = false;
         setPreferences();
         initNavigation();
 
@@ -227,15 +233,18 @@ public class MainActivity extends BaseActivity
         String action = intent.getAction();
         if (action != null && (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(action) ||
                 action.startsWith(ACTION_OPEN_SECTION_FROM_WIDGET))) {
+            isFromWidget = true;
             if (ACTION_OPEN_ARTICLE_FROM_WIDGET.equals(action)) {
                 Bundle extras = intent.getExtras();
                 if (extras != null) {
                     currentSection = extras.getInt(EXTRA_SECTION_INDEX);
+                    mWidgetId = extras.getInt(EXTRA_APP_WIDGET_ID);
                     mArticleFromWidget = extras.getParcelable(EXTRA_ARTICLE);
                 }
             } else if (action.startsWith(ACTION_OPEN_SECTION_FROM_WIDGET)) {
-                currentSection = Integer.parseInt(action
-                        .substring(ACTION_OPEN_SECTION_FROM_WIDGET.length()));
+                mWidgetId = Integer.parseInt(action.substring(ACTION_OPEN_SECTION_FROM_WIDGET.length()));
+                currentSection = getSharedPreferences(WidgetConfigActivity.PREFS_NAME, 0)
+                        .getInt(String.valueOf(mWidgetId), 0);
             }
             isNewList = true;
             currentPage = 1;
@@ -494,6 +503,10 @@ public class MainActivity extends BaseActivity
                 && articles.isEmpty());
         articlesFragment.showProgressContainer(false);
         articlesFragment.showListContainer(true);
+        if (isFromWidget) {
+            WidgetIntentService.startActionSaveArticles(this, mWidgetId, articles);
+        }
+        isFromWidget = false;
         if (mArticleFromWidget != null) {
             openArticleFromWidget();
         }

@@ -149,6 +149,9 @@ public class WidgetIntentService extends IntentService {
         int currentPage = 1;
         Uri uri = ArticlesUriBuilder.buildUriWithParams(currentPage, sectionIndex, null);
         List<Article> articles = QueryUtils.extractArticles(uri.toString(), isEditorPicks);
+        //TODO uncomment for production
+//        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
+//        mFirebaseAnalytics.logEvent("api_call_widget", null);
         startActionSaveArticles(this, appWidgetId, articles);
     }
 
@@ -161,10 +164,6 @@ public class WidgetIntentService extends IntentService {
 
     private void handleActionUpdateWidget(int widgetId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        //TODO uncomment for production
-//        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
-//        mFirebaseAnalytics.logEvent("api_call_widget", null);
-
         ArticlesWidgetProvider.updateAppWidget(this, appWidgetManager, widgetId);
     }
 }
