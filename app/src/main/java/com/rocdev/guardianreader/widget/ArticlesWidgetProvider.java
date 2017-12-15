@@ -115,6 +115,10 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
     // first widget added
     @Override
     public void onEnabled(Context context) {
+        setAlarm(context);
+    }
+
+    private void setAlarm(Context context) {
         // see https://goo.gl/BjfHfo Google example
         int alarmType = AlarmManager.ELAPSED_REALTIME;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -135,6 +139,8 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         // The below code fires after 1 hour, and repeats every 1 hour.  This is very
         // useful for demonstration purposes, but horrendous for production.  Don't be that dev.
         if (alarmManager != null) {
+            //cancel previous alarm?
+            alarmManager.cancel(createTimerPendingIntent(context));
             alarmManager.setRepeating(alarmType, SystemClock.elapsedRealtime() + interval,
                     interval, createTimerPendingIntent(context));
         }
@@ -149,6 +155,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
                 getPackageName(), ArticlesWidgetProvider.class.getName()));
         switch (intent.getAction()) {
             case ACTION_TIMER_TRIGGERED:
+                setAlarm(context);
                 onUpdate(context, appWidgetManager, appWidgetIds);
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
