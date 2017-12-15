@@ -152,6 +152,10 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
                 onUpdate(context, appWidgetManager, appWidgetIds);
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
+                for (int id: appWidgetIds) {
+                    updateAppWidget(context, appWidgetManager, id);
+                }
+                break;
             case ACTION_SET_REFRESH_RATE_TIMER:
                 if (appWidgetIds != null && appWidgetIds.length > 0)
                     onEnabled(context);
