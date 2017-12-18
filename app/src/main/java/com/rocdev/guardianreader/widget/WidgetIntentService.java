@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
-import android.util.Log;
+
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rocdev.guardianreader.database.Contract;
@@ -29,7 +27,7 @@ import java.util.List;
  */
 public class WidgetIntentService extends IntentService {
 
-    private static final String TAG = WidgetIntentService.class.getSimpleName();
+//    private static final String TAG = WidgetIntentService.class.getSimpleName();
 
     // ACTIONS
     public static final String ACTION_UPDATE_ARTICLES =
@@ -116,7 +114,7 @@ public class WidgetIntentService extends IntentService {
     }
 
     private void refreshWidgetFromButton(String action) {
-        int appWidgetId = -1;
+        int appWidgetId;
         try {
             appWidgetId = Integer.parseInt(action
                     .substring(ACTION_REFRESH_WIDGET.length()));
@@ -150,8 +148,8 @@ public class WidgetIntentService extends IntentService {
         Uri uri = ArticlesUriBuilder.buildUriWithParams(currentPage, sectionIndex, null);
         List<Article> articles = QueryUtils.extractArticles(uri.toString(), isEditorPicks);
         //TODO uncomment for production
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
-        mFirebaseAnalytics.logEvent("api_call_widget", null);
+//        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
+//        mFirebaseAnalytics.logEvent("api_call_widget", null);
         startActionSaveArticles(this, appWidgetId, articles);
     }
 

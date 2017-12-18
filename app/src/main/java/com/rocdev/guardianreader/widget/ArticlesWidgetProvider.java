@@ -19,6 +19,8 @@ import com.rocdev.guardianreader.activities.MainActivity;
 import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.QueryUtils;
 
+import java.util.Arrays;
+
 /**
  * Implementation of App Widget functionality.
  */
@@ -30,6 +32,10 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
             "com.rocdev.guardianreader.set_widget_refresh_timer";
     public static final String ACTION_SET_REFRESH_RATE_TIMER =
             "com.rocdev.guardianreader.set_widget_refresh_rate_timer";
+
+
+    private static final String KEY_TIMER_RESET =
+            "com.rocdev.guardianreader.timer_is_reset";
 
     private static final String PREF_DEFAULT_WIDGET_REFRESH_RATE = "2";
 
@@ -92,17 +98,23 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
                 Context.MODE_PRIVATE);
         if (prefs == null) return;
         // There may be multiple widgets active, so update all of them
-
+        // only 5 oldest get updated
+        Arrays.sort(appWidgetIds);
         for (int i = 0; i < appWidgetIds.length; i++) {
             int appWidgetId = appWidgetIds[i];
-            int id = prefs.getInt(String.valueOf(appWidgetId), WIDGET_ID_INVALID);
-            if (id != WIDGET_ID_INVALID) {
+            Log.d(TAG, "onUpdate triggered widget id: " + appWidgetId);
+            if (appWidgetId != WIDGET_ID_INVALID) {
                 // restrict onUpdate on 5 widgets due to api restrictions
                 if (i < 5) {
                     startService(context, appWidgetId);
+                } else {
+                    WidgetIntentService.startActionUpdateWidget(context, appWidgetId);
                 }
             }
         }
+        //make sure timer is reset for versions < v34 (Bugfix???)
+        setAlarm(context);
+
     }
 
     static void startService(Context context, int widgetId) {
@@ -115,6 +127,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
     // first widget added
     @Override
     public void onEnabled(Context context) {
+        Log.d(TAG, "onEnabled triggered");
         setAlarm(context);
     }
 
@@ -155,17 +168,17 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
                 getPackageName(), ArticlesWidgetProvider.class.getName()));
         switch (intent.getAction()) {
             case ACTION_TIMER_TRIGGERED:
-                setAlarm(context);
+                Log.d(TAG, "onReceive triggered, ACTION_TIMER_TRIGGERED");
                 onUpdate(context, appWidgetManager, appWidgetIds);
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
-                for (int id: appWidgetIds) {
+                for (int id : appWidgetIds) {
                     updateAppWidget(context, appWidgetManager, id);
                 }
                 break;
             case ACTION_SET_REFRESH_RATE_TIMER:
                 if (appWidgetIds != null && appWidgetIds.length > 0)
-                    onEnabled(context);
+                    setAlarm(context);
                 break;
         }
     }

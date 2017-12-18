@@ -1,25 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rocdev.guardianreader.widget.WidgetConfigActivity"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/textView_widget_config_sections_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Pick a section"/>
+    tools:context="com.rocdev.guardianreader.widget.WidgetConfigActivity">
 
     <ListView
         android:id="@+id/listview_widget_config_sections"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"/>
 
-
-
-
-
-</LinearLayout>
+</FrameLayout>

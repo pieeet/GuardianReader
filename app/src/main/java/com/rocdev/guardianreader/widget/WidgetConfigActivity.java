@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,7 +20,7 @@ import com.rocdev.guardianreader.utils.SectionsAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WidgetConfigActivity extends Activity {
+public class WidgetConfigActivity extends AppCompatActivity {
 
     public static final String PREFS_NAME = "com.rocdev.guardianreader.widgetprefsname";
     private static final String TAG = WidgetConfigActivity.class.getSimpleName();
@@ -81,6 +82,8 @@ public class WidgetConfigActivity extends Activity {
         RemoteViews rv = new RemoteViews(getPackageName(), R.layout.articles_widget);
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         appWidgetManager.updateAppWidget(mAppWidgetId, rv);
+        if (getSupportActionBar() != null)
+        getSupportActionBar().setTitle("Pick a section");
 
     }
 
