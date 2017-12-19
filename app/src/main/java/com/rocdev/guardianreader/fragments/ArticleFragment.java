@@ -64,13 +64,17 @@ public class ArticleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_article, container, false);
-        webView = (WebView) rootView.findViewById(R.id.articleWebview);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setDisplayZoomControls(false);
-        webView.setWebViewClient(new ArticleWebViewClient());
-        webView.loadUrl(article.getUrl());
+        try {
+            webView = (WebView) rootView.findViewById(R.id.articleWebview);
+            WebSettings webSettings = webView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setBuiltInZoomControls(true);
+            webSettings.setDisplayZoomControls(false);
+            webView.setWebViewClient(new ArticleWebViewClient());
+            webView.loadUrl(article.getUrl());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return rootView;
     }
 

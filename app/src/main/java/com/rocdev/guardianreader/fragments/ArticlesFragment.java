@@ -170,10 +170,13 @@ public class ArticlesFragment extends Fragment {
         }
         addBannerAds();
         if (currentSection != Section.SAVED.ordinal()) {
-            View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
-            listItems.add(buttonView);
+            try {
+                View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
+                listItems.add(buttonView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
 
