@@ -201,7 +201,7 @@ public class ArticlesFragment extends Fragment {
             listItems.add(listItems.size(), adViewBottom);
             final AdRequest.Builder builder = new AdRequest.Builder();
             //TODO comment out for production
-            setTestDevices(builder);
+//            setTestDevices(builder);
             adViewTop.loadAd(builder.build());
             adViewBottom.loadAd(builder.build());
 
