@@ -25,7 +25,7 @@ import java.util.Arrays;
  */
 public class ArticlesWidgetProvider extends AppWidgetProvider {
 
-    private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
+//    private static final String TAG = ArticlesWidgetProvider.class.getSimpleName();
 
     private static final String ACTION_TIMER_TRIGGERED =
             "com.rocdev.guardianreader.set_widget_refresh_timer";
@@ -101,7 +101,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         Arrays.sort(appWidgetIds);
         for (int i = 0; i < appWidgetIds.length; i++) {
             int appWidgetId = appWidgetIds[i];
-            Log.d(TAG, "onUpdate triggered widget id: " + appWidgetId);
+//            Log.d(TAG, "onUpdate triggered widget id: " + appWidgetId);
             if (appWidgetId != WIDGET_ID_INVALID) {
                 // restrict onUpdate on 5 widgets due to api restrictions
                 if (i < 5) {
