@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -113,7 +112,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
             }
         }
         //make sure timer is reset for versions < v34 (Bugfix???)
-        setAlarm(context);
+        cancelAlarm(context);
 
     }
 
@@ -124,14 +123,14 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         WidgetIntentService.startActionUpdateArticles(context, sectionIndex, widgetId);
     }
 
-    // first widget added
-    @Override
-    public void onEnabled(Context context) {
-        Log.d(TAG, "onEnabled triggered");
-        setAlarm(context);
-    }
+//    // first widget added
+//    @Override
+//    public void onEnabled(Context context) {
+//        Log.d(TAG, "onEnabled triggered");
+//        cancelAlarm(context);
+//    }
 
-    private void setAlarm(Context context) {
+    private void cancelAlarm(Context context) {
         // see https://goo.gl/BjfHfo Google example
         int alarmType = AlarmManager.ELAPSED_REALTIME;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -154,8 +153,8 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         if (alarmManager != null) {
             //cancel previous alarm?
             alarmManager.cancel(createTimerPendingIntent(context));
-            alarmManager.setRepeating(alarmType, SystemClock.elapsedRealtime() + interval,
-                    interval, createTimerPendingIntent(context));
+//            alarmManager.setRepeating(alarmType, SystemClock.elapsedRealtime() + interval,
+//                    interval, createTimerPendingIntent(context));
         }
     }
 
@@ -167,19 +166,19 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context.
                 getPackageName(), ArticlesWidgetProvider.class.getName()));
         switch (intent.getAction()) {
-            case ACTION_TIMER_TRIGGERED:
-                Log.d(TAG, "onReceive triggered, ACTION_TIMER_TRIGGERED");
-                onUpdate(context, appWidgetManager, appWidgetIds);
-                break;
+//            case ACTION_TIMER_TRIGGERED:
+//                Log.d(TAG, "onReceive triggered, ACTION_TIMER_TRIGGERED");
+//                onUpdate(context, appWidgetManager, appWidgetIds);
+//                break;
             case Intent.ACTION_BOOT_COMPLETED:
                 for (int id : appWidgetIds) {
                     updateAppWidget(context, appWidgetManager, id);
                 }
                 break;
-            case ACTION_SET_REFRESH_RATE_TIMER:
-                if (appWidgetIds != null && appWidgetIds.length > 0)
-                    setAlarm(context);
-                break;
+//            case ACTION_SET_REFRESH_RATE_TIMER:
+//                if (appWidgetIds != null && appWidgetIds.length > 0)
+//                    cancelAlarm(context);
+//                break;
         }
     }
 
