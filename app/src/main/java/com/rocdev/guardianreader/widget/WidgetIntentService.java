@@ -148,8 +148,8 @@ public class WidgetIntentService extends IntentService {
         Uri uri = ArticlesUriBuilder.buildUriWithParams(currentPage, sectionIndex, null);
         List<Article> articles = QueryUtils.extractArticles(uri.toString(), isEditorPicks);
         //TODO uncomment for production
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
-        mFirebaseAnalytics.logEvent("api_call_widget", null);
+//        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(WidgetIntentService.this);
+//        mFirebaseAnalytics.logEvent("api_call_widget", null);
         startActionSaveArticles(this, appWidgetId, articles);
     }
 
