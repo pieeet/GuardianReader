@@ -186,7 +186,7 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
         Intent setTimerIntent = new Intent(context, ArticlesWidgetProvider.class);
         setTimerIntent.setAction(ACTION_TIMER_TRIGGERED);
         return PendingIntent.getBroadcast(context,
-                0, setTimerIntent, 0);
+                0, setTimerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override

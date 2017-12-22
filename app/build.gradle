@@ -8,10 +8,11 @@ android {
         applicationId "com.rocdev.guardianreader"
         minSdkVersion 15
         targetSdkVersion 25
-//        versionCode 36
-        versionCode 0
-//        versionName "3.1.6"
-        versionName "test"
+        versionCode 36
+        //TODO change for production/test
+//        versionCode 0
+        versionName "3.1.6"
+//        versionName "test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
