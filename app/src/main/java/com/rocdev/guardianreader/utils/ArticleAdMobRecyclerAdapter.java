@@ -78,7 +78,7 @@ public class ArticleAdMobRecyclerAdapter extends
         LayoutInflater inflater = LayoutInflater.from(context);
         switch (viewType) {
             case VIEW_TYPE_ARTICLE:
-                View article = inflater.inflate(R.layout.article_list_item, parent, false);
+                View article = inflater.inflate(R.layout.article_list_item_constraint_layout, parent, false);
                 return new ItemViewHolder(article);
             case VIEW_TYPE_AD:
                 View adView = inflater.inflate(R.layout.ad_list_item, parent, false);
