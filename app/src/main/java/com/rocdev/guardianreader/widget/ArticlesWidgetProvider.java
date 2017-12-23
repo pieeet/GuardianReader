@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.rocdev.guardianreader.R;
@@ -31,10 +30,6 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
             "com.rocdev.guardianreader.set_widget_refresh_timer";
     public static final String ACTION_SET_REFRESH_RATE_TIMER =
             "com.rocdev.guardianreader.set_widget_refresh_rate_timer";
-
-
-    private static final String KEY_TIMER_RESET =
-            "com.rocdev.guardianreader.timer_is_reset";
 
     private static final String PREF_DEFAULT_WIDGET_REFRESH_RATE = "2";
 
@@ -132,7 +127,6 @@ public class ArticlesWidgetProvider extends AppWidgetProvider {
 
     private void cancelAlarm(Context context) {
         // see https://goo.gl/BjfHfo Google example
-        int alarmType = AlarmManager.ELAPSED_REALTIME;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int interval = Integer.parseInt(prefs.getString(
                 context.getString(R.string.pref_key_widget_refresh_rate),
