@@ -13,9 +13,9 @@ import com.rocdev.guardianreader.models.Section;
 public class ArticlesUriBuilder {
 
     //TODO uncomment before building release-apk
-    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
+//    private static final String PARAM_VALUE_API_KEY = Secret.getApiKey();
     //TODO comment out before building release-apk
-//    private static final String PARAM_VALUE_API_KEY = "test";
+    private static final String PARAM_VALUE_API_KEY = "test";
     private static final String PARAM_NAME_API_KEY = "api-key";
     private static final String PARAM_NAME_SHOW_FIELDS = "show-fields";
     private static final String PARAM_VALUE_SHOW_FIELDS = "thumbnail";
