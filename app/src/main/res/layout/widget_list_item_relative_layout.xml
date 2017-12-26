@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/article_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:contentDescription="thumbnail"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_toEndOf="@+id/thumbnail"
+        android:layout_toRightOf="@+id/thumbnail"
+        android:maxWidth="420dp"
+        android:text="TextView"
+        android:textColor="@color/colorTextListitemTitle"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/titleTextView"
+        android:layout_alignStart="@+id/titleTextView"
+        android:layout_below="@+id/titleTextView"
+        android:layout_marginTop="8dp"
+        android:paddingRight="8dp"
+        android:layout_toStartOf="@+id/sectionTextView"
+        android:layout_toLeftOf="@+id/sectionTextView"
+        android:drawableLeft="@drawable/ic_schedule_black_18dp"
+        android:drawablePadding="2dp"
+        android:drawableStart="@drawable/ic_schedule_black_18dp"
+        android:text="TextView"
+        android:textColor="@color/colorTextListitemTitle"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/sectionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/dateTextView"
+        android:text="TextView"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="12sp" />
+
+</RelativeLayout>
