@@ -80,7 +80,7 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             try {
                 Article article = mArticles.get(i);
                 rv = new RemoteViews(mContext.getPackageName(), R.layout.article_list_item_content);
-                rv.setTextViewText(R.id.titleTextView, article.getTitle());
+                rv.setTextViewText(R.id.titleTextView, article.getTitle().replace("\n", ""));
                 rv.setTextViewText(R.id.dateTextView, ArticleDateUtils
                         .formatDateTime(article.getDate()));
                 rv.setTextViewText(R.id.sectionTextView, article.getSection());

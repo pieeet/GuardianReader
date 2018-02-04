@@ -168,7 +168,7 @@ public class ArticlesFragment extends Fragment {
         if (articles != null) {
             listItems.addAll(articles);
         }
-        addBannerAds();
+//        addBannerAds();
         if (currentSection != Section.SAVED.ordinal()) {
             try {
                 View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
