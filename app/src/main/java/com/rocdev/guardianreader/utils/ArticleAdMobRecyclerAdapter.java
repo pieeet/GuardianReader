@@ -14,6 +14,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
+import com.rocdev.guardianreader.models.GuardianAd;
 import com.rocdev.guardianreader.models.Section;
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +24,6 @@ import static com.rocdev.guardianreader.R.id.moreButton;
 
 /**
  * Created by piet on 08-06-17.
- *
  */
 
 public class ArticleAdMobRecyclerAdapter extends
@@ -34,6 +34,7 @@ public class ArticleAdMobRecyclerAdapter extends
     private static final int VIEW_TYPE_ARTICLE = 0;
     private static final int VIEW_TYPE_AD = 1;
     private static final int VIEW_TYPE_BUTTON = 2;
+    private static final int VIEW_TYPE_GUARDIAN_AD = 3;
 
     private static final int HEADLINES_AUS = 0;
     private static final int HEADLINES_UK = 1;
@@ -84,10 +85,13 @@ public class ArticleAdMobRecyclerAdapter extends
                 View adView = inflater.inflate(R.layout.ad_list_item, parent, false);
                 return new AdViewHolder(adView);
             case VIEW_TYPE_BUTTON:
-                // fall through
-            default:
                 View button = inflater.inflate(R.layout.more_button_list_item, parent, false);
                 return new ButtonViewHolder(button);
+            case VIEW_TYPE_GUARDIAN_AD:
+                View guardianAd = inflater.inflate(R.layout.guardian_ad, parent, false);
+                return new GuardianAdHolder(guardianAd);
+            default:
+                return null;
         }
     }
 
@@ -99,6 +103,8 @@ public class ArticleAdMobRecyclerAdapter extends
             type = VIEW_TYPE_ARTICLE;
         } else if (item instanceof AdView) {
             type = VIEW_TYPE_AD;
+        } else if (item instanceof GuardianAd) {
+            type = VIEW_TYPE_GUARDIAN_AD;
         } else {
             type = VIEW_TYPE_BUTTON;
         }
@@ -117,9 +123,12 @@ public class ArticleAdMobRecyclerAdapter extends
                 setAdItemHolder(holder, position);
                 break;
             case VIEW_TYPE_BUTTON:
-                // fall through
-            default:
                 setButtonItemHolder((ButtonViewHolder) holder);
+                break;
+            case VIEW_TYPE_GUARDIAN_AD:
+                GuardianAd guardianAd = (GuardianAd) listItems.get(position);
+                setGuardianAdItemHolder((GuardianAdHolder) holder, guardianAd);
+                break;
         }
     }
 
@@ -146,16 +155,25 @@ public class ArticleAdMobRecyclerAdapter extends
         });
     }
 
+    private void setGuardianAdItemHolder(GuardianAdHolder holder, final GuardianAd guardianAd) {
+        holder.adText.setText(guardianAd.getAdText());
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onGuardianAdClicked(guardianAd);
+            }
+        });
+    }
+
     private void setAdItemHolder(RecyclerView.ViewHolder holder, int position) {
         AdViewHolder adViewHolder = (AdViewHolder) holder;
         AdView adView = (AdView) listItems.get(position);
         ViewGroup adContainer = (ViewGroup) adViewHolder.itemView;
         adContainer.removeAllViews();
         if (adView.getParent() != null) {
-            ((ViewGroup)adView.getParent()).removeView(adView);
+            ((ViewGroup) adView.getParent()).removeView(adView);
         }
         adContainer.addView(adView);
-
     }
 
     private void setButtonItemHolder(ButtonViewHolder holder) {
@@ -224,7 +242,7 @@ public class ArticleAdMobRecyclerAdapter extends
         }
     }
 
-    private class ButtonViewHolder extends RecyclerView.ViewHolder {
+    private static class ButtonViewHolder extends RecyclerView.ViewHolder {
         final Button button;
 
         ButtonViewHolder(View itemView) {
@@ -233,10 +251,27 @@ public class ArticleAdMobRecyclerAdapter extends
         }
     }
 
+    private static class GuardianAdHolder extends RecyclerView.ViewHolder {
+        final TextView adText;
+        final View container;
+
+
+        public GuardianAdHolder(View itemView) {
+            super(itemView);
+            this.container = itemView;
+            this.adText = (TextView) itemView.findViewById(R.id.guardian_ad_text);
+        }
+    }
+
     public interface ArticleAdMobRecyclerAdapterListener {
         void onMoreArticles();
+
         void onMoreNews(int section);
+
         void onItemClicked(Article article);
+
+        void onGuardianAdClicked(GuardianAd guardianAd);
+
         boolean onItemLongClicked(Article article);
     }
 }

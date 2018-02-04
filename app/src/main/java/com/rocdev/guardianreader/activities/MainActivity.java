@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rocdev.guardianreader.fragments.SectionsFragment;
+import com.rocdev.guardianreader.models.GuardianAd;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 import com.rocdev.guardianreader.utils.ArticleLoader;
 import com.rocdev.guardianreader.fragments.ArticlesFragment;
@@ -664,6 +665,17 @@ public class MainActivity extends BaseActivity
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl())));
             }
         }
+    }
+
+    @Override
+    public void onGuardianAdClicked(GuardianAd guardianAd) {
+        if (guardianAd.getUrl().equals(GuardianAd.URL_PLAY_STORE)) {
+            mFirebaseAnalytics.logEvent("ad_click_app", null);
+        } else {
+            mFirebaseAnalytics.logEvent("ad_click_support", null);
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(guardianAd.getUrl()));
+        startActivity(intent);
     }
 
     //Needs to be global

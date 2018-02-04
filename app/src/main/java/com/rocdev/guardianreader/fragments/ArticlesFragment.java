@@ -19,6 +19,7 @@ import com.google.android.gms.ads.AdView;
 
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
+import com.rocdev.guardianreader.models.GuardianAd;
 import com.rocdev.guardianreader.models.Section;
 import com.rocdev.guardianreader.utils.ArticleAdMobRecyclerAdapter;
 
@@ -169,6 +170,7 @@ public class ArticlesFragment extends Fragment {
             listItems.addAll(articles);
         }
 //        addBannerAds();
+        addGuardianAds();
         if (currentSection != Section.SAVED.ordinal()) {
             try {
                 View buttonView = inflater.inflate(R.layout.more_button_list_item, null);
@@ -177,6 +179,17 @@ public class ArticlesFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void addGuardianAds() {
+        GuardianAd supportAd = new GuardianAd(GuardianAd.TYPE_DOWNLOAD_APP);
+        GuardianAd installGuardianApp = new GuardianAd(GuardianAd.TYPE_BECOME_A_SUPPORTER);
+        int adPosition;
+        if (listItems.size() > 9) {
+            adPosition = 2;
+            listItems.add(adPosition, supportAd);
+        }
+        listItems.add(listItems.size(), installGuardianApp);
     }
 
 
