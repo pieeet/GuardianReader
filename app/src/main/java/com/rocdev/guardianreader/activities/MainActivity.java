@@ -437,6 +437,12 @@ public class MainActivity extends BaseActivity
                         getString(R.string.google_play_url)));
                 startActivity(browserIntent);
                 break;
+            case R.id.action_privacy:
+                Intent browserIntentPrivacy = new Intent(Intent.ACTION_VIEW);
+                browserIntentPrivacy.setData(Uri.parse(
+                        getString(R.string.privacy_policy_url)));
+                startActivity(browserIntentPrivacy);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
