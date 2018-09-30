@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -25,9 +27,11 @@ import java.util.List;
  * <p>
  * helper methods.
  */
-public class WidgetIntentService extends IntentService {
+public class WidgetIntentService extends JobIntentService {
 
 //    private static final String TAG = WidgetIntentService.class.getSimpleName();
+
+    public static final int JOB_ID = 747474;
 
     // ACTIONS
     public static final String ACTION_UPDATE_ARTICLES =
@@ -48,9 +52,21 @@ public class WidgetIntentService extends IntentService {
             "com.rocdev.guardianreader.widget.extra.WIDGET_ID";
     private static final String EXTRA_WIDGET_ARTICLES =
             "com.rocdev.guardianreader.widget.extra.ARTICLES";
-    public WidgetIntentService() {
-        super("WidgetIntentService");
+
+//    public WidgetIntentService() {
+//        super("WidgetIntentService");
+//    }
+
+
+
+    /**
+     * Convenience method for enqueuing work in to this service.
+     *
+     */
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, WidgetIntentService.class, JOB_ID, work);
     }
+
 
     /**
      * Starts this service to perform action Fetch Articles with the given parameters. If
@@ -63,7 +79,7 @@ public class WidgetIntentService extends IntentService {
         intent.setAction(ACTION_UPDATE_ARTICLES);
         intent.putExtra(EXTRA_SECTION_INDEX, sectionIndex);
         intent.putExtra(EXTRA_WIDGET_ID, widgetId);
-        context.startService(intent);
+        enqueueWork(context, intent);
     }
 
     public static void startActionSaveArticles(Context context, int widgetId, List<Article> articles) {
@@ -72,19 +88,18 @@ public class WidgetIntentService extends IntentService {
         intent.putExtra(EXTRA_WIDGET_ID, widgetId);
         intent.putParcelableArrayListExtra(EXTRA_WIDGET_ARTICLES,
                 (ArrayList<? extends Parcelable>) articles);
-        context.startService(intent);
+        enqueueWork(context, intent);
     }
 
     public static void startActionUpdateWidget(Context context, int widgetId) {
         Intent intent = new Intent(context, WidgetIntentService.class);
         intent.setAction(ACTION_UPDATE_WIDGET);
         intent.putExtra(EXTRA_WIDGET_ID, widgetId);
-        context.startService(intent);
+        enqueueWork(context, intent);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        if (intent == null) return;
+    protected void onHandleWork(@NonNull Intent intent) {
         final String action = intent.getAction();
         if (action == null) return;
 
@@ -163,5 +178,11 @@ public class WidgetIntentService extends IntentService {
     private void handleActionUpdateWidget(int widgetId) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         ArticlesWidgetProvider.updateAppWidget(this, appWidgetManager, widgetId);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
