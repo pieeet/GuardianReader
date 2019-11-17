@@ -7,8 +7,9 @@ an average raing of 4.5.
 Unfortunately then The Guardian staff decided to invalidate my API key, without further
 explanation.
 
-To deploy the app for yourself you should add a java class called "Secret" to the utils
-package with the following code:
+To deploy the app for yourself you need an [api key](https://open-platform.theguardian.com/access/)
+from The Guardian and you should add a java class
+called "Secret" to the utils package with the following code:
 
     class Secret {
 
