@@ -34,6 +34,7 @@
     <string name="pref_key_fashion" translatable="false">pref_section_fashion</string>
     <string name="pref_key_film" translatable="false">pref_section_film</string>
     <string name="pref_key_football" translatable="false">pref_section_football</string>
+    <string name="pref_key_formulaone" translatable="false">pref_section_formulaone</string>
     <string name="pref_key_law" translatable="false">pref_section_law</string>
     <string name="pref_key_life_style" translatable="false">pref_section_life_style</string>
     <string name="pref_key_media" translatable="false">pref_section_media</string>
@@ -78,6 +79,7 @@
     <string name="pref_title_fashion">Fashion</string>
     <string name="pref_title_film">Film</string>
     <string name="pref_title_football">Football</string>
+    <string name="pref_title_formulaone">Formula One</string>
     <string name="pref_title_law">Law</string>
     <string name="pref_title_life_style"><![CDATA[Life & Style]]></string>
     <string name="pref_title_media">Media</string>

@@ -90,6 +90,14 @@ public enum Section  {
             R.id.nav_football,
             "pref_section_football",
             R.drawable.ic_bookmark_border_black_18dp),
+    Formula_One(
+
+            "https://content.guardianapis.com/sport/formulaone",
+            R.string.pref_title_formulaone,
+            R.id.nav_formulaone,
+            "pref_section_formulaone",
+            R.drawable.ic_bookmark_border_black_18dp),
+
     LAW(
             "https://content.guardianapis.com/law",
             R.string.pref_title_law,

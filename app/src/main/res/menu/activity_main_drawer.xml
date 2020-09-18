@@ -62,6 +62,12 @@
             android:id="@+id/nav_football"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
             android:title="@string/pref_title_football" />
+
+        <item
+            android:id="@+id/nav_formulaone"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:title="@string/pref_title_formulaone" />
+
         <item
             android:id="@+id/nav_law"
             android:icon="@drawable/ic_bookmark_border_black_18dp"

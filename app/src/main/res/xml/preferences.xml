@@ -129,6 +129,15 @@
             android:summaryOff="@string/pref_summary_hidden"
             android:summaryOn="@string/pref_summary_shown"
             android:title="@string/pref_title_football" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:icon="@drawable/ic_bookmark_border_black_18dp"
+            android:key="@string/pref_key_formulaone"
+            android:summaryOff="@string/pref_summary_hidden"
+            android:summaryOn="@string/pref_summary_shown"
+            android:title="@string/pref_title_formulaone" />
+
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:icon="@drawable/ic_bookmark_border_black_18dp"
