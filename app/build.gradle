@@ -2,16 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.rocdev.guardianreader"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 29
         //TODO change for production/test
-        versionCode 42
+        versionCode 46
 //        versionCode 0
-        versionName "3.1.10"
+        versionName "3.1.15"
 //        versionName "test"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
