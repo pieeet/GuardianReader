@@ -1,7 +1,7 @@
 package com.rocdev.guardianreader.utils;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.NativeExpressAdView;
 import com.rocdev.guardianreader.R;
 import com.rocdev.guardianreader.models.Article;
 import com.rocdev.guardianreader.models.GuardianAd;
@@ -101,9 +98,11 @@ public class ArticleAdMobRecyclerAdapter extends
         Object item = listItems.get(position);
         if (item instanceof Article) {
             type = VIEW_TYPE_ARTICLE;
-        } else if (item instanceof AdView) {
-            type = VIEW_TYPE_AD;
-        } else if (item instanceof GuardianAd) {
+        }
+//        else if (item instanceof AdView) {
+//            type = VIEW_TYPE_AD;
+//        }
+        else if (item instanceof GuardianAd) {
             type = VIEW_TYPE_GUARDIAN_AD;
         } else {
             type = VIEW_TYPE_BUTTON;
@@ -119,9 +118,9 @@ public class ArticleAdMobRecyclerAdapter extends
                 Article article = (Article) listItems.get(position);
                 setArticleItemHolder((ItemViewHolder) holder, article);
                 break;
-            case VIEW_TYPE_AD:
-                setAdItemHolder(holder, position);
-                break;
+//            case VIEW_TYPE_AD:
+//                setAdItemHolder(holder, position);
+//                break;
             case VIEW_TYPE_BUTTON:
                 setButtonItemHolder((ButtonViewHolder) holder);
                 break;
@@ -165,16 +164,16 @@ public class ArticleAdMobRecyclerAdapter extends
         });
     }
 
-    private void setAdItemHolder(RecyclerView.ViewHolder holder, int position) {
-        AdViewHolder adViewHolder = (AdViewHolder) holder;
-        AdView adView = (AdView) listItems.get(position);
-        ViewGroup adContainer = (ViewGroup) adViewHolder.itemView;
-        adContainer.removeAllViews();
-        if (adView.getParent() != null) {
-            ((ViewGroup) adView.getParent()).removeView(adView);
-        }
-        adContainer.addView(adView);
-    }
+//    private void setAdItemHolder(RecyclerView.ViewHolder holder, int position) {
+//        AdViewHolder adViewHolder = (AdViewHolder) holder;
+//        AdView adView = (AdView) listItems.get(position);
+//        ViewGroup adContainer = (ViewGroup) adViewHolder.itemView;
+//        adContainer.removeAllViews();
+//        if (adView.getParent() != null) {
+//            ((ViewGroup) adView.getParent()).removeView(adView);
+//        }
+//        adContainer.addView(adView);
+//    }
 
     private void setButtonItemHolder(ButtonViewHolder holder) {
         this.buttonViewHolder = holder;

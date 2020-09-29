@@ -3,10 +3,10 @@ package com.rocdev.guardianreader.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.ShareCompat;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import androidx.core.app.NavUtils;
+import androidx.core.app.ShareCompat;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;

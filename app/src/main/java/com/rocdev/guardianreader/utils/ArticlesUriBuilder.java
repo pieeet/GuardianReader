@@ -1,7 +1,7 @@
 package com.rocdev.guardianreader.utils;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.rocdev.guardianreader.models.Section;
 
