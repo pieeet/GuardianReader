@@ -8,9 +8,9 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         //TODO change for production/test
-        versionCode 48
+        versionCode 49
 //        versionCode 0
-        versionName "3.2.1"
+        versionName "3.2.2"
 //        versionName "test"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true

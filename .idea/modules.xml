@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GuardianReader.iml" filepath="$PROJECT_DIR$/GuardianReader.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/GuardianReader.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/GuardianReader.app.iml" />
     </modules>
   </component>
 </project>
